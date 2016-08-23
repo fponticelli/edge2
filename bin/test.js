@@ -325,8 +325,10 @@ var TestTimeSpan = function() {
 TestTimeSpan.__name__ = ["TestTimeSpan"];
 TestTimeSpan.prototype = {
 	testConversions: function() {
-		utest_Assert.equals(20,20,null,{ fileName : "TestTimeSpan.hx", lineNumber : 10, className : "TestTimeSpan", methodName : "testConversions"});
-		utest_Assert.equals(0.02,0.02,null,{ fileName : "TestTimeSpan.hx", lineNumber : 11, className : "TestTimeSpan", methodName : "testConversions"});
+		utest_Assert.equals(20,20,null,{ fileName : "TestTimeSpan.hx", lineNumber : 9, className : "TestTimeSpan", methodName : "testConversions"});
+		utest_Assert.equals(0.02,0.02,null,{ fileName : "TestTimeSpan.hx", lineNumber : 10, className : "TestTimeSpan", methodName : "testConversions"});
+		utest_Assert.equals(2,2.,null,{ fileName : "TestTimeSpan.hx", lineNumber : 11, className : "TestTimeSpan", methodName : "testConversions"});
+		utest_Assert.equals(2000,2000,null,{ fileName : "TestTimeSpan.hx", lineNumber : 12, className : "TestTimeSpan", methodName : "testConversions"});
 	}
 	,__class__: TestTimeSpan
 };

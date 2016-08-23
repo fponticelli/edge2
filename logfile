@@ -1,0 +1,28 @@
+LOG:  database system was shut down at 2016-08-19 16:00:38 MDT
+LOG:  MultiXact member wraparound protections are now enabled
+LOG:  autovacuum launcher started
+LOG:  database system is ready to accept connections
+ERROR:  canceling statement due to user request
+STATEMENT:  SELECT oid, obj_description(oid, 'pg_class') AS comment, case when reltablespace!=0 then (select spcname from pg_tablespace where pg_tablespace.oid=reltablespace) else (select spcname from pg_tablespace, pg_database where pg_tablespace.oid=dattablespace and datname='cmsapi') end as tablespace, pg_get_viewdef(oid,true) AS viewdef FROM pg_class WHERE oid = '"public"."userTrackings"'::regclass::oid;
+	SELECT attnum, attname, atttypid, attnotnull, format_type(atttypid,atttypmod), pg_get_expr(adbin, attrelid, true) AS adsrc, col_description(attrelid, attnum), typcategory, has_column_privilege(attrelid,attnum,'SELECT')
+	FROM pg_attribute
+	LEFT JOIN pg_type ON atttypid=pg_type.oid
+	LEFT JOIN pg_attrdef ON adrelid=attrelid AND adnum=attnum
+	WHERE attrelid = '"public"."userTrackings"'::regclass AND NOT attisdropped
+	ORDER BY attnum;
+	SELECT                                                                                                                                   pg_class.oid,                                                                                                                          pg_class.relname,                                                                                                                      indisunique,                                                                                                                           indisprimary,                                                                                                                          indisexclusion,                                                                                                                                    indkey,                                                                                                                                pg_get_indexdef(indexrelid, 0, true) AS definition,                                                                                    ARRAY(select pg_get_indexdef(indexrelid, attnum, true) FROM pg_attribute WHERE attrelid = indexrelid ORDER BY attnum) AS expressions,  obj_description(pg_class.oid, 'pg_class') AS comment                                                                                 FROM pg_index                                                                                                                          JOIN pg_class ON pg_class.oid = indexrelid                                                                                             WHERE indrelid = '"public"."userTrackings"'::regclass;                                                                                                         
+	SELECT pg_constraint.oid, conname, contype, conkey, nspname AS fschema, relname AS ftable, confkey AS fkeys, pg_get_expr(conbin, conrelid, true), pg_get_constraintdef(pg_constraint.oid, true), confupdtype, confdeltype, obj_description(pg_constraint.oid, 'pg_constraint'), condeferrable, condeferred, connoinherit 
+	FROM pg_constraint
+	LEFT JOIN pg_class ON pg_class.oid = confrelid
+	LEFT JOIN pg_namespace ON pg_namespace.oid = pg_class.relnamespace
+	WHERE conrelid = '"public"."userTrackings"'::regclass;
+	SELECT pg_type.oid, ARRAY(SELECT enumlabel FROM pg_enum WHERE enumtypid=pg_type.oid ORDER BY enumsortorder)
+	FROM pg_type
+	WHERE pg_type.oid IN (SELECT atttypid FROM pg_attribute WHERE attrelid = '"public"."userTrackings"'::regclass) AND typtype='e';
+	
+ERROR:  syntax error at or near ""action.utenant.action.definition.action"" at character 81
+STATEMENT:  CREATE INDEX "index.action.utenant.action.definition.action" ON "userTrackings" "action.utenant.action.definition.action";
+ERROR:  syntax error at or near ""session.sessionId"" at character 59
+STATEMENT:  CREATE INDEX "index.session.sessionId" ON "userTrackings" "session.sessionId";
+ERROR:  syntax error at or near "{" at character 81
+STATEMENT:  CREATE INDEX "index.action.utenant.action.definition.action" ON "userTrackings" { "action.utenant.action.definition.action" };

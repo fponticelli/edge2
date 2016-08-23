@@ -1,0 +1,19 @@
+-lib thx.core
+-lib utest
+-cp src
+-cp test
+-main TestAll
+-js bin/test.js
+
+edge.Engine
+edge.Entity
+edge.EntitySystem
+edge.EntityView
+edge.MessageSystem
+edge.MessageView
+edge.Phase
+edge.System
+edge.TimeSpan
+edge.View
+
+-cmd node bin/test.js

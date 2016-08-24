@@ -442,7 +442,7 @@ StringTools.replace = function(s,sub,by) {
 var TestAll = function() { };
 TestAll.__name__ = ["TestAll"];
 TestAll.main = function() {
-	utest_UTest.run([new TestComponents(),new TestEntity(),new TestTimeSpan()]);
+	utest_UTest.run([new TestComponents(),new TestElement(),new TestEntity(),new TestTimeSpan()]);
 };
 var TestComponents = function() {
 };
@@ -510,6 +510,71 @@ TestComponent.B = ["B",1];
 TestComponent.B.__enum__ = TestComponent;
 TestComponent.C = ["C",2];
 TestComponent.C.__enum__ = TestComponent;
+var TestElement = function() {
+};
+TestElement.__name__ = ["TestElement"];
+TestElement.prototype = {
+	testBasics: function() {
+		var engine = edge_Engine.withEnumElement();
+		utest_Assert.isFalse(engine.elements().hasNext(),null,{ fileName : "TestElement.hx", lineNumber : 12, className : "TestElement", methodName : "testBasics"});
+		var s = SampleElement.Score({ points : 1});
+		engine.addElement(s);
+		utest_Assert.equals(s,engine.elements().next(),null,{ fileName : "TestElement.hx", lineNumber : 15, className : "TestElement", methodName : "testBasics"});
+		engine.addElement(SampleElement.Player({ name : "Edgy1"}));
+		engine.addElement(SampleElement.Player({ name : "Edgy2"}));
+		engine.addElement(SampleElement.Player({ name : "Edgy3"}));
+		utest_Assert.isTrue(engine.allElements(function(el) {
+			return true;
+		}),null,{ fileName : "TestElement.hx", lineNumber : 19, className : "TestElement", methodName : "testBasics"});
+		utest_Assert.isFalse(engine.allElements(function(el1) {
+			return false;
+		}),null,{ fileName : "TestElement.hx", lineNumber : 22, className : "TestElement", methodName : "testBasics"});
+		utest_Assert.isTrue(engine.removeElement(function(el2) {
+			if(el2[1] == 1) {
+				if(el2[2].name == "Edgy1") {
+					return true;
+				} else {
+					return false;
+				}
+			} else {
+				return false;
+			}
+		}),null,{ fileName : "TestElement.hx", lineNumber : 25, className : "TestElement", methodName : "testBasics"});
+		utest_Assert.isTrue(engine.anyElement(function(el3) {
+			if(el3[1] == 1) {
+				if(el3[2].name == "Edgy2") {
+					return true;
+				} else {
+					return false;
+				}
+			} else {
+				return false;
+			}
+		}),null,{ fileName : "TestElement.hx", lineNumber : 29, className : "TestElement", methodName : "testBasics"});
+		utest_Assert.isTrue(engine.removeElements(function(el4) {
+			if(el4[1] == 1) {
+				return true;
+			} else {
+				return false;
+			}
+		}),null,{ fileName : "TestElement.hx", lineNumber : 33, className : "TestElement", methodName : "testBasics"});
+		utest_Assert.isFalse(engine.anyElement(function(el5) {
+			if(el5[1] == 1) {
+				if(el5[2].name == "Edgy2") {
+					return true;
+				} else {
+					return false;
+				}
+			} else {
+				return false;
+			}
+		}),null,{ fileName : "TestElement.hx", lineNumber : 37, className : "TestElement", methodName : "testBasics"});
+	}
+	,__class__: TestElement
+};
+var SampleElement = { __ename__ : ["SampleElement"], __constructs__ : ["Score","Player"] };
+SampleElement.Score = function(score) { var $x = ["Score",0,score]; $x.__enum__ = SampleElement; return $x; };
+SampleElement.Player = function(info) { var $x = ["Player",1,info]; $x.__enum__ = SampleElement; return $x; };
 var TestEntity = function() {
 };
 TestEntity.__name__ = ["TestEntity"];
@@ -714,9 +779,10 @@ edge_Engine.prototype = {
 			var entity = tmp.next();
 			if(predicate(entity)) {
 				entity.destroy();
-				return;
+				return true;
 			}
 		}
+		return false;
 	}
 	,entityDestroyed: function(entity) {
 		this._entities.remove(entity);
@@ -734,41 +800,51 @@ edge_Engine.prototype = {
 		}
 	}
 	,removeEntities: function(predicate) {
+		var removed = false;
 		var tmp = $iterator(thx__$Set_Set_$Impl_$)(this._entities);
 		while(tmp.hasNext()) {
 			var entity = tmp.next();
 			if(predicate(entity)) {
 				entity.destroy();
+				removed = true;
 			}
 		}
+		return removed;
 	}
 	,clearEntities: function() {
 		this.removeEntities(function(_) {
 			return true;
 		});
-		return;
+		return this;
 	}
 	,entities: function() {
 		return $iterator(thx__$Set_Set_$Impl_$)(this._entities);
 	}
 	,_elements: null
 	,addElement: function(Element) {
-		throw new thx_error_NotImplemented({ fileName : "Engine.hx", lineNumber : 71, className : "edge.Engine", methodName : "addElement"});
+		throw new thx_error_NotImplemented({ fileName : "Engine.hx", lineNumber : 76, className : "edge.Engine", methodName : "addElement"});
 	}
 	,removeElement: function(predicate) {
-		throw new thx_error_NotImplemented({ fileName : "Engine.hx", lineNumber : 74, className : "edge.Engine", methodName : "removeElement"});
+		throw new thx_error_NotImplemented({ fileName : "Engine.hx", lineNumber : 79, className : "edge.Engine", methodName : "removeElement"});
 	}
 	,removeElements: function(predicate) {
-		throw new thx_error_NotImplemented({ fileName : "Engine.hx", lineNumber : 77, className : "edge.Engine", methodName : "removeElements"});
+		throw new thx_error_NotImplemented({ fileName : "Engine.hx", lineNumber : 82, className : "edge.Engine", methodName : "removeElements"});
 	}
 	,clearElements: function() {
-		throw new thx_error_NotImplemented({ fileName : "Engine.hx", lineNumber : 80, className : "edge.Engine", methodName : "clearElements"});
+		throw new thx_error_NotImplemented({ fileName : "Engine.hx", lineNumber : 85, className : "edge.Engine", methodName : "clearElements"});
+	}
+	,allElements: function(predicate) {
+		throw new thx_error_NotImplemented({ fileName : "Engine.hx", lineNumber : 89, className : "edge.Engine", methodName : "allElements"});
+	}
+	,anyElement: function(predicate) {
+		throw new thx_error_NotImplemented({ fileName : "Engine.hx", lineNumber : 93, className : "edge.Engine", methodName : "anyElement"});
 	}
 	,elements: function() {
 		return $iterator(thx__$Set_Set_$Impl_$)(this._elements);
 	}
 	,clear: function() {
-		throw new thx_error_NotImplemented({ fileName : "Engine.hx", lineNumber : 87, className : "edge.Engine", methodName : "clear"});
+		this.clearEntities();
+		this.clearElements();
 	}
 	,__class__: edge_Engine
 };

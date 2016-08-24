@@ -28,13 +28,14 @@ class Engine<Component, Element> {
     return entity;
   }
 
-  public function removeEntity(predicate: Entity<Component, Element> -> Bool): Void {
+  public function removeEntity(predicate: Entity<Component, Element> -> Bool): Bool {
     for(entity in _entities) {
       if(predicate(entity)) {
         entity.destroy();
-        return;
+        return true;
       }
     }
+    return false;
   }
 
   function entityDestroyed(entity: Entity<Component, Element>) {
@@ -51,15 +52,19 @@ class Engine<Component, Element> {
     case Destroyed: entityDestroyed(entity);
   }
 
-  public function removeEntities(predicate: Entity<Component, Element> -> Bool): Void {
+  public function removeEntities(predicate: Entity<Component, Element> -> Bool): Bool {
+    var removed = false;
     for(entity in _entities) {
       if(predicate(entity)) {
         entity.destroy();
+        removed = true;
       }
     }
+    return removed;
   }
-  public function clearEntities(): Void {
-    return removeEntities(function(_) return true);
+  public function clearEntities(): Engine<Component, Element> {
+    removeEntities(function(_) return true);
+    return this;
   }
 
   public function entities(): Iterator<Entity<Component, Element>>
@@ -70,13 +75,21 @@ class Engine<Component, Element> {
   public function addElement(Element: Element): Void {
     return throw new thx.error.NotImplemented();
   }
-  public function removeElement(predicate: Element -> Bool): Void {
+  public function removeElement(predicate: Element -> Bool): Bool {
     return throw new thx.error.NotImplemented();
   }
-  public function removeElements(predicate: Element -> Bool): Void {
+  public function removeElements(predicate: Element -> Bool): Bool {
     return throw new thx.error.NotImplemented();
   }
   public function clearElements(): Void {
+    return throw new thx.error.NotImplemented();
+  }
+
+  public function allElements(predicate: Element -> Bool): Bool {
+    return throw new thx.error.NotImplemented();
+  }
+
+  public function anyElement(predicate: Element -> Bool): Bool {
     return throw new thx.error.NotImplemented();
   }
 
@@ -84,6 +97,7 @@ class Engine<Component, Element> {
     return _elements.iterator();
 
   public function clear(): Void {
-    return throw new thx.error.NotImplemented();
+    clearEntities();
+    clearElements();
   }
 }

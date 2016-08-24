@@ -442,7 +442,7 @@ StringTools.replace = function(s,sub,by) {
 var TestAll = function() { };
 TestAll.__name__ = ["TestAll"];
 TestAll.main = function() {
-	utest_UTest.run([new TestComponents(),new TestElement(),new TestEntity(),new TestTimeSpan()]);
+	utest_UTest.run([new TestComponents(),new TestElement(),new TestEntity(),new TestTimeSpan(),new TestPhase(),new TestView()]);
 };
 var TestComponents = function() {
 };
@@ -609,6 +609,14 @@ TestEntity.prototype = {
 	}
 	,__class__: TestEntity
 };
+var TestPhase = function() {
+};
+TestPhase.__name__ = ["TestPhase"];
+TestPhase.prototype = {
+	testBasics: function() {
+	}
+	,__class__: TestPhase
+};
 var TestTimeSpan = function() {
 };
 TestTimeSpan.__name__ = ["TestTimeSpan"];
@@ -620,6 +628,14 @@ TestTimeSpan.prototype = {
 		utest_Assert.equals(2000,2000,null,{ fileName : "TestTimeSpan.hx", lineNumber : 12, className : "TestTimeSpan", methodName : "testConversions"});
 	}
 	,__class__: TestTimeSpan
+};
+var TestView = function() {
+};
+TestView.__name__ = ["TestView"];
+TestView.prototype = {
+	testBasics: function() {
+	}
+	,__class__: TestView
 };
 var ValueType = { __ename__ : ["ValueType"], __constructs__ : ["TNull","TInt","TFloat","TBool","TObject","TFunction","TClass","TEnum","TUnknown"] };
 ValueType.TNull = ["TNull",0];
@@ -745,6 +761,7 @@ Type["typeof"] = function(v) {
 	}
 };
 var edge_Engine = function(createElementSet) {
+	this._phases = [];
 	this._entities = thx__$Set_Set_$Impl_$.createObject();
 	this._elements = createElementSet();
 };
@@ -755,11 +772,14 @@ edge_Engine.withEnumElement = function() {
 	});
 };
 edge_Engine.prototype = {
-	createPhase: function() {
-		throw new thx_error_NotImplemented({ fileName : "Engine.hx", lineNumber : 17, className : "edge.Engine", methodName : "createPhase"});
+	_phases: null
+	,createPhase: function() {
+		var phase = new edge_Phase();
+		this._phases.push(phase);
+		return phase;
 	}
 	,phases: function() {
-		throw new thx_error_NotImplemented({ fileName : "Engine.hx", lineNumber : 20, className : "edge.Engine", methodName : "phases"});
+		return HxOverrides.iter(this._phases);
 	}
 	,_entities: null
 	,createEntity: function(components) {
@@ -930,20 +950,17 @@ edge_EntityChange.Updated = ["Updated",0];
 edge_EntityChange.Updated.__enum__ = edge_EntityChange;
 edge_EntityChange.Destroyed = ["Destroyed",1];
 edge_EntityChange.Destroyed.__enum__ = edge_EntityChange;
-var edge_Phase = function() { };
+var edge_Phase = function() {
+};
 edge_Phase.__name__ = ["edge","Phase"];
 edge_Phase.prototype = {
 	addView: function(view) {
-		throw new thx_error_NotImplemented({ fileName : "Phase.hx", lineNumber : 7, className : "edge.Phase", methodName : "addView"});
+		throw new thx_error_NotImplemented({ fileName : "Phase.hx", lineNumber : 9, className : "edge.Phase", methodName : "addView"});
+	}
+	,update: function() {
+		throw new thx_error_NotImplemented({ fileName : "Phase.hx", lineNumber : 13, className : "edge.Phase", methodName : "update"});
 	}
 	,__class__: edge_Phase
-};
-var edge_System = function() { };
-edge_System.__name__ = ["edge","System"];
-edge_System.prototype = {
-	engine: null
-	,update: null
-	,__class__: edge_System
 };
 var edge__$TimeSpan_TimeSpan_$Impl_$ = {};
 edge__$TimeSpan_TimeSpan_$Impl_$.__name__ = ["edge","_TimeSpan","TimeSpan_Impl_"];

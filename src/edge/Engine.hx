@@ -13,12 +13,15 @@ class Engine<Component, Element> {
   }
 
   // phases
+  var _phases: Array<Phase<Component, Element>> = [];
   public function createPhase(): Phase<Component, Element> {
-    return throw new thx.error.NotImplemented();
+    // TODO
+    var phase = new Phase();
+    _phases.push(phase);
+    return phase;
   }
-  public function phases(): Iterable<Phase<Component, Element>> { // ?
-    return throw new thx.error.NotImplemented();
-  }
+  public function phases(): Iterator<Phase<Component, Element>>
+    return _phases.iterator();
 
   // entities
   var _entities: Set<Entity<Component, Element>>;

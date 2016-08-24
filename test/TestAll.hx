@@ -5,6 +5,8 @@ class TestAll {
       new TestElement(),
       new TestEntity(),
       new TestTimeSpan(),
+      new TestPhase(),
+      new TestView(),
     ]);
   }
 }

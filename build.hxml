@@ -9,8 +9,8 @@ edge.Engine
 edge.Entity
 edge.EntitySystem
 edge.EntityView
-edge.MessageSystem
-edge.MessageView
+edge.ElementSystem
+edge.ElementView
 edge.Phase
 edge.System
 edge.TimeSpan

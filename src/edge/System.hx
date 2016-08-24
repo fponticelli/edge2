@@ -1,6 +1,6 @@
 package edge;
 
-interface System<Component, Message> {
-  var engine: Engine<Component, Message>;
+interface System<Component, Element> {
+  var engine: Engine<Component, Element>;
   function before(timeDelta: TimeSpan): Void;
 }

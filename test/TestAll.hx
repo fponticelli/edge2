@@ -1,7 +1,9 @@
 class TestAll {
   public static function main() {
     utest.UTest.run([
-      new TestTimeSpan()
+      new TestComponents(),
+      new TestEntity(),
+      new TestTimeSpan(),
     ]);
   }
 }

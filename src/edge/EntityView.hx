@@ -1,9 +1,9 @@
 package edge;
 
-interface EntityView<T, Component, Message> {
-  function onAddedEntity(entity: Entity<Component, Message>): Void;
-  function onRemovedEntity(entity: Entity<Component, Message>): Void;
-  function onUpdatedEntity(entity: Entity<Component, Message>): Void;
+interface EntityView<T, Component, Element> {
+  function onAddedEntity(entity: Entity<Component, Element>): Void;
+  function onRemovedEntity(entity: Entity<Component, Element>): Void;
+  function onUpdatedEntity(entity: Entity<Component, Element>): Void;
 
-  function updateEntitySystem(system: EntitySystem<T, Component, Message>): Void;
+  function updateEntitySystem(system: EntitySystem<T, Component, Element>): Void;
 }

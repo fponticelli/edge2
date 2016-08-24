@@ -26,3 +26,1374 @@ ERROR:  syntax error at or near ""session.sessionId"" at character 59
 STATEMENT:  CREATE INDEX "index.session.sessionId" ON "userTrackings" "session.sessionId";
 ERROR:  syntax error at or near "{" at character 81
 STATEMENT:  CREATE INDEX "index.action.utenant.action.definition.action" ON "userTrackings" { "action.utenant.action.definition.action" };
+ERROR:  relation "userTrackings" does not exist
+STATEMENT:  CREATE INDEX "index.action.utenant.action.definition.action" ON "userTrackings" ("action.utenant.action.definition.action");
+ERROR:  cannot delete from view "pg_indexes"
+DETAIL:  Views that do not select from a single table or view are not automatically updatable.
+HINT:  To enable deleting from the view, provide an INSTEAD OF DELETE trigger or an unconditional ON DELETE DO INSTEAD rule.
+STATEMENT:  BEGIN;
+	DELETE FROM "pg_catalog"."pg_indexes" WHERE "schemaname"='public' AND "tablename"='userTrackings' AND "indexname"='index.action.utenant.action.definition.action' AND "tablespace" IS NULL AND "indexdef"='CREATE INDEX "index.action.utenant.action.definition.action" ON "userTrackings" USING btree ("action.utenant.action.definition.action")';
+	
+ERROR:  relation "index.action.utenant.action.definition.action" already exists
+STATEMENT:  CREATE INDEX "index.action.utenant.action.definition.action" ON "userTrackings" ("action.utenant.action.definition.action");
+ERROR:  column "action.utenant.action.download.orderFile" does not exist
+STATEMENT:  CREATE INDEX "index.session.sessionId" ON "userTrackings" ("session.sessionId");
+	CREATE INDEX "index.session.userId" ON "userTrackings" ("session.userId");
+	CREATE INDEX "index.session.ip" ON "userTrackings" ("session.ip");
+	CREATE INDEX "index.session.date" ON "userTrackings" ("session.date");
+	CREATE INDEX "index.action.anonymous.failedLogin" ON "userTrackings" ("action.anonymous.failedLogin");
+	CREATE INDEX "index.action.anonymous.init.cookieEnabled" ON "userTrackings" ("action.anonymous.init.cookieEnabled");
+	CREATE INDEX "index.action.anonymous.init.language.some" ON "userTrackings" ("action.anonymous.init.language.some");
+	CREATE INDEX "index.action.anonymous.init.language.none" ON "userTrackings" ("action.anonymous.init.language.none");
+	CREATE INDEX "index.action.anonymous.init.timeOffset" ON "userTrackings" ("action.anonymous.init.timeOffset");
+	CREATE INDEX "index.action.anonymous.init.screen.width" ON "userTrackings" ("action.anonymous.init.screen.width");
+	CREATE INDEX "index.action.anonymous.init.screen.height" ON "userTrackings" ("action.anonymous.init.screen.height");
+	CREATE INDEX "index.action.anonymous.init.screen.colorDepth" ON "userTrackings" ("action.anonymous.init.screen.colorDepth");
+	CREATE INDEX "index.action.anonymous.init.screen.orientation" ON "userTrackings" ("action.anonymous.init.screen.orientation");
+	CREATE INDEX "index.action.anonymous.init.screen.devicePixelRatio" ON "userTrackings" ("action.anonymous.init.screen.devicePixelRatio");
+	CREATE INDEX "index.action.anonymous.requestReset.username" ON "userTrackings" ("action.anonymous.requestReset.username");
+	CREATE INDEX "index.action.anonymous.requestReset.success" ON "userTrackings" ("action.anonymous.requestReset.success");
+	CREATE INDEX "index.action.anonymous.emailLink" ON "userTrackings" ("action.anonymous.emailLink");
+	CREATE INDEX "index.action.anonymous.performedReset.username" ON "userTrackings" ("action.anonymous.performedReset.username");
+	CREATE INDEX "index.action.anonymous.performedReset.success" ON "userTrackings" ("action.anonymous.performedReset.success");
+	CREATE INDEX "index.action.user.userId" ON "userTrackings" ("action.user.userId");
+	CREATE INDEX "index.action.user.action.login" ON "userTrackings" ("action.user.action.login");
+	CREATE INDEX "index.action.user.action.firstLogin" ON "userTrackings" ("action.user.action.firstLogin");
+	CREATE INDEX "index.action.user.action.logout" ON "userTrackings" ("action.user.action.logout");
+	CREATE INDEX "index.action.user.action.changeTimezone" ON "userTrackings" ("action.user.action.changeTimezone");
+	CREATE INDEX "index.action.user.action.changePassword" ON "userTrackings" ("action.user.action.changePassword");
+	CREATE INDEX "index.action.user.action.clearProductPreferences" ON "userTrackings" ("action.user.action.clearProductPreferences");
+	CREATE INDEX "index.action.user.action.clearAllPreferences" ON "userTrackings" ("action.user.action.clearAllPreferences");
+	CREATE INDEX "index.action.user.action.changeTenant" ON "userTrackings" ("action.user.action.changeTenant");
+	CREATE INDEX "index.action.utenant.userId" ON "userTrackings" ("action.utenant.userId");
+	CREATE INDEX "index.action.utenant.action.download.productFile.id" ON "userTrackings" ("action.utenant.action.download.productFile.id");
+	CREATE INDEX "index.action.utenant.action.download.productFile.filename" ON "userTrackings" ("action.utenant.action.download.productFile.filename");
+	CREATE INDEX "index.action.utenant.action.download.orderFile.id" ON "userTrackings" ("action.utenant.action.download.orderFile");
+	CREATE INDEX "index.action.utenant.action.download.orderFile.filename" ON "userTrackings" ("action.utenant.action.download.orderFile.filename");
+	CREATE INDEX "index.action.utenant.action.download.orderLineFile.id" ON "userTrackings" ("action.utenant.action.download.orderLineFile.id");
+	CREATE INDEX "index.action.utenant.action.download.orderLineFile.filename" ON "userTrackings" ("action.utenant.action.download.orderLineFile.filename");
+	CREATE INDEX "index.action.utenant.action.download.dataHubData.mappingId" ON "userTrackings" ("action.utenant.action.download.dataHubData.mappingId");
+	CREATE INDEX "index.action.utenant.action.download.dataHubData.params" ON "userTrackings" ("action.utenant.action.download.dataHubData.params");
+	CREATE INDEX "index.action.utenant.action.visit.product" ON "userTrackings" ("action.utenant.action.visit.product");
+	CREATE INDEX "index.action.utenant.action.visit.library.terms.some" ON "userTrackings" ("action.utenant.action.visit.library.terms");
+	CREATE INDEX "index.action.utenant.action.visit.library.terms.none" ON "userTrackings" ("action.utenant.action.visit.library.terms");
+	CREATE INDEX "index.action.utenant.action.visit.library.sort.some" ON "userTrackings" ("action.utenant.action.visit.library.sort");
+	CREATE INDEX "index.action.utenant.action.visit.library.sort.none" ON "userTrackings" ("action.utenant.action.visit.library.sort");
+	CREATE INDEX "index.action.utenant.action.visit.library.view.chart" ON "userTrackings" ("action.utenant.action.visit.library.view.chart");
+	CREATE INDEX "index.action.utenant.action.visit.library.view.book" ON "userTrackings" ("action.utenant.action.visit.library.view");
+	CREATE INDEX "index.action.utenant.action.visit.library.view.page" ON "userTrackings" ("action.utenant.action.visit.library.view");
+	CREATE INDEX "index.action.utenant.action.visit.item.mappingId" ON "userTrackings" ("action.utenant.action.visit.item.mappingId");
+	CREATE INDEX "index.action.utenant.action.visit.item.itemId.some" ON "userTrackings" ("action.utenant.action.visit.item.itemId");
+	CREATE INDEX "index.action.utenant.action.visit.item.itemId.none" ON "userTrackings" ("action.utenant.action.visit.item.itemId");
+	CREATE INDEX "index.action.utenant.action.visit.override.mappingId" ON "userTrackings" ("action.utenant.action.visit.override");
+	CREATE INDEX "index.action.utenant.action.visit.override.itemId.some" ON "userTrackings" ("action.utenant.action.visit.override.itemId.some");
+	CREATE INDEX "index.action.utenant.action.visit.override.itemId.none" ON "userTrackings" ("action.utenant.action.visit.override.itemId.none");
+	CREATE INDEX "index.action.utenant.action.visit.dataHub.mappingId" ON "userTrackings" ("action.utenant.action.visit.dataHub");
+	CREATE INDEX "index.action.utenant.action.visit.dataHub.scale" ON "userTrackings" ("action.utenant.action.visit.dataHub.scale");
+	CREATE INDEX "index.action.utenant.action.visit.dataHub.params" ON "userTrackings" ("action.utenant.action.visit.dataHub.params");
+	CREATE INDEX "index.action.utenant.action.visit.cart" ON "userTrackings" ("action.utenant.action.visit.cart");
+	CREATE INDEX "index.action.utenant.action.visit.url" ON "userTrackings" ("action.utenant.action.visit.url");
+	CREATE INDEX "index.action.utenant.action.visit.myAccount" ON "userTrackings" ("action.utenant.action.visit.myAccount");
+	CREATE INDEX "index.action.utenant.action.visit.orderDetails" ON "userTrackings" ("action.utenant.action.visit.orderDetails");
+	CREATE INDEX "index.action.utenant.action.visit.orders" ON "userTrackings" ("action.utenant.action.visit.orders");
+	CREATE INDEX "index.action.utenant.action.visit.overrides.mappingId" ON "userTrackings" ("action.utenant.action.visit.overrides.mappingId");
+	CREATE INDEX "index.action.utenant.action.visit.overrides.terms.some" ON "userTrackings" ("action.utenant.action.visit.overrides.terms.some");
+	CREATE INDEX "index.action.utenant.action.visit.overrides.terms.none" ON "userTrackings" ("action.utenant.action.visit.overrides.terms.none");
+	CREATE INDEX "index.action.utenant.action.cartOrderLine.orderLineId" ON "userTrackings" ("action.utenant.action.cartOrderLine.orderLineId");
+	CREATE INDEX "index.action.utenant.action.cartOrderLine.action" ON "userTrackings" ("action.utenant.action.cartOrderLine.action");
+	CREATE INDEX "index.action.utenant.action.placeOrder" ON "userTrackings" ("action.utenant.action.placeOrder");
+	CREATE INDEX "index.action.utenant.action.override.overrideId" ON "userTrackings" ("action.utenant.action.override.overrideId");
+	CREATE INDEX "index.action.utenant.action.override.action" ON "userTrackings" ("action.utenant.action.override.action");
+	CREATE INDEX "index.action.utenant.action.definition.mappingId" ON "userTrackings" ("action.utenant.action.definition.mappingId");
+	CREATE INDEX "index.action.utenant.action.definition.definitionId" ON "userTrackings" ("action.utenant.action.definition");
+ERROR:  relation "index.action.utenant.action.definition.action" already exists
+STATEMENT:  CREATE INDEX "index.action.utenant.action.definition.action" ON "userTrackings" ("action.utenant.action.definition.action");
+ERROR:  data type json has no default operator class for access method "btree"
+HINT:  You must specify an operator class for the index or define a default operator class for the data type.
+STATEMENT:  CREATE TABLE "userTrackings" (
+	  "session.sessionId" UUID,
+	  "session.userId" UUID,
+	  "session.ip" VARCHAR(15),
+	  "session.date" TIMESTAMP,
+	  "action.anonymous.failedLogin" VARCHAR,
+	  "action.anonymous.init.cookieEnabled" BOOLEAN,
+	  "action.anonymous.init.language.some" VARCHAR,
+	  "action.anonymous.init.language.none" BOOLEAN,
+	  "action.anonymous.init.timeOffset" VARCHAR,
+	  "action.anonymous.init.screen.width" INTEGER,
+	  "action.anonymous.init.screen.height" INTEGER,
+	  "action.anonymous.init.screen.colorDepth" INTEGER,
+	  "action.anonymous.init.screen.orientation" VARCHAR,
+	  "action.anonymous.init.screen.devicePixelRatio" DOUBLE PRECISION,
+	  "action.anonymous.requestReset.username" VARCHAR,
+	  "action.anonymous.requestReset.success" BOOLEAN,
+	  "action.anonymous.emailLink" TEXT,
+	  "action.anonymous.performedReset.username" VARCHAR,
+	  "action.anonymous.performedReset.success" BOOLEAN,
+	  "action.user.userId" UUID,
+	  "action.user.action.login" BOOLEAN,
+	  "action.user.action.firstLogin" BOOLEAN,
+	  "action.user.action.logout" BOOLEAN,
+	  "action.user.action.changeTimezone" VARCHAR,
+	  "action.user.action.changePassword" BOOLEAN,
+	  "action.user.action.clearProductPreferences" BOOLEAN,
+	  "action.user.action.clearAllPreferences" BOOLEAN,
+	  "action.user.action.changeTenant" UUID,
+	  "action.utenant.userId" UUID,
+	  "action.utenant.action.download.productFile.id" UUID,
+	  "action.utenant.action.download.productFile.filename" VARCHAR,
+	  "action.utenant.action.download.orderFile.id" VARCHAR,
+	  "action.utenant.action.download.orderFile.filename" VARCHAR,
+	  "action.utenant.action.download.orderLineFile.id" UUID,
+	  "action.utenant.action.download.orderLineFile.filename" VARCHAR,
+	  "action.utenant.action.download.dataHubData.mappingId" VARCHAR,
+	  "action.utenant.action.download.dataHubData.params" JSON,
+	  "action.utenant.action.visit.product" VARCHAR,
+	  "action.utenant.action.visit.library.terms.some" VARCHAR,
+	  "action.utenant.action.visit.library.terms.none" BOOLEAN,
+	  "action.utenant.action.visit.library.sort.some" VARCHAR,
+	  "action.utenant.action.visit.library.sort.none" BOOLEAN,
+	  "action.utenant.action.visit.library.view.chart" VARCHAR[],
+	  "action.utenant.action.visit.library.view.book" BOOLEAN,
+	  "action.utenant.action.visit.library.view.page" BOOLEAN,
+	  "action.utenant.action.visit.item.mappingId" VARCHAR,
+	  "action.utenant.action.visit.item.itemId.some" VARCHAR,
+	  "action.utenant.action.visit.item.itemId.none" BOOLEAN,
+	  "action.utenant.action.visit.override.mappingId" TEXT,
+	  "action.utenant.action.visit.override.itemId.some" VARCHAR,
+	  "action.utenant.action.visit.override.itemId.none" BOOLEAN,
+	  "action.utenant.action.visit.dataHub.mappingId" VARCHAR,
+	  "action.utenant.action.visit.dataHub.scale" VARCHAR,
+	  "action.utenant.action.visit.dataHub.params" JSON,
+	  "action.utenant.action.visit.cart" BOOLEAN,
+	  "action.utenant.action.visit.url" VARCHAR,
+	  "action.utenant.action.visit.myAccount" BOOLEAN,
+	  "action.utenant.action.visit.orderDetails" VARCHAR,
+	  "action.utenant.action.visit.orders" BOOLEAN,
+	  "action.utenant.action.visit.overrides.mappingId" VARCHAR,
+	  "action.utenant.action.visit.overrides.terms.some" VARCHAR,
+	  "action.utenant.action.visit.overrides.terms.none" BOOLEAN,
+	  "action.utenant.action.cartOrderLine.orderLineId" UUID,
+	  "action.utenant.action.cartOrderLine.action" VARCHAR,
+	  "action.utenant.action.placeOrder" VARCHAR,
+	  "action.utenant.action.override.overrideId" UUID,
+	  "action.utenant.action.override.action" VARCHAR,
+	  "action.utenant.action.definition.mappingId" VARCHAR,
+	  "action.utenant.action.definition.definitionId" VARCHAR,
+	  "action.utenant.action.definition.action" VARCHAR
+	);
+	
+	CREATE INDEX "index.session.sessionId" ON "userTrackings" ("session.sessionId");
+	CREATE INDEX "index.session.userId" ON "userTrackings" ("session.userId");
+	CREATE INDEX "index.session.ip" ON "userTrackings" ("session.ip");
+	CREATE INDEX "index.session.date" ON "userTrackings" ("session.date");
+	CREATE INDEX "index.action.anonymous.failedLogin" ON "userTrackings" ("action.anonymous.failedLogin");
+	CREATE INDEX "index.action.anonymous.init.cookieEnabled" ON "userTrackings" ("action.anonymous.init.cookieEnabled");
+	CREATE INDEX "index.action.anonymous.init.language.some" ON "userTrackings" ("action.anonymous.init.language.some");
+	CREATE INDEX "index.action.anonymous.init.language.none" ON "userTrackings" ("action.anonymous.init.language.none");
+	CREATE INDEX "index.action.anonymous.init.timeOffset" ON "userTrackings" ("action.anonymous.init.timeOffset");
+	CREATE INDEX "index.action.anonymous.init.screen.width" ON "userTrackings" ("action.anonymous.init.screen.width");
+	CREATE INDEX "index.action.anonymous.init.screen.height" ON "userTrackings" ("action.anonymous.init.screen.height");
+	CREATE INDEX "index.action.anonymous.init.screen.colorDepth" ON "userTrackings" ("action.anonymous.init.screen.colorDepth");
+	CREATE INDEX "index.action.anonymous.init.screen.orientation" ON "userTrackings" ("action.anonymous.init.screen.orientation");
+	CREATE INDEX "index.action.anonymous.init.screen.devicePixelRatio" ON "userTrackings" ("action.anonymous.init.screen.devicePixelRatio");
+	CREATE INDEX "index.action.anonymous.requestReset.username" ON "userTrackings" ("action.anonymous.requestReset.username");
+	CREATE INDEX "index.action.anonymous.requestReset.success" ON "userTrackings" ("action.anonymous.requestReset.success");
+	CREATE INDEX "index.action.anonymous.emailLink" ON "userTrackings" ("action.anonymous.emailLink");
+	CREATE INDEX "index.action.anonymous.performedReset.username" ON "userTrackings" ("action.anonymous.performedReset.username");
+	CREATE INDEX "index.action.anonymous.performedReset.success" ON "userTrackings" ("action.anonymous.performedReset.success");
+	CREATE INDEX "index.action.user.userId" ON "userTrackings" ("action.user.userId");
+	CREATE INDEX "index.action.user.action.login" ON "userTrackings" ("action.user.action.login");
+	CREATE INDEX "index.action.user.action.firstLogin" ON "userTrackings" ("action.user.action.firstLogin");
+	CREATE INDEX "index.action.user.action.logout" ON "userTrackings" ("action.user.action.logout");
+	CREATE INDEX "index.action.user.action.changeTimezone" ON "userTrackings" ("action.user.action.changeTimezone");
+	CREATE INDEX "index.action.user.action.changePassword" ON "userTrackings" ("action.user.action.changePassword");
+	CREATE INDEX "index.action.user.action.clearProductPreferences" ON "userTrackings" ("action.user.action.clearProductPreferences");
+	CREATE INDEX "index.action.user.action.clearAllPreferences" ON "userTrackings" ("action.user.action.clearAllPreferences");
+	CREATE INDEX "index.action.user.action.changeTenant" ON "userTrackings" ("action.user.action.changeTenant");
+	CREATE INDEX "index.action.utenant.userId" ON "userTrackings" ("action.utenant.userId");
+	CREATE INDEX "index.action.utenant.action.download.productFile.id" ON "userTrackings" ("action.utenant.action.download.productFile.id");
+	CREATE INDEX "index.action.utenant.action.download.productFile.filename" ON "userTrackings" ("action.utenant.action.download.productFile.filename");
+	CREATE INDEX "index.action.utenant.action.download.orderFile.id" ON "userTrackings" ("action.utenant.action.download.orderFile.id");
+	CREATE INDEX "index.action.utenant.action.download.orderFile.filename" ON "userTrackings" ("action.utenant.action.download.orderFile.filename");
+	CREATE INDEX "index.action.utenant.action.download.orderLineFile.id" ON "userTrackings" ("action.utenant.action.download.orderLineFile.id");
+	CREATE INDEX "index.action.utenant.action.download.orderLineFile.filename" ON "userTrackings" ("action.utenant.action.download.orderLineFile.filename");
+	CREATE INDEX "index.action.utenant.action.download.dataHubData.mappingId" ON "userTrackings" ("action.utenant.action.download.dataHubData.mappingId");
+	CREATE INDEX "index.action.utenant.action.download.dataHubData.params" ON "userTrackings" ("action.utenant.action.download.dataHubData.params");
+	CREATE INDEX "index.action.utenant.action.visit.product" ON "userTrackings" ("action.utenant.action.visit.product");
+	CREATE INDEX "index.action.utenant.action.visit.library.terms.some" ON "userTrackings" ("action.utenant.action.visit.library.terms");
+	CREATE INDEX "index.action.utenant.action.visit.library.terms.none" ON "userTrackings" ("action.utenant.action.visit.library.terms");
+	CREATE INDEX "index.action.utenant.action.visit.library.sort.some" ON "userTrackings" ("action.utenant.action.visit.library.sort");
+	CREATE INDEX "index.action.utenant.action.visit.library.sort.none" ON "userTrackings" ("action.utenant.action.visit.library.sort");
+	CREATE INDEX "index.action.utenant.action.visit.library.view.chart" ON "userTrackings" ("action.utenant.action.visit.library.view.chart");
+	CREATE INDEX "index.action.utenant.action.visit.library.view.book" ON "userTrackings" ("action.utenant.action.visit.library.view");
+	CREATE INDEX "index.action.utenant.action.visit.library.view.page" ON "userTrackings" ("action.utenant.action.visit.library.view");
+	CREATE INDEX "index.action.utenant.action.visit.item.mappingId" ON "userTrackings" ("action.utenant.action.visit.item.mappingId");
+	CREATE INDEX "index.action.utenant.action.visit.item.itemId.some" ON "userTrackings" ("action.utenant.action.visit.item.itemId");
+	CREATE INDEX "index.action.utenant.action.visit.item.itemId.none" ON "userTrackings" ("action.utenant.action.visit.item.itemId");
+	CREATE INDEX "index.action.utenant.action.visit.override.mappingId" ON "userTrackings" ("action.utenant.action.visit.override");
+	CREATE INDEX "index.action.utenant.action.visit.override.itemId.some" ON "userTrackings" ("action.utenant.action.visit.override.itemId.some");
+	CREATE INDEX "index.action.utenant.action.visit.override.itemId.none" ON "userTrackings" ("action.utenant.action.visit.override.itemId.none");
+	CREATE INDEX "index.action.utenant.action.visit.dataHub.mappingId" ON "userTrackings" ("action.utenant.action.visit.dataHub");
+	CREATE INDEX "index.action.utenant.action.visit.dataHub.scale" ON "userTrackings" ("action.utenant.action.visit.dataHub.scale");
+	CREATE INDEX "index.action.utenant.action.visit.dataHub.params" ON "userTrackings" ("action.utenant.action.visit.dataHub.params");
+	CREATE INDEX "index.action.utenant.action.visit.cart" ON "userTrackings" ("action.utenant.action.visit.cart");
+	CREATE INDEX "index.action.utenant.action.visit.url" ON "userTrackings" ("action.utenant.action.visit.url");
+	CREATE INDEX "index.action.utenant.action.visit.myAccount" ON "userTrackings" ("action.utenant.action.visit.myAccount");
+	CREATE INDEX "index.action.utenant.action.visit.orderDetails" ON "userTrackings" ("action.utenant.action.visit.orderDetails");
+	CREATE INDEX "index.action.utenant.action.visit.orders" ON "userTrackings" ("action.utenant.action.visit.orders");
+	CREATE INDEX "index.action.utenant.action.visit.overrides.mappingId" ON "userTrackings" ("action.utenant.action.visit.overrides.mappingId");
+	CREATE INDEX "index.action.utenant.action.visit.overrides.terms.some" ON "userTrackings" ("action.utenant.action.visit.overrides.terms.some");
+	CREATE INDEX "index.action.utenant.action.visit.overrides.terms.none" ON "userTrackings" ("action.utenant.action.visit.overrides.terms.none");
+	CREATE INDEX "index.action.utenant.action.cartOrderLine.orderLineId" ON "userTrackings" ("action.utenant.action.cartOrderLine.orderLineId");
+	CREATE INDEX "index.action.utenant.action.cartOrderLine.action" ON "userTrackings" ("action.utenant.action.cartOrderLine.action");
+	CREATE INDEX "index.action.utenant.action.placeOrder" ON "userTrackings" ("action.utenant.action.placeOrder");
+	CREATE INDEX "index.action.utenant.action.override.overrideId" ON "userTrackings" ("action.utenant.action.override.overrideId");
+	CREATE INDEX "index.action.utenant.action.override.action" ON "userTrackings" ("action.utenant.action.override.action");
+	CREATE INDEX "index.action.utenant.action.definition.mappingId" ON "userTrackings" ("action.utenant.action.definition.mappingId");
+	CREATE INDEX "index.action.utenant.action.definition.definitionId" ON "userTrackings" ("action.utenant.action.definition");
+	CREATE INDEX "index.action.utenant.action.definition.action" ON "userTrackings" ("action.utenant.action.definition.action");
+ERROR:  data type json has no default operator class for access method "btree"
+HINT:  You must specify an operator class for the index or define a default operator class for the data type.
+STATEMENT:  CREATE TABLE "userTrackings" (
+	  "session.sessionId" UUID,
+	  "session.userId" UUID,
+	  "session.ip" VARCHAR(15),
+	  "session.date" TIMESTAMP,
+	  "action.anonymous.failedLogin" VARCHAR,
+	  "action.anonymous.init.cookieEnabled" BOOLEAN,
+	  "action.anonymous.init.language.some" VARCHAR,
+	  "action.anonymous.init.language.none" BOOLEAN,
+	  "action.anonymous.init.timeOffset" VARCHAR,
+	  "action.anonymous.init.screen.width" INTEGER,
+	  "action.anonymous.init.screen.height" INTEGER,
+	  "action.anonymous.init.screen.colorDepth" INTEGER,
+	  "action.anonymous.init.screen.orientation" VARCHAR,
+	  "action.anonymous.init.screen.devicePixelRatio" DOUBLE PRECISION,
+	  "action.anonymous.requestReset.username" VARCHAR,
+	  "action.anonymous.requestReset.success" BOOLEAN,
+	  "action.anonymous.emailLink" TEXT,
+	  "action.anonymous.performedReset.username" VARCHAR,
+	  "action.anonymous.performedReset.success" BOOLEAN,
+	  "action.user.userId" UUID,
+	  "action.user.action.login" BOOLEAN,
+	  "action.user.action.firstLogin" BOOLEAN,
+	  "action.user.action.logout" BOOLEAN,
+	  "action.user.action.changeTimezone" VARCHAR,
+	  "action.user.action.changePassword" BOOLEAN,
+	  "action.user.action.clearProductPreferences" BOOLEAN,
+	  "action.user.action.clearAllPreferences" BOOLEAN,
+	  "action.user.action.changeTenant" UUID,
+	  "action.utenant.userId" UUID,
+	  "action.utenant.action.download.productFile.id" UUID,
+	  "action.utenant.action.download.productFile.filename" VARCHAR,
+	  "action.utenant.action.download.orderFile.id" VARCHAR,
+	  "action.utenant.action.download.orderFile.filename" VARCHAR,
+	  "action.utenant.action.download.orderLineFile.id" UUID,
+	  "action.utenant.action.download.orderLineFile.filename" VARCHAR,
+	  "action.utenant.action.download.dataHubData.mappingId" VARCHAR,
+	  "action.utenant.action.download.dataHubData.params" JSON,
+	  "action.utenant.action.visit.product" VARCHAR,
+	  "action.utenant.action.visit.library.terms.some" VARCHAR,
+	  "action.utenant.action.visit.library.terms.none" BOOLEAN,
+	  "action.utenant.action.visit.library.sort.some" VARCHAR,
+	  "action.utenant.action.visit.library.sort.none" BOOLEAN,
+	  "action.utenant.action.visit.library.view.chart" VARCHAR[],
+	  "action.utenant.action.visit.library.view.book" BOOLEAN,
+	  "action.utenant.action.visit.library.view.page" BOOLEAN,
+	  "action.utenant.action.visit.item.mappingId" VARCHAR,
+	  "action.utenant.action.visit.item.itemId.some" VARCHAR,
+	  "action.utenant.action.visit.item.itemId.none" BOOLEAN,
+	  "action.utenant.action.visit.override.mappingId" TEXT,
+	  "action.utenant.action.visit.override.itemId.some" VARCHAR,
+	  "action.utenant.action.visit.override.itemId.none" BOOLEAN,
+	  "action.utenant.action.visit.dataHub.mappingId" VARCHAR,
+	  "action.utenant.action.visit.dataHub.scale" VARCHAR,
+	  "action.utenant.action.visit.dataHub.params" JSON,
+	  "action.utenant.action.visit.cart" BOOLEAN,
+	  "action.utenant.action.visit.url" VARCHAR,
+	  "action.utenant.action.visit.myAccount" BOOLEAN,
+	  "action.utenant.action.visit.orderDetails" VARCHAR,
+	  "action.utenant.action.visit.orders" BOOLEAN,
+	  "action.utenant.action.visit.overrides.mappingId" VARCHAR,
+	  "action.utenant.action.visit.overrides.terms.some" VARCHAR,
+	  "action.utenant.action.visit.overrides.terms.none" BOOLEAN,
+	  "action.utenant.action.cartOrderLine.orderLineId" UUID,
+	  "action.utenant.action.cartOrderLine.action" VARCHAR,
+	  "action.utenant.action.placeOrder" VARCHAR,
+	  "action.utenant.action.override.overrideId" UUID,
+	  "action.utenant.action.override.action" VARCHAR,
+	  "action.utenant.action.definition.mappingId" VARCHAR,
+	  "action.utenant.action.definition.definitionId" VARCHAR,
+	  "action.utenant.action.definition.action" VARCHAR
+	);
+	
+	CREATE INDEX "index.session.sessionId" ON "userTrackings" ("session.sessionId");
+	CREATE INDEX "index.session.userId" ON "userTrackings" ("session.userId");
+	CREATE INDEX "index.session.ip" ON "userTrackings" ("session.ip");
+	CREATE INDEX "index.session.date" ON "userTrackings" ("session.date");
+	CREATE INDEX "index.action.anonymous.failedLogin" ON "userTrackings" ("action.anonymous.failedLogin");
+	CREATE INDEX "index.action.anonymous.init.cookieEnabled" ON "userTrackings" ("action.anonymous.init.cookieEnabled");
+	CREATE INDEX "index.action.anonymous.init.language.some" ON "userTrackings" ("action.anonymous.init.language.some");
+	CREATE INDEX "index.action.anonymous.init.language.none" ON "userTrackings" ("action.anonymous.init.language.none");
+	CREATE INDEX "index.action.anonymous.init.timeOffset" ON "userTrackings" ("action.anonymous.init.timeOffset");
+	CREATE INDEX "index.action.anonymous.init.screen.width" ON "userTrackings" ("action.anonymous.init.screen.width");
+	CREATE INDEX "index.action.anonymous.init.screen.height" ON "userTrackings" ("action.anonymous.init.screen.height");
+	CREATE INDEX "index.action.anonymous.init.screen.colorDepth" ON "userTrackings" ("action.anonymous.init.screen.colorDepth");
+	CREATE INDEX "index.action.anonymous.init.screen.orientation" ON "userTrackings" ("action.anonymous.init.screen.orientation");
+	CREATE INDEX "index.action.anonymous.init.screen.devicePixelRatio" ON "userTrackings" ("action.anonymous.init.screen.devicePixelRatio");
+	CREATE INDEX "index.action.anonymous.requestReset.username" ON "userTrackings" ("action.anonymous.requestReset.username");
+	CREATE INDEX "index.action.anonymous.requestReset.success" ON "userTrackings" ("action.anonymous.requestReset.success");
+	CREATE INDEX "index.action.anonymous.emailLink" ON "userTrackings" ("action.anonymous.emailLink");
+	CREATE INDEX "index.action.anonymous.performedReset.username" ON "userTrackings" ("action.anonymous.performedReset.username");
+	CREATE INDEX "index.action.anonymous.performedReset.success" ON "userTrackings" ("action.anonymous.performedReset.success");
+	CREATE INDEX "index.action.user.userId" ON "userTrackings" ("action.user.userId");
+	CREATE INDEX "index.action.user.action.login" ON "userTrackings" ("action.user.action.login");
+	CREATE INDEX "index.action.user.action.firstLogin" ON "userTrackings" ("action.user.action.firstLogin");
+	CREATE INDEX "index.action.user.action.logout" ON "userTrackings" ("action.user.action.logout");
+	CREATE INDEX "index.action.user.action.changeTimezone" ON "userTrackings" ("action.user.action.changeTimezone");
+	CREATE INDEX "index.action.user.action.changePassword" ON "userTrackings" ("action.user.action.changePassword");
+	CREATE INDEX "index.action.user.action.clearProductPreferences" ON "userTrackings" ("action.user.action.clearProductPreferences");
+	CREATE INDEX "index.action.user.action.clearAllPreferences" ON "userTrackings" ("action.user.action.clearAllPreferences");
+	CREATE INDEX "index.action.user.action.changeTenant" ON "userTrackings" ("action.user.action.changeTenant");
+	CREATE INDEX "index.action.utenant.userId" ON "userTrackings" ("action.utenant.userId");
+	CREATE INDEX "index.action.utenant.action.download.productFile.id" ON "userTrackings" ("action.utenant.action.download.productFile.id");
+	CREATE INDEX "index.action.utenant.action.download.productFile.filename" ON "userTrackings" ("action.utenant.action.download.productFile.filename");
+	CREATE INDEX "index.action.utenant.action.download.orderFile.id" ON "userTrackings" ("action.utenant.action.download.orderFile.id");
+	CREATE INDEX "index.action.utenant.action.download.orderFile.filename" ON "userTrackings" ("action.utenant.action.download.orderFile.filename");
+	CREATE INDEX "index.action.utenant.action.download.orderLineFile.id" ON "userTrackings" ("action.utenant.action.download.orderLineFile.id");
+	CREATE INDEX "index.action.utenant.action.download.orderLineFile.filename" ON "userTrackings" ("action.utenant.action.download.orderLineFile.filename");
+	CREATE INDEX "index.action.utenant.action.download.dataHubData.mappingId" ON "userTrackings" ("action.utenant.action.download.dataHubData.mappingId");
+	CREATE INDEX "index.action.utenant.action.download.dataHubData.params" ON "userTrackings" ("action.utenant.action.download.dataHubData.params");
+	CREATE INDEX "index.action.utenant.action.visit.product" ON "userTrackings" ("action.utenant.action.visit.product");
+	CREATE INDEX "index.action.utenant.action.visit.library.terms.some" ON "userTrackings" ("action.utenant.action.visit.library.terms");
+	CREATE INDEX "index.action.utenant.action.visit.library.terms.none" ON "userTrackings" ("action.utenant.action.visit.library.terms");
+	CREATE INDEX "index.action.utenant.action.visit.library.sort.some" ON "userTrackings" ("action.utenant.action.visit.library.sort");
+	CREATE INDEX "index.action.utenant.action.visit.library.sort.none" ON "userTrackings" ("action.utenant.action.visit.library.sort");
+	CREATE INDEX "index.action.utenant.action.visit.library.view.chart" ON "userTrackings" ("action.utenant.action.visit.library.view.chart");
+	CREATE INDEX "index.action.utenant.action.visit.library.view.book" ON "userTrackings" ("action.utenant.action.visit.library.view");
+	CREATE INDEX "index.action.utenant.action.visit.library.view.page" ON "userTrackings" ("action.utenant.action.visit.library.view");
+	CREATE INDEX "index.action.utenant.action.visit.item.mappingId" ON "userTrackings" ("action.utenant.action.visit.item.mappingId");
+	CREATE INDEX "index.action.utenant.action.visit.item.itemId.some" ON "userTrackings" ("action.utenant.action.visit.item.itemId");
+	CREATE INDEX "index.action.utenant.action.visit.item.itemId.none" ON "userTrackings" ("action.utenant.action.visit.item.itemId");
+	CREATE INDEX "index.action.utenant.action.visit.override.mappingId" ON "userTrackings" ("action.utenant.action.visit.override");
+	CREATE INDEX "index.action.utenant.action.visit.override.itemId.some" ON "userTrackings" ("action.utenant.action.visit.override.itemId.some");
+	CREATE INDEX "index.action.utenant.action.visit.override.itemId.none" ON "userTrackings" ("action.utenant.action.visit.override.itemId.none");
+	CREATE INDEX "index.action.utenant.action.visit.dataHub.mappingId" ON "userTrackings" ("action.utenant.action.visit.dataHub");
+	CREATE INDEX "index.action.utenant.action.visit.dataHub.scale" ON "userTrackings" ("action.utenant.action.visit.dataHub.scale");
+	CREATE INDEX "index.action.utenant.action.visit.cart" ON "userTrackings" ("action.utenant.action.visit.cart");
+	CREATE INDEX "index.action.utenant.action.visit.url" ON "userTrackings" ("action.utenant.action.visit.url");
+	CREATE INDEX "index.action.utenant.action.visit.myAccount" ON "userTrackings" ("action.utenant.action.visit.myAccount");
+	CREATE INDEX "index.action.utenant.action.visit.orderDetails" ON "userTrackings" ("action.utenant.action.visit.orderDetails");
+	CREATE INDEX "index.action.utenant.action.visit.orders" ON "userTrackings" ("action.utenant.action.visit.orders");
+	CREATE INDEX "index.action.utenant.action.visit.overrides.mappingId" ON "userTrackings" ("action.utenant.action.visit.overrides.mappingId");
+	CREATE INDEX "index.action.utenant.action.visit.overrides.terms.some" ON "userTrackings" ("action.utenant.action.visit.overrides.terms.some");
+	CREATE INDEX "index.action.utenant.action.visit.overrides.terms.none" ON "userTrackings" ("action.utenant.action.visit.overrides.terms.none");
+	CREATE INDEX "index.action.utenant.action.cartOrderLine.orderLineId" ON "userTrackings" ("action.utenant.action.cartOrderLine.orderLineId");
+	CREATE INDEX "index.action.utenant.action.cartOrderLine.action" ON "userTrackings" ("action.utenant.action.cartOrderLine.action");
+	CREATE INDEX "index.action.utenant.action.placeOrder" ON "userTrackings" ("action.utenant.action.placeOrder");
+	CREATE INDEX "index.action.utenant.action.override.overrideId" ON "userTrackings" ("action.utenant.action.override.overrideId");
+	CREATE INDEX "index.action.utenant.action.override.action" ON "userTrackings" ("action.utenant.action.override.action");
+	CREATE INDEX "index.action.utenant.action.definition.mappingId" ON "userTrackings" ("action.utenant.action.definition.mappingId");
+	CREATE INDEX "index.action.utenant.action.definition.definitionId" ON "userTrackings" ("action.utenant.action.definition");
+	CREATE INDEX "index.action.utenant.action.definition.action" ON "userTrackings" ("action.utenant.action.definition.action");
+ERROR:  column "action.utenant.action.visit.library.terms" does not exist
+STATEMENT:  CREATE TABLE "userTrackings" (
+	  "session.sessionId" UUID,
+	  "session.userId" UUID,
+	  "session.ip" VARCHAR(15),
+	  "session.date" TIMESTAMP,
+	  "action.anonymous.failedLogin" VARCHAR,
+	  "action.anonymous.init.cookieEnabled" BOOLEAN,
+	  "action.anonymous.init.language.some" VARCHAR,
+	  "action.anonymous.init.language.none" BOOLEAN,
+	  "action.anonymous.init.timeOffset" VARCHAR,
+	  "action.anonymous.init.screen.width" INTEGER,
+	  "action.anonymous.init.screen.height" INTEGER,
+	  "action.anonymous.init.screen.colorDepth" INTEGER,
+	  "action.anonymous.init.screen.orientation" VARCHAR,
+	  "action.anonymous.init.screen.devicePixelRatio" DOUBLE PRECISION,
+	  "action.anonymous.requestReset.username" VARCHAR,
+	  "action.anonymous.requestReset.success" BOOLEAN,
+	  "action.anonymous.emailLink" TEXT,
+	  "action.anonymous.performedReset.username" VARCHAR,
+	  "action.anonymous.performedReset.success" BOOLEAN,
+	  "action.user.userId" UUID,
+	  "action.user.action.login" BOOLEAN,
+	  "action.user.action.firstLogin" BOOLEAN,
+	  "action.user.action.logout" BOOLEAN,
+	  "action.user.action.changeTimezone" VARCHAR,
+	  "action.user.action.changePassword" BOOLEAN,
+	  "action.user.action.clearProductPreferences" BOOLEAN,
+	  "action.user.action.clearAllPreferences" BOOLEAN,
+	  "action.user.action.changeTenant" UUID,
+	  "action.utenant.userId" UUID,
+	  "action.utenant.action.download.productFile.id" UUID,
+	  "action.utenant.action.download.productFile.filename" VARCHAR,
+	  "action.utenant.action.download.orderFile.id" VARCHAR,
+	  "action.utenant.action.download.orderFile.filename" VARCHAR,
+	  "action.utenant.action.download.orderLineFile.id" UUID,
+	  "action.utenant.action.download.orderLineFile.filename" VARCHAR,
+	  "action.utenant.action.download.dataHubData.mappingId" VARCHAR,
+	  "action.utenant.action.download.dataHubData.params" JSON,
+	  "action.utenant.action.visit.product" VARCHAR,
+	  "action.utenant.action.visit.library.terms.some" VARCHAR,
+	  "action.utenant.action.visit.library.terms.none" BOOLEAN,
+	  "action.utenant.action.visit.library.sort.some" VARCHAR,
+	  "action.utenant.action.visit.library.sort.none" BOOLEAN,
+	  "action.utenant.action.visit.library.view.chart" VARCHAR[],
+	  "action.utenant.action.visit.library.view.book" BOOLEAN,
+	  "action.utenant.action.visit.library.view.page" BOOLEAN,
+	  "action.utenant.action.visit.item.mappingId" VARCHAR,
+	  "action.utenant.action.visit.item.itemId.some" VARCHAR,
+	  "action.utenant.action.visit.item.itemId.none" BOOLEAN,
+	  "action.utenant.action.visit.override.mappingId" TEXT,
+	  "action.utenant.action.visit.override.itemId.some" VARCHAR,
+	  "action.utenant.action.visit.override.itemId.none" BOOLEAN,
+	  "action.utenant.action.visit.dataHub.mappingId" VARCHAR,
+	  "action.utenant.action.visit.dataHub.scale" VARCHAR,
+	  "action.utenant.action.visit.dataHub.params" JSON,
+	  "action.utenant.action.visit.cart" BOOLEAN,
+	  "action.utenant.action.visit.url" VARCHAR,
+	  "action.utenant.action.visit.myAccount" BOOLEAN,
+	  "action.utenant.action.visit.orderDetails" VARCHAR,
+	  "action.utenant.action.visit.orders" BOOLEAN,
+	  "action.utenant.action.visit.overrides.mappingId" VARCHAR,
+	  "action.utenant.action.visit.overrides.terms.some" VARCHAR,
+	  "action.utenant.action.visit.overrides.terms.none" BOOLEAN,
+	  "action.utenant.action.cartOrderLine.orderLineId" UUID,
+	  "action.utenant.action.cartOrderLine.action" VARCHAR,
+	  "action.utenant.action.placeOrder" VARCHAR,
+	  "action.utenant.action.override.overrideId" UUID,
+	  "action.utenant.action.override.action" VARCHAR,
+	  "action.utenant.action.definition.mappingId" VARCHAR,
+	  "action.utenant.action.definition.definitionId" VARCHAR,
+	  "action.utenant.action.definition.action" VARCHAR
+	);
+	
+	CREATE INDEX "index.session.sessionId" ON "userTrackings" ("session.sessionId");
+	CREATE INDEX "index.session.userId" ON "userTrackings" ("session.userId");
+	CREATE INDEX "index.session.ip" ON "userTrackings" ("session.ip");
+	CREATE INDEX "index.session.date" ON "userTrackings" ("session.date");
+	CREATE INDEX "index.action.anonymous.failedLogin" ON "userTrackings" ("action.anonymous.failedLogin");
+	CREATE INDEX "index.action.anonymous.init.cookieEnabled" ON "userTrackings" ("action.anonymous.init.cookieEnabled");
+	CREATE INDEX "index.action.anonymous.init.language.some" ON "userTrackings" ("action.anonymous.init.language.some");
+	CREATE INDEX "index.action.anonymous.init.language.none" ON "userTrackings" ("action.anonymous.init.language.none");
+	CREATE INDEX "index.action.anonymous.init.timeOffset" ON "userTrackings" ("action.anonymous.init.timeOffset");
+	CREATE INDEX "index.action.anonymous.init.screen.width" ON "userTrackings" ("action.anonymous.init.screen.width");
+	CREATE INDEX "index.action.anonymous.init.screen.height" ON "userTrackings" ("action.anonymous.init.screen.height");
+	CREATE INDEX "index.action.anonymous.init.screen.colorDepth" ON "userTrackings" ("action.anonymous.init.screen.colorDepth");
+	CREATE INDEX "index.action.anonymous.init.screen.orientation" ON "userTrackings" ("action.anonymous.init.screen.orientation");
+	CREATE INDEX "index.action.anonymous.init.screen.devicePixelRatio" ON "userTrackings" ("action.anonymous.init.screen.devicePixelRatio");
+	CREATE INDEX "index.action.anonymous.requestReset.username" ON "userTrackings" ("action.anonymous.requestReset.username");
+	CREATE INDEX "index.action.anonymous.requestReset.success" ON "userTrackings" ("action.anonymous.requestReset.success");
+	CREATE INDEX "index.action.anonymous.emailLink" ON "userTrackings" ("action.anonymous.emailLink");
+	CREATE INDEX "index.action.anonymous.performedReset.username" ON "userTrackings" ("action.anonymous.performedReset.username");
+	CREATE INDEX "index.action.anonymous.performedReset.success" ON "userTrackings" ("action.anonymous.performedReset.success");
+	CREATE INDEX "index.action.user.userId" ON "userTrackings" ("action.user.userId");
+	CREATE INDEX "index.action.user.action.login" ON "userTrackings" ("action.user.action.login");
+	CREATE INDEX "index.action.user.action.firstLogin" ON "userTrackings" ("action.user.action.firstLogin");
+	CREATE INDEX "index.action.user.action.logout" ON "userTrackings" ("action.user.action.logout");
+	CREATE INDEX "index.action.user.action.changeTimezone" ON "userTrackings" ("action.user.action.changeTimezone");
+	CREATE INDEX "index.action.user.action.changePassword" ON "userTrackings" ("action.user.action.changePassword");
+	CREATE INDEX "index.action.user.action.clearProductPreferences" ON "userTrackings" ("action.user.action.clearProductPreferences");
+	CREATE INDEX "index.action.user.action.clearAllPreferences" ON "userTrackings" ("action.user.action.clearAllPreferences");
+	CREATE INDEX "index.action.user.action.changeTenant" ON "userTrackings" ("action.user.action.changeTenant");
+	CREATE INDEX "index.action.utenant.userId" ON "userTrackings" ("action.utenant.userId");
+	CREATE INDEX "index.action.utenant.action.download.productFile.id" ON "userTrackings" ("action.utenant.action.download.productFile.id");
+	CREATE INDEX "index.action.utenant.action.download.productFile.filename" ON "userTrackings" ("action.utenant.action.download.productFile.filename");
+	CREATE INDEX "index.action.utenant.action.download.orderFile.id" ON "userTrackings" ("action.utenant.action.download.orderFile.id");
+	CREATE INDEX "index.action.utenant.action.download.orderFile.filename" ON "userTrackings" ("action.utenant.action.download.orderFile.filename");
+	CREATE INDEX "index.action.utenant.action.download.orderLineFile.id" ON "userTrackings" ("action.utenant.action.download.orderLineFile.id");
+	CREATE INDEX "index.action.utenant.action.download.orderLineFile.filename" ON "userTrackings" ("action.utenant.action.download.orderLineFile.filename");
+	CREATE INDEX "index.action.utenant.action.download.dataHubData.mappingId" ON "userTrackings" ("action.utenant.action.download.dataHubData.mappingId");
+	CREATE INDEX "index.action.utenant.action.visit.product" ON "userTrackings" ("action.utenant.action.visit.product");
+	CREATE INDEX "index.action.utenant.action.visit.library.terms.some" ON "userTrackings" ("action.utenant.action.visit.library.terms");
+	CREATE INDEX "index.action.utenant.action.visit.library.terms.none" ON "userTrackings" ("action.utenant.action.visit.library.terms");
+	CREATE INDEX "index.action.utenant.action.visit.library.sort.some" ON "userTrackings" ("action.utenant.action.visit.library.sort");
+	CREATE INDEX "index.action.utenant.action.visit.library.sort.none" ON "userTrackings" ("action.utenant.action.visit.library.sort");
+	CREATE INDEX "index.action.utenant.action.visit.library.view.chart" ON "userTrackings" ("action.utenant.action.visit.library.view.chart");
+	CREATE INDEX "index.action.utenant.action.visit.library.view.book" ON "userTrackings" ("action.utenant.action.visit.library.view");
+	CREATE INDEX "index.action.utenant.action.visit.library.view.page" ON "userTrackings" ("action.utenant.action.visit.library.view");
+	CREATE INDEX "index.action.utenant.action.visit.item.mappingId" ON "userTrackings" ("action.utenant.action.visit.item.mappingId");
+	CREATE INDEX "index.action.utenant.action.visit.item.itemId.some" ON "userTrackings" ("action.utenant.action.visit.item.itemId");
+	CREATE INDEX "index.action.utenant.action.visit.item.itemId.none" ON "userTrackings" ("action.utenant.action.visit.item.itemId");
+	CREATE INDEX "index.action.utenant.action.visit.override.mappingId" ON "userTrackings" ("action.utenant.action.visit.override");
+	CREATE INDEX "index.action.utenant.action.visit.override.itemId.some" ON "userTrackings" ("action.utenant.action.visit.override.itemId.some");
+	CREATE INDEX "index.action.utenant.action.visit.override.itemId.none" ON "userTrackings" ("action.utenant.action.visit.override.itemId.none");
+	CREATE INDEX "index.action.utenant.action.visit.dataHub.mappingId" ON "userTrackings" ("action.utenant.action.visit.dataHub");
+	CREATE INDEX "index.action.utenant.action.visit.dataHub.scale" ON "userTrackings" ("action.utenant.action.visit.dataHub.scale");
+	CREATE INDEX "index.action.utenant.action.visit.cart" ON "userTrackings" ("action.utenant.action.visit.cart");
+	CREATE INDEX "index.action.utenant.action.visit.url" ON "userTrackings" ("action.utenant.action.visit.url");
+	CREATE INDEX "index.action.utenant.action.visit.myAccount" ON "userTrackings" ("action.utenant.action.visit.myAccount");
+	CREATE INDEX "index.action.utenant.action.visit.orderDetails" ON "userTrackings" ("action.utenant.action.visit.orderDetails");
+	CREATE INDEX "index.action.utenant.action.visit.orders" ON "userTrackings" ("action.utenant.action.visit.orders");
+	CREATE INDEX "index.action.utenant.action.visit.overrides.mappingId" ON "userTrackings" ("action.utenant.action.visit.overrides.mappingId");
+	CREATE INDEX "index.action.utenant.action.visit.overrides.terms.some" ON "userTrackings" ("action.utenant.action.visit.overrides.terms.some");
+	CREATE INDEX "index.action.utenant.action.visit.overrides.terms.none" ON "userTrackings" ("action.utenant.action.visit.overrides.terms.none");
+	CREATE INDEX "index.action.utenant.action.cartOrderLine.orderLineId" ON "userTrackings" ("action.utenant.action.cartOrderLine.orderLineId");
+	CREATE INDEX "index.action.utenant.action.cartOrderLine.action" ON "userTrackings" ("action.utenant.action.cartOrderLine.action");
+	CREATE INDEX "index.action.utenant.action.placeOrder" ON "userTrackings" ("action.utenant.action.placeOrder");
+	CREATE INDEX "index.action.utenant.action.override.overrideId" ON "userTrackings" ("action.utenant.action.override.overrideId");
+	CREATE INDEX "index.action.utenant.action.override.action" ON "userTrackings" ("action.utenant.action.override.action");
+	CREATE INDEX "index.action.utenant.action.definition.mappingId" ON "userTrackings" ("action.utenant.action.definition.mappingId");
+	CREATE INDEX "index.action.utenant.action.definition.definitionId" ON "userTrackings" ("action.utenant.action.definition");
+	CREATE INDEX "index.action.utenant.action.definition.action" ON "userTrackings" ("action.utenant.action.definition.action");
+ERROR:  relation "userTrackings" does not exist
+STATEMENT:  CREATE INDEX "index.action.utenant.action.definition.action" ON "userTrackings" ("action.utenant.action.definition.action");
+ERROR:  column "action.utenant.action.visit.library.sort" does not exist
+STATEMENT:  CREATE TABLE "userTrackings" (
+	  "session.sessionId" UUID,
+	  "session.userId" UUID,
+	  "session.ip" VARCHAR(15),
+	  "session.date" TIMESTAMP,
+	  "action.anonymous.failedLogin" VARCHAR,
+	  "action.anonymous.init.cookieEnabled" BOOLEAN,
+	  "action.anonymous.init.language.some" VARCHAR,
+	  "action.anonymous.init.language.none" BOOLEAN,
+	  "action.anonymous.init.timeOffset" VARCHAR,
+	  "action.anonymous.init.screen.width" INTEGER,
+	  "action.anonymous.init.screen.height" INTEGER,
+	  "action.anonymous.init.screen.colorDepth" INTEGER,
+	  "action.anonymous.init.screen.orientation" VARCHAR,
+	  "action.anonymous.init.screen.devicePixelRatio" DOUBLE PRECISION,
+	  "action.anonymous.requestReset.username" VARCHAR,
+	  "action.anonymous.requestReset.success" BOOLEAN,
+	  "action.anonymous.emailLink" TEXT,
+	  "action.anonymous.performedReset.username" VARCHAR,
+	  "action.anonymous.performedReset.success" BOOLEAN,
+	  "action.user.userId" UUID,
+	  "action.user.action.login" BOOLEAN,
+	  "action.user.action.firstLogin" BOOLEAN,
+	  "action.user.action.logout" BOOLEAN,
+	  "action.user.action.changeTimezone" VARCHAR,
+	  "action.user.action.changePassword" BOOLEAN,
+	  "action.user.action.clearProductPreferences" BOOLEAN,
+	  "action.user.action.clearAllPreferences" BOOLEAN,
+	  "action.user.action.changeTenant" UUID,
+	  "action.utenant.userId" UUID,
+	  "action.utenant.action.download.productFile.id" UUID,
+	  "action.utenant.action.download.productFile.filename" VARCHAR,
+	  "action.utenant.action.download.orderFile.id" VARCHAR,
+	  "action.utenant.action.download.orderFile.filename" VARCHAR,
+	  "action.utenant.action.download.orderLineFile.id" UUID,
+	  "action.utenant.action.download.orderLineFile.filename" VARCHAR,
+	  "action.utenant.action.download.dataHubData.mappingId" VARCHAR,
+	  "action.utenant.action.download.dataHubData.params" JSON,
+	  "action.utenant.action.visit.product" VARCHAR,
+	  "action.utenant.action.visit.library.terms.some" VARCHAR,
+	  "action.utenant.action.visit.library.terms.none" BOOLEAN,
+	  "action.utenant.action.visit.library.sort.some" VARCHAR,
+	  "action.utenant.action.visit.library.sort.none" BOOLEAN,
+	  "action.utenant.action.visit.library.view.chart" VARCHAR[],
+	  "action.utenant.action.visit.library.view.book" BOOLEAN,
+	  "action.utenant.action.visit.library.view.page" BOOLEAN,
+	  "action.utenant.action.visit.item.mappingId" VARCHAR,
+	  "action.utenant.action.visit.item.itemId.some" VARCHAR,
+	  "action.utenant.action.visit.item.itemId.none" BOOLEAN,
+	  "action.utenant.action.visit.override.mappingId" TEXT,
+	  "action.utenant.action.visit.override.itemId.some" VARCHAR,
+	  "action.utenant.action.visit.override.itemId.none" BOOLEAN,
+	  "action.utenant.action.visit.dataHub.mappingId" VARCHAR,
+	  "action.utenant.action.visit.dataHub.scale" VARCHAR,
+	  "action.utenant.action.visit.dataHub.params" JSON,
+	  "action.utenant.action.visit.cart" BOOLEAN,
+	  "action.utenant.action.visit.url" VARCHAR,
+	  "action.utenant.action.visit.myAccount" BOOLEAN,
+	  "action.utenant.action.visit.orderDetails" VARCHAR,
+	  "action.utenant.action.visit.orders" BOOLEAN,
+	  "action.utenant.action.visit.overrides.mappingId" VARCHAR,
+	  "action.utenant.action.visit.overrides.terms.some" VARCHAR,
+	  "action.utenant.action.visit.overrides.terms.none" BOOLEAN,
+	  "action.utenant.action.cartOrderLine.orderLineId" UUID,
+	  "action.utenant.action.cartOrderLine.action" VARCHAR,
+	  "action.utenant.action.placeOrder" VARCHAR,
+	  "action.utenant.action.override.overrideId" UUID,
+	  "action.utenant.action.override.action" VARCHAR,
+	  "action.utenant.action.definition.mappingId" VARCHAR,
+	  "action.utenant.action.definition.definitionId" VARCHAR,
+	  "action.utenant.action.definition.action" VARCHAR
+	);
+	
+	CREATE INDEX "index.session.sessionId" ON "userTrackings" ("session.sessionId");
+	CREATE INDEX "index.session.userId" ON "userTrackings" ("session.userId");
+	CREATE INDEX "index.session.ip" ON "userTrackings" ("session.ip");
+	CREATE INDEX "index.session.date" ON "userTrackings" ("session.date");
+	CREATE INDEX "index.action.anonymous.failedLogin" ON "userTrackings" ("action.anonymous.failedLogin");
+	CREATE INDEX "index.action.anonymous.init.cookieEnabled" ON "userTrackings" ("action.anonymous.init.cookieEnabled");
+	CREATE INDEX "index.action.anonymous.init.language.some" ON "userTrackings" ("action.anonymous.init.language.some");
+	CREATE INDEX "index.action.anonymous.init.language.none" ON "userTrackings" ("action.anonymous.init.language.none");
+	CREATE INDEX "index.action.anonymous.init.timeOffset" ON "userTrackings" ("action.anonymous.init.timeOffset");
+	CREATE INDEX "index.action.anonymous.init.screen.width" ON "userTrackings" ("action.anonymous.init.screen.width");
+	CREATE INDEX "index.action.anonymous.init.screen.height" ON "userTrackings" ("action.anonymous.init.screen.height");
+	CREATE INDEX "index.action.anonymous.init.screen.colorDepth" ON "userTrackings" ("action.anonymous.init.screen.colorDepth");
+	CREATE INDEX "index.action.anonymous.init.screen.orientation" ON "userTrackings" ("action.anonymous.init.screen.orientation");
+	CREATE INDEX "index.action.anonymous.init.screen.devicePixelRatio" ON "userTrackings" ("action.anonymous.init.screen.devicePixelRatio");
+	CREATE INDEX "index.action.anonymous.requestReset.username" ON "userTrackings" ("action.anonymous.requestReset.username");
+	CREATE INDEX "index.action.anonymous.requestReset.success" ON "userTrackings" ("action.anonymous.requestReset.success");
+	CREATE INDEX "index.action.anonymous.emailLink" ON "userTrackings" ("action.anonymous.emailLink");
+	CREATE INDEX "index.action.anonymous.performedReset.username" ON "userTrackings" ("action.anonymous.performedReset.username");
+	CREATE INDEX "index.action.anonymous.performedReset.success" ON "userTrackings" ("action.anonymous.performedReset.success");
+	CREATE INDEX "index.action.user.userId" ON "userTrackings" ("action.user.userId");
+	CREATE INDEX "index.action.user.action.login" ON "userTrackings" ("action.user.action.login");
+	CREATE INDEX "index.action.user.action.firstLogin" ON "userTrackings" ("action.user.action.firstLogin");
+	CREATE INDEX "index.action.user.action.logout" ON "userTrackings" ("action.user.action.logout");
+	CREATE INDEX "index.action.user.action.changeTimezone" ON "userTrackings" ("action.user.action.changeTimezone");
+	CREATE INDEX "index.action.user.action.changePassword" ON "userTrackings" ("action.user.action.changePassword");
+	CREATE INDEX "index.action.user.action.clearProductPreferences" ON "userTrackings" ("action.user.action.clearProductPreferences");
+	CREATE INDEX "index.action.user.action.clearAllPreferences" ON "userTrackings" ("action.user.action.clearAllPreferences");
+	CREATE INDEX "index.action.user.action.changeTenant" ON "userTrackings" ("action.user.action.changeTenant");
+	CREATE INDEX "index.action.utenant.userId" ON "userTrackings" ("action.utenant.userId");
+	CREATE INDEX "index.action.utenant.action.download.productFile.id" ON "userTrackings" ("action.utenant.action.download.productFile.id");
+	CREATE INDEX "index.action.utenant.action.download.productFile.filename" ON "userTrackings" ("action.utenant.action.download.productFile.filename");
+	CREATE INDEX "index.action.utenant.action.download.orderFile.id" ON "userTrackings" ("action.utenant.action.download.orderFile.id");
+	CREATE INDEX "index.action.utenant.action.download.orderFile.filename" ON "userTrackings" ("action.utenant.action.download.orderFile.filename");
+	CREATE INDEX "index.action.utenant.action.download.orderLineFile.id" ON "userTrackings" ("action.utenant.action.download.orderLineFile.id");
+	CREATE INDEX "index.action.utenant.action.download.orderLineFile.filename" ON "userTrackings" ("action.utenant.action.download.orderLineFile.filename");
+	CREATE INDEX "index.action.utenant.action.download.dataHubData.mappingId" ON "userTrackings" ("action.utenant.action.download.dataHubData.mappingId");
+	CREATE INDEX "index.action.utenant.action.visit.product" ON "userTrackings" ("action.utenant.action.visit.product");
+	CREATE INDEX "index.action.utenant.action.visit.library.terms.some" ON "userTrackings" ("action.utenant.action.visit.library.terms.some");
+	CREATE INDEX "index.action.utenant.action.visit.library.terms.none" ON "userTrackings" ("action.utenant.action.visit.library.terms.none");
+	CREATE INDEX "index.action.utenant.action.visit.library.sort.some" ON "userTrackings" ("action.utenant.action.visit.library.sort");
+	CREATE INDEX "index.action.utenant.action.visit.library.sort.none" ON "userTrackings" ("action.utenant.action.visit.library.sort");
+	CREATE INDEX "index.action.utenant.action.visit.library.view.chart" ON "userTrackings" ("action.utenant.action.visit.library.view.chart");
+	CREATE INDEX "index.action.utenant.action.visit.library.view.book" ON "userTrackings" ("action.utenant.action.visit.library.view");
+	CREATE INDEX "index.action.utenant.action.visit.library.view.page" ON "userTrackings" ("action.utenant.action.visit.library.view");
+	CREATE INDEX "index.action.utenant.action.visit.item.mappingId" ON "userTrackings" ("action.utenant.action.visit.item.mappingId");
+	CREATE INDEX "index.action.utenant.action.visit.item.itemId.some" ON "userTrackings" ("action.utenant.action.visit.item.itemId");
+	CREATE INDEX "index.action.utenant.action.visit.item.itemId.none" ON "userTrackings" ("action.utenant.action.visit.item.itemId");
+	CREATE INDEX "index.action.utenant.action.visit.override.mappingId" ON "userTrackings" ("action.utenant.action.visit.override");
+	CREATE INDEX "index.action.utenant.action.visit.override.itemId.some" ON "userTrackings" ("action.utenant.action.visit.override.itemId.some");
+	CREATE INDEX "index.action.utenant.action.visit.override.itemId.none" ON "userTrackings" ("action.utenant.action.visit.override.itemId.none");
+	CREATE INDEX "index.action.utenant.action.visit.dataHub.mappingId" ON "userTrackings" ("action.utenant.action.visit.dataHub");
+	CREATE INDEX "index.action.utenant.action.visit.dataHub.scale" ON "userTrackings" ("action.utenant.action.visit.dataHub.scale");
+	CREATE INDEX "index.action.utenant.action.visit.cart" ON "userTrackings" ("action.utenant.action.visit.cart");
+	CREATE INDEX "index.action.utenant.action.visit.url" ON "userTrackings" ("action.utenant.action.visit.url");
+	CREATE INDEX "index.action.utenant.action.visit.myAccount" ON "userTrackings" ("action.utenant.action.visit.myAccount");
+	CREATE INDEX "index.action.utenant.action.visit.orderDetails" ON "userTrackings" ("action.utenant.action.visit.orderDetails");
+	CREATE INDEX "index.action.utenant.action.visit.orders" ON "userTrackings" ("action.utenant.action.visit.orders");
+	CREATE INDEX "index.action.utenant.action.visit.overrides.mappingId" ON "userTrackings" ("action.utenant.action.visit.overrides.mappingId");
+	CREATE INDEX "index.action.utenant.action.visit.overrides.terms.some" ON "userTrackings" ("action.utenant.action.visit.overrides.terms.some");
+	CREATE INDEX "index.action.utenant.action.visit.overrides.terms.none" ON "userTrackings" ("action.utenant.action.visit.overrides.terms.none");
+	CREATE INDEX "index.action.utenant.action.cartOrderLine.orderLineId" ON "userTrackings" ("action.utenant.action.cartOrderLine.orderLineId");
+	CREATE INDEX "index.action.utenant.action.cartOrderLine.action" ON "userTrackings" ("action.utenant.action.cartOrderLine.action");
+	CREATE INDEX "index.action.utenant.action.placeOrder" ON "userTrackings" ("action.utenant.action.placeOrder");
+	CREATE INDEX "index.action.utenant.action.override.overrideId" ON "userTrackings" ("action.utenant.action.override.overrideId");
+	CREATE INDEX "index.action.utenant.action.override.action" ON "userTrackings" ("action.utenant.action.override.action");
+	CREATE INDEX "index.action.utenant.action.definition.mappingId" ON "userTrackings" ("action.utenant.action.definition.mappingId");
+	CREATE INDEX "index.action.utenant.action.definition.definitionId" ON "userTrackings" ("action.utenant.action.definition");
+	CREATE INDEX "index.action.utenant.action.definition.action" ON "userTrackings" ("action.utenant.action.definition.action");
+ERROR:  column "action.utenant.action.visit.library.view" does not exist
+STATEMENT:  CREATE TABLE "userTrackings" (
+	  "session.sessionId" UUID,
+	  "session.userId" UUID,
+	  "session.ip" VARCHAR(15),
+	  "session.date" TIMESTAMP,
+	  "action.anonymous.failedLogin" VARCHAR,
+	  "action.anonymous.init.cookieEnabled" BOOLEAN,
+	  "action.anonymous.init.language.some" VARCHAR,
+	  "action.anonymous.init.language.none" BOOLEAN,
+	  "action.anonymous.init.timeOffset" VARCHAR,
+	  "action.anonymous.init.screen.width" INTEGER,
+	  "action.anonymous.init.screen.height" INTEGER,
+	  "action.anonymous.init.screen.colorDepth" INTEGER,
+	  "action.anonymous.init.screen.orientation" VARCHAR,
+	  "action.anonymous.init.screen.devicePixelRatio" DOUBLE PRECISION,
+	  "action.anonymous.requestReset.username" VARCHAR,
+	  "action.anonymous.requestReset.success" BOOLEAN,
+	  "action.anonymous.emailLink" TEXT,
+	  "action.anonymous.performedReset.username" VARCHAR,
+	  "action.anonymous.performedReset.success" BOOLEAN,
+	  "action.user.userId" UUID,
+	  "action.user.action.login" BOOLEAN,
+	  "action.user.action.firstLogin" BOOLEAN,
+	  "action.user.action.logout" BOOLEAN,
+	  "action.user.action.changeTimezone" VARCHAR,
+	  "action.user.action.changePassword" BOOLEAN,
+	  "action.user.action.clearProductPreferences" BOOLEAN,
+	  "action.user.action.clearAllPreferences" BOOLEAN,
+	  "action.user.action.changeTenant" UUID,
+	  "action.utenant.userId" UUID,
+	  "action.utenant.action.download.productFile.id" UUID,
+	  "action.utenant.action.download.productFile.filename" VARCHAR,
+	  "action.utenant.action.download.orderFile.id" VARCHAR,
+	  "action.utenant.action.download.orderFile.filename" VARCHAR,
+	  "action.utenant.action.download.orderLineFile.id" UUID,
+	  "action.utenant.action.download.orderLineFile.filename" VARCHAR,
+	  "action.utenant.action.download.dataHubData.mappingId" VARCHAR,
+	  "action.utenant.action.download.dataHubData.params" JSON,
+	  "action.utenant.action.visit.product" VARCHAR,
+	  "action.utenant.action.visit.library.terms.some" VARCHAR,
+	  "action.utenant.action.visit.library.terms.none" BOOLEAN,
+	  "action.utenant.action.visit.library.sort.some" VARCHAR,
+	  "action.utenant.action.visit.library.sort.none" BOOLEAN,
+	  "action.utenant.action.visit.library.view.chart" VARCHAR[],
+	  "action.utenant.action.visit.library.view.book" BOOLEAN,
+	  "action.utenant.action.visit.library.view.page" BOOLEAN,
+	  "action.utenant.action.visit.item.mappingId" VARCHAR,
+	  "action.utenant.action.visit.item.itemId.some" VARCHAR,
+	  "action.utenant.action.visit.item.itemId.none" BOOLEAN,
+	  "action.utenant.action.visit.override.mappingId" TEXT,
+	  "action.utenant.action.visit.override.itemId.some" VARCHAR,
+	  "action.utenant.action.visit.override.itemId.none" BOOLEAN,
+	  "action.utenant.action.visit.dataHub.mappingId" VARCHAR,
+	  "action.utenant.action.visit.dataHub.scale" VARCHAR,
+	  "action.utenant.action.visit.dataHub.params" JSON,
+	  "action.utenant.action.visit.cart" BOOLEAN,
+	  "action.utenant.action.visit.url" VARCHAR,
+	  "action.utenant.action.visit.myAccount" BOOLEAN,
+	  "action.utenant.action.visit.orderDetails" VARCHAR,
+	  "action.utenant.action.visit.orders" BOOLEAN,
+	  "action.utenant.action.visit.overrides.mappingId" VARCHAR,
+	  "action.utenant.action.visit.overrides.terms.some" VARCHAR,
+	  "action.utenant.action.visit.overrides.terms.none" BOOLEAN,
+	  "action.utenant.action.cartOrderLine.orderLineId" UUID,
+	  "action.utenant.action.cartOrderLine.action" VARCHAR,
+	  "action.utenant.action.placeOrder" VARCHAR,
+	  "action.utenant.action.override.overrideId" UUID,
+	  "action.utenant.action.override.action" VARCHAR,
+	  "action.utenant.action.definition.mappingId" VARCHAR,
+	  "action.utenant.action.definition.definitionId" VARCHAR,
+	  "action.utenant.action.definition.action" VARCHAR
+	);
+	
+	CREATE INDEX "index.session.sessionId" ON "userTrackings" ("session.sessionId");
+	CREATE INDEX "index.session.userId" ON "userTrackings" ("session.userId");
+	CREATE INDEX "index.session.ip" ON "userTrackings" ("session.ip");
+	CREATE INDEX "index.session.date" ON "userTrackings" ("session.date");
+	CREATE INDEX "index.action.anonymous.failedLogin" ON "userTrackings" ("action.anonymous.failedLogin");
+	CREATE INDEX "index.action.anonymous.init.cookieEnabled" ON "userTrackings" ("action.anonymous.init.cookieEnabled");
+	CREATE INDEX "index.action.anonymous.init.language.some" ON "userTrackings" ("action.anonymous.init.language.some");
+	CREATE INDEX "index.action.anonymous.init.language.none" ON "userTrackings" ("action.anonymous.init.language.none");
+	CREATE INDEX "index.action.anonymous.init.timeOffset" ON "userTrackings" ("action.anonymous.init.timeOffset");
+	CREATE INDEX "index.action.anonymous.init.screen.width" ON "userTrackings" ("action.anonymous.init.screen.width");
+	CREATE INDEX "index.action.anonymous.init.screen.height" ON "userTrackings" ("action.anonymous.init.screen.height");
+	CREATE INDEX "index.action.anonymous.init.screen.colorDepth" ON "userTrackings" ("action.anonymous.init.screen.colorDepth");
+	CREATE INDEX "index.action.anonymous.init.screen.orientation" ON "userTrackings" ("action.anonymous.init.screen.orientation");
+	CREATE INDEX "index.action.anonymous.init.screen.devicePixelRatio" ON "userTrackings" ("action.anonymous.init.screen.devicePixelRatio");
+	CREATE INDEX "index.action.anonymous.requestReset.username" ON "userTrackings" ("action.anonymous.requestReset.username");
+	CREATE INDEX "index.action.anonymous.requestReset.success" ON "userTrackings" ("action.anonymous.requestReset.success");
+	CREATE INDEX "index.action.anonymous.emailLink" ON "userTrackings" ("action.anonymous.emailLink");
+	CREATE INDEX "index.action.anonymous.performedReset.username" ON "userTrackings" ("action.anonymous.performedReset.username");
+	CREATE INDEX "index.action.anonymous.performedReset.success" ON "userTrackings" ("action.anonymous.performedReset.success");
+	CREATE INDEX "index.action.user.userId" ON "userTrackings" ("action.user.userId");
+	CREATE INDEX "index.action.user.action.login" ON "userTrackings" ("action.user.action.login");
+	CREATE INDEX "index.action.user.action.firstLogin" ON "userTrackings" ("action.user.action.firstLogin");
+	CREATE INDEX "index.action.user.action.logout" ON "userTrackings" ("action.user.action.logout");
+	CREATE INDEX "index.action.user.action.changeTimezone" ON "userTrackings" ("action.user.action.changeTimezone");
+	CREATE INDEX "index.action.user.action.changePassword" ON "userTrackings" ("action.user.action.changePassword");
+	CREATE INDEX "index.action.user.action.clearProductPreferences" ON "userTrackings" ("action.user.action.clearProductPreferences");
+	CREATE INDEX "index.action.user.action.clearAllPreferences" ON "userTrackings" ("action.user.action.clearAllPreferences");
+	CREATE INDEX "index.action.user.action.changeTenant" ON "userTrackings" ("action.user.action.changeTenant");
+	CREATE INDEX "index.action.utenant.userId" ON "userTrackings" ("action.utenant.userId");
+	CREATE INDEX "index.action.utenant.action.download.productFile.id" ON "userTrackings" ("action.utenant.action.download.productFile.id");
+	CREATE INDEX "index.action.utenant.action.download.productFile.filename" ON "userTrackings" ("action.utenant.action.download.productFile.filename");
+	CREATE INDEX "index.action.utenant.action.download.orderFile.id" ON "userTrackings" ("action.utenant.action.download.orderFile.id");
+	CREATE INDEX "index.action.utenant.action.download.orderFile.filename" ON "userTrackings" ("action.utenant.action.download.orderFile.filename");
+	CREATE INDEX "index.action.utenant.action.download.orderLineFile.id" ON "userTrackings" ("action.utenant.action.download.orderLineFile.id");
+	CREATE INDEX "index.action.utenant.action.download.orderLineFile.filename" ON "userTrackings" ("action.utenant.action.download.orderLineFile.filename");
+	CREATE INDEX "index.action.utenant.action.download.dataHubData.mappingId" ON "userTrackings" ("action.utenant.action.download.dataHubData.mappingId");
+	CREATE INDEX "index.action.utenant.action.visit.product" ON "userTrackings" ("action.utenant.action.visit.product");
+	CREATE INDEX "index.action.utenant.action.visit.library.terms.some" ON "userTrackings" ("action.utenant.action.visit.library.terms.some");
+	CREATE INDEX "index.action.utenant.action.visit.library.terms.none" ON "userTrackings" ("action.utenant.action.visit.library.terms.none");
+	CREATE INDEX "index.action.utenant.action.visit.library.sort.some" ON "userTrackings" ("action.utenant.action.visit.library.sort.some");
+	CREATE INDEX "index.action.utenant.action.visit.library.sort.none" ON "userTrackings" ("action.utenant.action.visit.library.sort.none");
+	CREATE INDEX "index.action.utenant.action.visit.library.view.chart" ON "userTrackings" ("action.utenant.action.visit.library.view.chart");
+	CREATE INDEX "index.action.utenant.action.visit.library.view.book" ON "userTrackings" ("action.utenant.action.visit.library.view");
+	CREATE INDEX "index.action.utenant.action.visit.library.view.page" ON "userTrackings" ("action.utenant.action.visit.library.view");
+	CREATE INDEX "index.action.utenant.action.visit.item.mappingId" ON "userTrackings" ("action.utenant.action.visit.item.mappingId");
+	CREATE INDEX "index.action.utenant.action.visit.item.itemId.some" ON "userTrackings" ("action.utenant.action.visit.item.itemId");
+	CREATE INDEX "index.action.utenant.action.visit.item.itemId.none" ON "userTrackings" ("action.utenant.action.visit.item.itemId");
+	CREATE INDEX "index.action.utenant.action.visit.override.mappingId" ON "userTrackings" ("action.utenant.action.visit.override");
+	CREATE INDEX "index.action.utenant.action.visit.override.itemId.some" ON "userTrackings" ("action.utenant.action.visit.override.itemId.some");
+	CREATE INDEX "index.action.utenant.action.visit.override.itemId.none" ON "userTrackings" ("action.utenant.action.visit.override.itemId.none");
+	CREATE INDEX "index.action.utenant.action.visit.dataHub.mappingId" ON "userTrackings" ("action.utenant.action.visit.dataHub");
+	CREATE INDEX "index.action.utenant.action.visit.dataHub.scale" ON "userTrackings" ("action.utenant.action.visit.dataHub.scale");
+	CREATE INDEX "index.action.utenant.action.visit.cart" ON "userTrackings" ("action.utenant.action.visit.cart");
+	CREATE INDEX "index.action.utenant.action.visit.url" ON "userTrackings" ("action.utenant.action.visit.url");
+	CREATE INDEX "index.action.utenant.action.visit.myAccount" ON "userTrackings" ("action.utenant.action.visit.myAccount");
+	CREATE INDEX "index.action.utenant.action.visit.orderDetails" ON "userTrackings" ("action.utenant.action.visit.orderDetails");
+	CREATE INDEX "index.action.utenant.action.visit.orders" ON "userTrackings" ("action.utenant.action.visit.orders");
+	CREATE INDEX "index.action.utenant.action.visit.overrides.mappingId" ON "userTrackings" ("action.utenant.action.visit.overrides.mappingId");
+	CREATE INDEX "index.action.utenant.action.visit.overrides.terms.some" ON "userTrackings" ("action.utenant.action.visit.overrides.terms.some");
+	CREATE INDEX "index.action.utenant.action.visit.overrides.terms.none" ON "userTrackings" ("action.utenant.action.visit.overrides.terms.none");
+	CREATE INDEX "index.action.utenant.action.cartOrderLine.orderLineId" ON "userTrackings" ("action.utenant.action.cartOrderLine.orderLineId");
+	CREATE INDEX "index.action.utenant.action.cartOrderLine.action" ON "userTrackings" ("action.utenant.action.cartOrderLine.action");
+	CREATE INDEX "index.action.utenant.action.placeOrder" ON "userTrackings" ("action.utenant.action.placeOrder");
+	CREATE INDEX "index.action.utenant.action.override.overrideId" ON "userTrackings" ("action.utenant.action.override.overrideId");
+	CREATE INDEX "index.action.utenant.action.override.action" ON "userTrackings" ("action.utenant.action.override.action");
+	CREATE INDEX "index.action.utenant.action.definition.mappingId" ON "userTrackings" ("action.utenant.action.definition.mappingId");
+	CREATE INDEX "index.action.utenant.action.definition.definitionId" ON "userTrackings" ("action.utenant.action.definition");
+	CREATE INDEX "index.action.utenant.action.definition.action" ON "userTrackings" ("action.utenant.action.definition.action");
+ERROR:  column "action.utenant.action.visit.item.itemId" does not exist
+STATEMENT:  CREATE TABLE "userTrackings" (
+	  "session.sessionId" UUID,
+	  "session.userId" UUID,
+	  "session.ip" VARCHAR(15),
+	  "session.date" TIMESTAMP,
+	  "action.anonymous.failedLogin" VARCHAR,
+	  "action.anonymous.init.cookieEnabled" BOOLEAN,
+	  "action.anonymous.init.language.some" VARCHAR,
+	  "action.anonymous.init.language.none" BOOLEAN,
+	  "action.anonymous.init.timeOffset" VARCHAR,
+	  "action.anonymous.init.screen.width" INTEGER,
+	  "action.anonymous.init.screen.height" INTEGER,
+	  "action.anonymous.init.screen.colorDepth" INTEGER,
+	  "action.anonymous.init.screen.orientation" VARCHAR,
+	  "action.anonymous.init.screen.devicePixelRatio" DOUBLE PRECISION,
+	  "action.anonymous.requestReset.username" VARCHAR,
+	  "action.anonymous.requestReset.success" BOOLEAN,
+	  "action.anonymous.emailLink" TEXT,
+	  "action.anonymous.performedReset.username" VARCHAR,
+	  "action.anonymous.performedReset.success" BOOLEAN,
+	  "action.user.userId" UUID,
+	  "action.user.action.login" BOOLEAN,
+	  "action.user.action.firstLogin" BOOLEAN,
+	  "action.user.action.logout" BOOLEAN,
+	  "action.user.action.changeTimezone" VARCHAR,
+	  "action.user.action.changePassword" BOOLEAN,
+	  "action.user.action.clearProductPreferences" BOOLEAN,
+	  "action.user.action.clearAllPreferences" BOOLEAN,
+	  "action.user.action.changeTenant" UUID,
+	  "action.utenant.userId" UUID,
+	  "action.utenant.action.download.productFile.id" UUID,
+	  "action.utenant.action.download.productFile.filename" VARCHAR,
+	  "action.utenant.action.download.orderFile.id" VARCHAR,
+	  "action.utenant.action.download.orderFile.filename" VARCHAR,
+	  "action.utenant.action.download.orderLineFile.id" UUID,
+	  "action.utenant.action.download.orderLineFile.filename" VARCHAR,
+	  "action.utenant.action.download.dataHubData.mappingId" VARCHAR,
+	  "action.utenant.action.download.dataHubData.params" JSON,
+	  "action.utenant.action.visit.product" VARCHAR,
+	  "action.utenant.action.visit.library.terms.some" VARCHAR,
+	  "action.utenant.action.visit.library.terms.none" BOOLEAN,
+	  "action.utenant.action.visit.library.sort.some" VARCHAR,
+	  "action.utenant.action.visit.library.sort.none" BOOLEAN,
+	  "action.utenant.action.visit.library.view.chart" VARCHAR[],
+	  "action.utenant.action.visit.library.view.book" BOOLEAN,
+	  "action.utenant.action.visit.library.view.page" BOOLEAN,
+	  "action.utenant.action.visit.item.mappingId" VARCHAR,
+	  "action.utenant.action.visit.item.itemId.some" VARCHAR,
+	  "action.utenant.action.visit.item.itemId.none" BOOLEAN,
+	  "action.utenant.action.visit.override.mappingId" TEXT,
+	  "action.utenant.action.visit.override.itemId.some" VARCHAR,
+	  "action.utenant.action.visit.override.itemId.none" BOOLEAN,
+	  "action.utenant.action.visit.dataHub.mappingId" VARCHAR,
+	  "action.utenant.action.visit.dataHub.scale" VARCHAR,
+	  "action.utenant.action.visit.dataHub.params" JSON,
+	  "action.utenant.action.visit.cart" BOOLEAN,
+	  "action.utenant.action.visit.url" VARCHAR,
+	  "action.utenant.action.visit.myAccount" BOOLEAN,
+	  "action.utenant.action.visit.orderDetails" VARCHAR,
+	  "action.utenant.action.visit.orders" BOOLEAN,
+	  "action.utenant.action.visit.overrides.mappingId" VARCHAR,
+	  "action.utenant.action.visit.overrides.terms.some" VARCHAR,
+	  "action.utenant.action.visit.overrides.terms.none" BOOLEAN,
+	  "action.utenant.action.cartOrderLine.orderLineId" UUID,
+	  "action.utenant.action.cartOrderLine.action" VARCHAR,
+	  "action.utenant.action.placeOrder" VARCHAR,
+	  "action.utenant.action.override.overrideId" UUID,
+	  "action.utenant.action.override.action" VARCHAR,
+	  "action.utenant.action.definition.mappingId" VARCHAR,
+	  "action.utenant.action.definition.definitionId" VARCHAR,
+	  "action.utenant.action.definition.action" VARCHAR
+	);
+	
+	CREATE INDEX "index.session.sessionId" ON "userTrackings" ("session.sessionId");
+	CREATE INDEX "index.session.userId" ON "userTrackings" ("session.userId");
+	CREATE INDEX "index.session.ip" ON "userTrackings" ("session.ip");
+	CREATE INDEX "index.session.date" ON "userTrackings" ("session.date");
+	CREATE INDEX "index.action.anonymous.failedLogin" ON "userTrackings" ("action.anonymous.failedLogin");
+	CREATE INDEX "index.action.anonymous.init.cookieEnabled" ON "userTrackings" ("action.anonymous.init.cookieEnabled");
+	CREATE INDEX "index.action.anonymous.init.language.some" ON "userTrackings" ("action.anonymous.init.language.some");
+	CREATE INDEX "index.action.anonymous.init.language.none" ON "userTrackings" ("action.anonymous.init.language.none");
+	CREATE INDEX "index.action.anonymous.init.timeOffset" ON "userTrackings" ("action.anonymous.init.timeOffset");
+	CREATE INDEX "index.action.anonymous.init.screen.width" ON "userTrackings" ("action.anonymous.init.screen.width");
+	CREATE INDEX "index.action.anonymous.init.screen.height" ON "userTrackings" ("action.anonymous.init.screen.height");
+	CREATE INDEX "index.action.anonymous.init.screen.colorDepth" ON "userTrackings" ("action.anonymous.init.screen.colorDepth");
+	CREATE INDEX "index.action.anonymous.init.screen.orientation" ON "userTrackings" ("action.anonymous.init.screen.orientation");
+	CREATE INDEX "index.action.anonymous.init.screen.devicePixelRatio" ON "userTrackings" ("action.anonymous.init.screen.devicePixelRatio");
+	CREATE INDEX "index.action.anonymous.requestReset.username" ON "userTrackings" ("action.anonymous.requestReset.username");
+	CREATE INDEX "index.action.anonymous.requestReset.success" ON "userTrackings" ("action.anonymous.requestReset.success");
+	CREATE INDEX "index.action.anonymous.emailLink" ON "userTrackings" ("action.anonymous.emailLink");
+	CREATE INDEX "index.action.anonymous.performedReset.username" ON "userTrackings" ("action.anonymous.performedReset.username");
+	CREATE INDEX "index.action.anonymous.performedReset.success" ON "userTrackings" ("action.anonymous.performedReset.success");
+	CREATE INDEX "index.action.user.userId" ON "userTrackings" ("action.user.userId");
+	CREATE INDEX "index.action.user.action.login" ON "userTrackings" ("action.user.action.login");
+	CREATE INDEX "index.action.user.action.firstLogin" ON "userTrackings" ("action.user.action.firstLogin");
+	CREATE INDEX "index.action.user.action.logout" ON "userTrackings" ("action.user.action.logout");
+	CREATE INDEX "index.action.user.action.changeTimezone" ON "userTrackings" ("action.user.action.changeTimezone");
+	CREATE INDEX "index.action.user.action.changePassword" ON "userTrackings" ("action.user.action.changePassword");
+	CREATE INDEX "index.action.user.action.clearProductPreferences" ON "userTrackings" ("action.user.action.clearProductPreferences");
+	CREATE INDEX "index.action.user.action.clearAllPreferences" ON "userTrackings" ("action.user.action.clearAllPreferences");
+	CREATE INDEX "index.action.user.action.changeTenant" ON "userTrackings" ("action.user.action.changeTenant");
+	CREATE INDEX "index.action.utenant.userId" ON "userTrackings" ("action.utenant.userId");
+	CREATE INDEX "index.action.utenant.action.download.productFile.id" ON "userTrackings" ("action.utenant.action.download.productFile.id");
+	CREATE INDEX "index.action.utenant.action.download.productFile.filename" ON "userTrackings" ("action.utenant.action.download.productFile.filename");
+	CREATE INDEX "index.action.utenant.action.download.orderFile.id" ON "userTrackings" ("action.utenant.action.download.orderFile.id");
+	CREATE INDEX "index.action.utenant.action.download.orderFile.filename" ON "userTrackings" ("action.utenant.action.download.orderFile.filename");
+	CREATE INDEX "index.action.utenant.action.download.orderLineFile.id" ON "userTrackings" ("action.utenant.action.download.orderLineFile.id");
+	CREATE INDEX "index.action.utenant.action.download.orderLineFile.filename" ON "userTrackings" ("action.utenant.action.download.orderLineFile.filename");
+	CREATE INDEX "index.action.utenant.action.download.dataHubData.mappingId" ON "userTrackings" ("action.utenant.action.download.dataHubData.mappingId");
+	CREATE INDEX "index.action.utenant.action.visit.product" ON "userTrackings" ("action.utenant.action.visit.product");
+	CREATE INDEX "index.action.utenant.action.visit.library.terms.some" ON "userTrackings" ("action.utenant.action.visit.library.terms.some");
+	CREATE INDEX "index.action.utenant.action.visit.library.terms.none" ON "userTrackings" ("action.utenant.action.visit.library.terms.none");
+	CREATE INDEX "index.action.utenant.action.visit.library.sort.some" ON "userTrackings" ("action.utenant.action.visit.library.sort.some");
+	CREATE INDEX "index.action.utenant.action.visit.library.sort.none" ON "userTrackings" ("action.utenant.action.visit.library.sort.none");
+	CREATE INDEX "index.action.utenant.action.visit.library.view.chart" ON "userTrackings" ("action.utenant.action.visit.library.view.chart");
+	CREATE INDEX "index.action.utenant.action.visit.library.view.book" ON "userTrackings" ("action.utenant.action.visit.library.view.book");
+	CREATE INDEX "index.action.utenant.action.visit.library.view.page" ON "userTrackings" ("action.utenant.action.visit.library.view.page");
+	CREATE INDEX "index.action.utenant.action.visit.item.mappingId" ON "userTrackings" ("action.utenant.action.visit.item.mappingId");
+	CREATE INDEX "index.action.utenant.action.visit.item.itemId.some" ON "userTrackings" ("action.utenant.action.visit.item.itemId");
+	CREATE INDEX "index.action.utenant.action.visit.item.itemId.none" ON "userTrackings" ("action.utenant.action.visit.item.itemId");
+	CREATE INDEX "index.action.utenant.action.visit.override.mappingId" ON "userTrackings" ("action.utenant.action.visit.override");
+	CREATE INDEX "index.action.utenant.action.visit.override.itemId.some" ON "userTrackings" ("action.utenant.action.visit.override.itemId.some");
+	CREATE INDEX "index.action.utenant.action.visit.override.itemId.none" ON "userTrackings" ("action.utenant.action.visit.override.itemId.none");
+	CREATE INDEX "index.action.utenant.action.visit.dataHub.mappingId" ON "userTrackings" ("action.utenant.action.visit.dataHub");
+	CREATE INDEX "index.action.utenant.action.visit.dataHub.scale" ON "userTrackings" ("action.utenant.action.visit.dataHub.scale");
+	CREATE INDEX "index.action.utenant.action.visit.cart" ON "userTrackings" ("action.utenant.action.visit.cart");
+	CREATE INDEX "index.action.utenant.action.visit.url" ON "userTrackings" ("action.utenant.action.visit.url");
+	CREATE INDEX "index.action.utenant.action.visit.myAccount" ON "userTrackings" ("action.utenant.action.visit.myAccount");
+	CREATE INDEX "index.action.utenant.action.visit.orderDetails" ON "userTrackings" ("action.utenant.action.visit.orderDetails");
+	CREATE INDEX "index.action.utenant.action.visit.orders" ON "userTrackings" ("action.utenant.action.visit.orders");
+	CREATE INDEX "index.action.utenant.action.visit.overrides.mappingId" ON "userTrackings" ("action.utenant.action.visit.overrides.mappingId");
+	CREATE INDEX "index.action.utenant.action.visit.overrides.terms.some" ON "userTrackings" ("action.utenant.action.visit.overrides.terms.some");
+	CREATE INDEX "index.action.utenant.action.visit.overrides.terms.none" ON "userTrackings" ("action.utenant.action.visit.overrides.terms.none");
+	CREATE INDEX "index.action.utenant.action.cartOrderLine.orderLineId" ON "userTrackings" ("action.utenant.action.cartOrderLine.orderLineId");
+	CREATE INDEX "index.action.utenant.action.cartOrderLine.action" ON "userTrackings" ("action.utenant.action.cartOrderLine.action");
+	CREATE INDEX "index.action.utenant.action.placeOrder" ON "userTrackings" ("action.utenant.action.placeOrder");
+	CREATE INDEX "index.action.utenant.action.override.overrideId" ON "userTrackings" ("action.utenant.action.override.overrideId");
+	CREATE INDEX "index.action.utenant.action.override.action" ON "userTrackings" ("action.utenant.action.override.action");
+	CREATE INDEX "index.action.utenant.action.definition.mappingId" ON "userTrackings" ("action.utenant.action.definition.mappingId");
+	CREATE INDEX "index.action.utenant.action.definition.definitionId" ON "userTrackings" ("action.utenant.action.definition");
+	CREATE INDEX "index.action.utenant.action.definition.action" ON "userTrackings" ("action.utenant.action.definition.action");
+ERROR:  column "action.utenant.action.visit.override" does not exist
+STATEMENT:  CREATE TABLE "userTrackings" (
+	  "session.sessionId" UUID,
+	  "session.userId" UUID,
+	  "session.ip" VARCHAR(15),
+	  "session.date" TIMESTAMP,
+	  "action.anonymous.failedLogin" VARCHAR,
+	  "action.anonymous.init.cookieEnabled" BOOLEAN,
+	  "action.anonymous.init.language.some" VARCHAR,
+	  "action.anonymous.init.language.none" BOOLEAN,
+	  "action.anonymous.init.timeOffset" VARCHAR,
+	  "action.anonymous.init.screen.width" INTEGER,
+	  "action.anonymous.init.screen.height" INTEGER,
+	  "action.anonymous.init.screen.colorDepth" INTEGER,
+	  "action.anonymous.init.screen.orientation" VARCHAR,
+	  "action.anonymous.init.screen.devicePixelRatio" DOUBLE PRECISION,
+	  "action.anonymous.requestReset.username" VARCHAR,
+	  "action.anonymous.requestReset.success" BOOLEAN,
+	  "action.anonymous.emailLink" TEXT,
+	  "action.anonymous.performedReset.username" VARCHAR,
+	  "action.anonymous.performedReset.success" BOOLEAN,
+	  "action.user.userId" UUID,
+	  "action.user.action.login" BOOLEAN,
+	  "action.user.action.firstLogin" BOOLEAN,
+	  "action.user.action.logout" BOOLEAN,
+	  "action.user.action.changeTimezone" VARCHAR,
+	  "action.user.action.changePassword" BOOLEAN,
+	  "action.user.action.clearProductPreferences" BOOLEAN,
+	  "action.user.action.clearAllPreferences" BOOLEAN,
+	  "action.user.action.changeTenant" UUID,
+	  "action.utenant.userId" UUID,
+	  "action.utenant.action.download.productFile.id" UUID,
+	  "action.utenant.action.download.productFile.filename" VARCHAR,
+	  "action.utenant.action.download.orderFile.id" VARCHAR,
+	  "action.utenant.action.download.orderFile.filename" VARCHAR,
+	  "action.utenant.action.download.orderLineFile.id" UUID,
+	  "action.utenant.action.download.orderLineFile.filename" VARCHAR,
+	  "action.utenant.action.download.dataHubData.mappingId" VARCHAR,
+	  "action.utenant.action.download.dataHubData.params" JSON,
+	  "action.utenant.action.visit.product" VARCHAR,
+	  "action.utenant.action.visit.library.terms.some" VARCHAR,
+	  "action.utenant.action.visit.library.terms.none" BOOLEAN,
+	  "action.utenant.action.visit.library.sort.some" VARCHAR,
+	  "action.utenant.action.visit.library.sort.none" BOOLEAN,
+	  "action.utenant.action.visit.library.view.chart" VARCHAR[],
+	  "action.utenant.action.visit.library.view.book" BOOLEAN,
+	  "action.utenant.action.visit.library.view.page" BOOLEAN,
+	  "action.utenant.action.visit.item.mappingId" VARCHAR,
+	  "action.utenant.action.visit.item.itemId.some" VARCHAR,
+	  "action.utenant.action.visit.item.itemId.none" BOOLEAN,
+	  "action.utenant.action.visit.override.mappingId" TEXT,
+	  "action.utenant.action.visit.override.itemId.some" VARCHAR,
+	  "action.utenant.action.visit.override.itemId.none" BOOLEAN,
+	  "action.utenant.action.visit.dataHub.mappingId" VARCHAR,
+	  "action.utenant.action.visit.dataHub.scale" VARCHAR,
+	  "action.utenant.action.visit.dataHub.params" JSON,
+	  "action.utenant.action.visit.cart" BOOLEAN,
+	  "action.utenant.action.visit.url" VARCHAR,
+	  "action.utenant.action.visit.myAccount" BOOLEAN,
+	  "action.utenant.action.visit.orderDetails" VARCHAR,
+	  "action.utenant.action.visit.orders" BOOLEAN,
+	  "action.utenant.action.visit.overrides.mappingId" VARCHAR,
+	  "action.utenant.action.visit.overrides.terms.some" VARCHAR,
+	  "action.utenant.action.visit.overrides.terms.none" BOOLEAN,
+	  "action.utenant.action.cartOrderLine.orderLineId" UUID,
+	  "action.utenant.action.cartOrderLine.action" VARCHAR,
+	  "action.utenant.action.placeOrder" VARCHAR,
+	  "action.utenant.action.override.overrideId" UUID,
+	  "action.utenant.action.override.action" VARCHAR,
+	  "action.utenant.action.definition.mappingId" VARCHAR,
+	  "action.utenant.action.definition.definitionId" VARCHAR,
+	  "action.utenant.action.definition.action" VARCHAR
+	);
+	
+	CREATE INDEX "index.session.sessionId" ON "userTrackings" ("session.sessionId");
+	CREATE INDEX "index.session.userId" ON "userTrackings" ("session.userId");
+	CREATE INDEX "index.session.ip" ON "userTrackings" ("session.ip");
+	CREATE INDEX "index.session.date" ON "userTrackings" ("session.date");
+	CREATE INDEX "index.action.anonymous.failedLogin" ON "userTrackings" ("action.anonymous.failedLogin");
+	CREATE INDEX "index.action.anonymous.init.cookieEnabled" ON "userTrackings" ("action.anonymous.init.cookieEnabled");
+	CREATE INDEX "index.action.anonymous.init.language.some" ON "userTrackings" ("action.anonymous.init.language.some");
+	CREATE INDEX "index.action.anonymous.init.language.none" ON "userTrackings" ("action.anonymous.init.language.none");
+	CREATE INDEX "index.action.anonymous.init.timeOffset" ON "userTrackings" ("action.anonymous.init.timeOffset");
+	CREATE INDEX "index.action.anonymous.init.screen.width" ON "userTrackings" ("action.anonymous.init.screen.width");
+	CREATE INDEX "index.action.anonymous.init.screen.height" ON "userTrackings" ("action.anonymous.init.screen.height");
+	CREATE INDEX "index.action.anonymous.init.screen.colorDepth" ON "userTrackings" ("action.anonymous.init.screen.colorDepth");
+	CREATE INDEX "index.action.anonymous.init.screen.orientation" ON "userTrackings" ("action.anonymous.init.screen.orientation");
+	CREATE INDEX "index.action.anonymous.init.screen.devicePixelRatio" ON "userTrackings" ("action.anonymous.init.screen.devicePixelRatio");
+	CREATE INDEX "index.action.anonymous.requestReset.username" ON "userTrackings" ("action.anonymous.requestReset.username");
+	CREATE INDEX "index.action.anonymous.requestReset.success" ON "userTrackings" ("action.anonymous.requestReset.success");
+	CREATE INDEX "index.action.anonymous.emailLink" ON "userTrackings" ("action.anonymous.emailLink");
+	CREATE INDEX "index.action.anonymous.performedReset.username" ON "userTrackings" ("action.anonymous.performedReset.username");
+	CREATE INDEX "index.action.anonymous.performedReset.success" ON "userTrackings" ("action.anonymous.performedReset.success");
+	CREATE INDEX "index.action.user.userId" ON "userTrackings" ("action.user.userId");
+	CREATE INDEX "index.action.user.action.login" ON "userTrackings" ("action.user.action.login");
+	CREATE INDEX "index.action.user.action.firstLogin" ON "userTrackings" ("action.user.action.firstLogin");
+	CREATE INDEX "index.action.user.action.logout" ON "userTrackings" ("action.user.action.logout");
+	CREATE INDEX "index.action.user.action.changeTimezone" ON "userTrackings" ("action.user.action.changeTimezone");
+	CREATE INDEX "index.action.user.action.changePassword" ON "userTrackings" ("action.user.action.changePassword");
+	CREATE INDEX "index.action.user.action.clearProductPreferences" ON "userTrackings" ("action.user.action.clearProductPreferences");
+	CREATE INDEX "index.action.user.action.clearAllPreferences" ON "userTrackings" ("action.user.action.clearAllPreferences");
+	CREATE INDEX "index.action.user.action.changeTenant" ON "userTrackings" ("action.user.action.changeTenant");
+	CREATE INDEX "index.action.utenant.userId" ON "userTrackings" ("action.utenant.userId");
+	CREATE INDEX "index.action.utenant.action.download.productFile.id" ON "userTrackings" ("action.utenant.action.download.productFile.id");
+	CREATE INDEX "index.action.utenant.action.download.productFile.filename" ON "userTrackings" ("action.utenant.action.download.productFile.filename");
+	CREATE INDEX "index.action.utenant.action.download.orderFile.id" ON "userTrackings" ("action.utenant.action.download.orderFile.id");
+	CREATE INDEX "index.action.utenant.action.download.orderFile.filename" ON "userTrackings" ("action.utenant.action.download.orderFile.filename");
+	CREATE INDEX "index.action.utenant.action.download.orderLineFile.id" ON "userTrackings" ("action.utenant.action.download.orderLineFile.id");
+	CREATE INDEX "index.action.utenant.action.download.orderLineFile.filename" ON "userTrackings" ("action.utenant.action.download.orderLineFile.filename");
+	CREATE INDEX "index.action.utenant.action.download.dataHubData.mappingId" ON "userTrackings" ("action.utenant.action.download.dataHubData.mappingId");
+	CREATE INDEX "index.action.utenant.action.visit.product" ON "userTrackings" ("action.utenant.action.visit.product");
+	CREATE INDEX "index.action.utenant.action.visit.library.terms.some" ON "userTrackings" ("action.utenant.action.visit.library.terms.some");
+	CREATE INDEX "index.action.utenant.action.visit.library.terms.none" ON "userTrackings" ("action.utenant.action.visit.library.terms.none");
+	CREATE INDEX "index.action.utenant.action.visit.library.sort.some" ON "userTrackings" ("action.utenant.action.visit.library.sort.some");
+	CREATE INDEX "index.action.utenant.action.visit.library.sort.none" ON "userTrackings" ("action.utenant.action.visit.library.sort.none");
+	CREATE INDEX "index.action.utenant.action.visit.library.view.chart" ON "userTrackings" ("action.utenant.action.visit.library.view.chart");
+	CREATE INDEX "index.action.utenant.action.visit.library.view.book" ON "userTrackings" ("action.utenant.action.visit.library.view.book");
+	CREATE INDEX "index.action.utenant.action.visit.library.view.page" ON "userTrackings" ("action.utenant.action.visit.library.view.page");
+	CREATE INDEX "index.action.utenant.action.visit.item.mappingId" ON "userTrackings" ("action.utenant.action.visit.item.mappingId");
+	CREATE INDEX "index.action.utenant.action.visit.item.itemId.some" ON "userTrackings" ("action.utenant.action.visit.item.itemId.some");
+	CREATE INDEX "index.action.utenant.action.visit.item.itemId.none" ON "userTrackings" ("action.utenant.action.visit.item.itemId.none");
+	CREATE INDEX "index.action.utenant.action.visit.override.mappingId" ON "userTrackings" ("action.utenant.action.visit.override");
+	CREATE INDEX "index.action.utenant.action.visit.override.itemId.some" ON "userTrackings" ("action.utenant.action.visit.override.itemId.some");
+	CREATE INDEX "index.action.utenant.action.visit.override.itemId.none" ON "userTrackings" ("action.utenant.action.visit.override.itemId.none");
+	CREATE INDEX "index.action.utenant.action.visit.dataHub.mappingId" ON "userTrackings" ("action.utenant.action.visit.dataHub");
+	CREATE INDEX "index.action.utenant.action.visit.dataHub.scale" ON "userTrackings" ("action.utenant.action.visit.dataHub.scale");
+	CREATE INDEX "index.action.utenant.action.visit.cart" ON "userTrackings" ("action.utenant.action.visit.cart");
+	CREATE INDEX "index.action.utenant.action.visit.url" ON "userTrackings" ("action.utenant.action.visit.url");
+	CREATE INDEX "index.action.utenant.action.visit.myAccount" ON "userTrackings" ("action.utenant.action.visit.myAccount");
+	CREATE INDEX "index.action.utenant.action.visit.orderDetails" ON "userTrackings" ("action.utenant.action.visit.orderDetails");
+	CREATE INDEX "index.action.utenant.action.visit.orders" ON "userTrackings" ("action.utenant.action.visit.orders");
+	CREATE INDEX "index.action.utenant.action.visit.overrides.mappingId" ON "userTrackings" ("action.utenant.action.visit.overrides.mappingId");
+	CREATE INDEX "index.action.utenant.action.visit.overrides.terms.some" ON "userTrackings" ("action.utenant.action.visit.overrides.terms.some");
+	CREATE INDEX "index.action.utenant.action.visit.overrides.terms.none" ON "userTrackings" ("action.utenant.action.visit.overrides.terms.none");
+	CREATE INDEX "index.action.utenant.action.cartOrderLine.orderLineId" ON "userTrackings" ("action.utenant.action.cartOrderLine.orderLineId");
+	CREATE INDEX "index.action.utenant.action.cartOrderLine.action" ON "userTrackings" ("action.utenant.action.cartOrderLine.action");
+	CREATE INDEX "index.action.utenant.action.placeOrder" ON "userTrackings" ("action.utenant.action.placeOrder");
+	CREATE INDEX "index.action.utenant.action.override.overrideId" ON "userTrackings" ("action.utenant.action.override.overrideId");
+	CREATE INDEX "index.action.utenant.action.override.action" ON "userTrackings" ("action.utenant.action.override.action");
+	CREATE INDEX "index.action.utenant.action.definition.mappingId" ON "userTrackings" ("action.utenant.action.definition.mappingId");
+	CREATE INDEX "index.action.utenant.action.definition.definitionId" ON "userTrackings" ("action.utenant.action.definition");
+	CREATE INDEX "index.action.utenant.action.definition.action" ON "userTrackings" ("action.utenant.action.definition.action");
+ERROR:  column "action.utenant.action.visit.dataHub" does not exist
+STATEMENT:  CREATE TABLE "userTrackings" (
+	  "session.sessionId" UUID,
+	  "session.userId" UUID,
+	  "session.ip" VARCHAR(15),
+	  "session.date" TIMESTAMP,
+	  "action.anonymous.failedLogin" VARCHAR,
+	  "action.anonymous.init.cookieEnabled" BOOLEAN,
+	  "action.anonymous.init.language.some" VARCHAR,
+	  "action.anonymous.init.language.none" BOOLEAN,
+	  "action.anonymous.init.timeOffset" VARCHAR,
+	  "action.anonymous.init.screen.width" INTEGER,
+	  "action.anonymous.init.screen.height" INTEGER,
+	  "action.anonymous.init.screen.colorDepth" INTEGER,
+	  "action.anonymous.init.screen.orientation" VARCHAR,
+	  "action.anonymous.init.screen.devicePixelRatio" DOUBLE PRECISION,
+	  "action.anonymous.requestReset.username" VARCHAR,
+	  "action.anonymous.requestReset.success" BOOLEAN,
+	  "action.anonymous.emailLink" TEXT,
+	  "action.anonymous.performedReset.username" VARCHAR,
+	  "action.anonymous.performedReset.success" BOOLEAN,
+	  "action.user.userId" UUID,
+	  "action.user.action.login" BOOLEAN,
+	  "action.user.action.firstLogin" BOOLEAN,
+	  "action.user.action.logout" BOOLEAN,
+	  "action.user.action.changeTimezone" VARCHAR,
+	  "action.user.action.changePassword" BOOLEAN,
+	  "action.user.action.clearProductPreferences" BOOLEAN,
+	  "action.user.action.clearAllPreferences" BOOLEAN,
+	  "action.user.action.changeTenant" UUID,
+	  "action.utenant.userId" UUID,
+	  "action.utenant.action.download.productFile.id" UUID,
+	  "action.utenant.action.download.productFile.filename" VARCHAR,
+	  "action.utenant.action.download.orderFile.id" VARCHAR,
+	  "action.utenant.action.download.orderFile.filename" VARCHAR,
+	  "action.utenant.action.download.orderLineFile.id" UUID,
+	  "action.utenant.action.download.orderLineFile.filename" VARCHAR,
+	  "action.utenant.action.download.dataHubData.mappingId" VARCHAR,
+	  "action.utenant.action.download.dataHubData.params" JSON,
+	  "action.utenant.action.visit.product" VARCHAR,
+	  "action.utenant.action.visit.library.terms.some" VARCHAR,
+	  "action.utenant.action.visit.library.terms.none" BOOLEAN,
+	  "action.utenant.action.visit.library.sort.some" VARCHAR,
+	  "action.utenant.action.visit.library.sort.none" BOOLEAN,
+	  "action.utenant.action.visit.library.view.chart" VARCHAR[],
+	  "action.utenant.action.visit.library.view.book" BOOLEAN,
+	  "action.utenant.action.visit.library.view.page" BOOLEAN,
+	  "action.utenant.action.visit.item.mappingId" VARCHAR,
+	  "action.utenant.action.visit.item.itemId.some" VARCHAR,
+	  "action.utenant.action.visit.item.itemId.none" BOOLEAN,
+	  "action.utenant.action.visit.override.mappingId" TEXT,
+	  "action.utenant.action.visit.override.itemId.some" VARCHAR,
+	  "action.utenant.action.visit.override.itemId.none" BOOLEAN,
+	  "action.utenant.action.visit.dataHub.mappingId" VARCHAR,
+	  "action.utenant.action.visit.dataHub.scale" VARCHAR,
+	  "action.utenant.action.visit.dataHub.params" JSON,
+	  "action.utenant.action.visit.cart" BOOLEAN,
+	  "action.utenant.action.visit.url" VARCHAR,
+	  "action.utenant.action.visit.myAccount" BOOLEAN,
+	  "action.utenant.action.visit.orderDetails" VARCHAR,
+	  "action.utenant.action.visit.orders" BOOLEAN,
+	  "action.utenant.action.visit.overrides.mappingId" VARCHAR,
+	  "action.utenant.action.visit.overrides.terms.some" VARCHAR,
+	  "action.utenant.action.visit.overrides.terms.none" BOOLEAN,
+	  "action.utenant.action.cartOrderLine.orderLineId" UUID,
+	  "action.utenant.action.cartOrderLine.action" VARCHAR,
+	  "action.utenant.action.placeOrder" VARCHAR,
+	  "action.utenant.action.override.overrideId" UUID,
+	  "action.utenant.action.override.action" VARCHAR,
+	  "action.utenant.action.definition.mappingId" VARCHAR,
+	  "action.utenant.action.definition.definitionId" VARCHAR,
+	  "action.utenant.action.definition.action" VARCHAR
+	);
+	
+	CREATE INDEX "index.session.sessionId" ON "userTrackings" ("session.sessionId");
+	CREATE INDEX "index.session.userId" ON "userTrackings" ("session.userId");
+	CREATE INDEX "index.session.ip" ON "userTrackings" ("session.ip");
+	CREATE INDEX "index.session.date" ON "userTrackings" ("session.date");
+	CREATE INDEX "index.action.anonymous.failedLogin" ON "userTrackings" ("action.anonymous.failedLogin");
+	CREATE INDEX "index.action.anonymous.init.cookieEnabled" ON "userTrackings" ("action.anonymous.init.cookieEnabled");
+	CREATE INDEX "index.action.anonymous.init.language.some" ON "userTrackings" ("action.anonymous.init.language.some");
+	CREATE INDEX "index.action.anonymous.init.language.none" ON "userTrackings" ("action.anonymous.init.language.none");
+	CREATE INDEX "index.action.anonymous.init.timeOffset" ON "userTrackings" ("action.anonymous.init.timeOffset");
+	CREATE INDEX "index.action.anonymous.init.screen.width" ON "userTrackings" ("action.anonymous.init.screen.width");
+	CREATE INDEX "index.action.anonymous.init.screen.height" ON "userTrackings" ("action.anonymous.init.screen.height");
+	CREATE INDEX "index.action.anonymous.init.screen.colorDepth" ON "userTrackings" ("action.anonymous.init.screen.colorDepth");
+	CREATE INDEX "index.action.anonymous.init.screen.orientation" ON "userTrackings" ("action.anonymous.init.screen.orientation");
+	CREATE INDEX "index.action.anonymous.init.screen.devicePixelRatio" ON "userTrackings" ("action.anonymous.init.screen.devicePixelRatio");
+	CREATE INDEX "index.action.anonymous.requestReset.username" ON "userTrackings" ("action.anonymous.requestReset.username");
+	CREATE INDEX "index.action.anonymous.requestReset.success" ON "userTrackings" ("action.anonymous.requestReset.success");
+	CREATE INDEX "index.action.anonymous.emailLink" ON "userTrackings" ("action.anonymous.emailLink");
+	CREATE INDEX "index.action.anonymous.performedReset.username" ON "userTrackings" ("action.anonymous.performedReset.username");
+	CREATE INDEX "index.action.anonymous.performedReset.success" ON "userTrackings" ("action.anonymous.performedReset.success");
+	CREATE INDEX "index.action.user.userId" ON "userTrackings" ("action.user.userId");
+	CREATE INDEX "index.action.user.action.login" ON "userTrackings" ("action.user.action.login");
+	CREATE INDEX "index.action.user.action.firstLogin" ON "userTrackings" ("action.user.action.firstLogin");
+	CREATE INDEX "index.action.user.action.logout" ON "userTrackings" ("action.user.action.logout");
+	CREATE INDEX "index.action.user.action.changeTimezone" ON "userTrackings" ("action.user.action.changeTimezone");
+	CREATE INDEX "index.action.user.action.changePassword" ON "userTrackings" ("action.user.action.changePassword");
+	CREATE INDEX "index.action.user.action.clearProductPreferences" ON "userTrackings" ("action.user.action.clearProductPreferences");
+	CREATE INDEX "index.action.user.action.clearAllPreferences" ON "userTrackings" ("action.user.action.clearAllPreferences");
+	CREATE INDEX "index.action.user.action.changeTenant" ON "userTrackings" ("action.user.action.changeTenant");
+	CREATE INDEX "index.action.utenant.userId" ON "userTrackings" ("action.utenant.userId");
+	CREATE INDEX "index.action.utenant.action.download.productFile.id" ON "userTrackings" ("action.utenant.action.download.productFile.id");
+	CREATE INDEX "index.action.utenant.action.download.productFile.filename" ON "userTrackings" ("action.utenant.action.download.productFile.filename");
+	CREATE INDEX "index.action.utenant.action.download.orderFile.id" ON "userTrackings" ("action.utenant.action.download.orderFile.id");
+	CREATE INDEX "index.action.utenant.action.download.orderFile.filename" ON "userTrackings" ("action.utenant.action.download.orderFile.filename");
+	CREATE INDEX "index.action.utenant.action.download.orderLineFile.id" ON "userTrackings" ("action.utenant.action.download.orderLineFile.id");
+	CREATE INDEX "index.action.utenant.action.download.orderLineFile.filename" ON "userTrackings" ("action.utenant.action.download.orderLineFile.filename");
+	CREATE INDEX "index.action.utenant.action.download.dataHubData.mappingId" ON "userTrackings" ("action.utenant.action.download.dataHubData.mappingId");
+	CREATE INDEX "index.action.utenant.action.visit.product" ON "userTrackings" ("action.utenant.action.visit.product");
+	CREATE INDEX "index.action.utenant.action.visit.library.terms.some" ON "userTrackings" ("action.utenant.action.visit.library.terms.some");
+	CREATE INDEX "index.action.utenant.action.visit.library.terms.none" ON "userTrackings" ("action.utenant.action.visit.library.terms.none");
+	CREATE INDEX "index.action.utenant.action.visit.library.sort.some" ON "userTrackings" ("action.utenant.action.visit.library.sort.some");
+	CREATE INDEX "index.action.utenant.action.visit.library.sort.none" ON "userTrackings" ("action.utenant.action.visit.library.sort.none");
+	CREATE INDEX "index.action.utenant.action.visit.library.view.chart" ON "userTrackings" ("action.utenant.action.visit.library.view.chart");
+	CREATE INDEX "index.action.utenant.action.visit.library.view.book" ON "userTrackings" ("action.utenant.action.visit.library.view.book");
+	CREATE INDEX "index.action.utenant.action.visit.library.view.page" ON "userTrackings" ("action.utenant.action.visit.library.view.page");
+	CREATE INDEX "index.action.utenant.action.visit.item.mappingId" ON "userTrackings" ("action.utenant.action.visit.item.mappingId");
+	CREATE INDEX "index.action.utenant.action.visit.item.itemId.some" ON "userTrackings" ("action.utenant.action.visit.item.itemId.some");
+	CREATE INDEX "index.action.utenant.action.visit.item.itemId.none" ON "userTrackings" ("action.utenant.action.visit.item.itemId.none");
+	CREATE INDEX "index.action.utenant.action.visit.override.mappingId" ON "userTrackings" ("action.utenant.action.visit.override.mappingId");
+	CREATE INDEX "index.action.utenant.action.visit.override.itemId.some" ON "userTrackings" ("action.utenant.action.visit.override.itemId.some");
+	CREATE INDEX "index.action.utenant.action.visit.override.itemId.none" ON "userTrackings" ("action.utenant.action.visit.override.itemId.none");
+	CREATE INDEX "index.action.utenant.action.visit.dataHub.mappingId" ON "userTrackings" ("action.utenant.action.visit.dataHub");
+	CREATE INDEX "index.action.utenant.action.visit.dataHub.scale" ON "userTrackings" ("action.utenant.action.visit.dataHub.scale");
+	CREATE INDEX "index.action.utenant.action.visit.cart" ON "userTrackings" ("action.utenant.action.visit.cart");
+	CREATE INDEX "index.action.utenant.action.visit.url" ON "userTrackings" ("action.utenant.action.visit.url");
+	CREATE INDEX "index.action.utenant.action.visit.myAccount" ON "userTrackings" ("action.utenant.action.visit.myAccount");
+	CREATE INDEX "index.action.utenant.action.visit.orderDetails" ON "userTrackings" ("action.utenant.action.visit.orderDetails");
+	CREATE INDEX "index.action.utenant.action.visit.orders" ON "userTrackings" ("action.utenant.action.visit.orders");
+	CREATE INDEX "index.action.utenant.action.visit.overrides.mappingId" ON "userTrackings" ("action.utenant.action.visit.overrides.mappingId");
+	CREATE INDEX "index.action.utenant.action.visit.overrides.terms.some" ON "userTrackings" ("action.utenant.action.visit.overrides.terms.some");
+	CREATE INDEX "index.action.utenant.action.visit.overrides.terms.none" ON "userTrackings" ("action.utenant.action.visit.overrides.terms.none");
+	CREATE INDEX "index.action.utenant.action.cartOrderLine.orderLineId" ON "userTrackings" ("action.utenant.action.cartOrderLine.orderLineId");
+	CREATE INDEX "index.action.utenant.action.cartOrderLine.action" ON "userTrackings" ("action.utenant.action.cartOrderLine.action");
+	CREATE INDEX "index.action.utenant.action.placeOrder" ON "userTrackings" ("action.utenant.action.placeOrder");
+	CREATE INDEX "index.action.utenant.action.override.overrideId" ON "userTrackings" ("action.utenant.action.override.overrideId");
+	CREATE INDEX "index.action.utenant.action.override.action" ON "userTrackings" ("action.utenant.action.override.action");
+	CREATE INDEX "index.action.utenant.action.definition.mappingId" ON "userTrackings" ("action.utenant.action.definition.mappingId");
+	CREATE INDEX "index.action.utenant.action.definition.definitionId" ON "userTrackings" ("action.utenant.action.definition");
+	CREATE INDEX "index.action.utenant.action.definition.action" ON "userTrackings" ("action.utenant.action.definition.action");
+ERROR:  column "action.utenant.action.definition" does not exist
+STATEMENT:  CREATE TABLE "userTrackings" (
+	  "session.sessionId" UUID,
+	  "session.userId" UUID,
+	  "session.ip" VARCHAR(15),
+	  "session.date" TIMESTAMP,
+	  "action.anonymous.failedLogin" VARCHAR,
+	  "action.anonymous.init.cookieEnabled" BOOLEAN,
+	  "action.anonymous.init.language.some" VARCHAR,
+	  "action.anonymous.init.language.none" BOOLEAN,
+	  "action.anonymous.init.timeOffset" VARCHAR,
+	  "action.anonymous.init.screen.width" INTEGER,
+	  "action.anonymous.init.screen.height" INTEGER,
+	  "action.anonymous.init.screen.colorDepth" INTEGER,
+	  "action.anonymous.init.screen.orientation" VARCHAR,
+	  "action.anonymous.init.screen.devicePixelRatio" DOUBLE PRECISION,
+	  "action.anonymous.requestReset.username" VARCHAR,
+	  "action.anonymous.requestReset.success" BOOLEAN,
+	  "action.anonymous.emailLink" TEXT,
+	  "action.anonymous.performedReset.username" VARCHAR,
+	  "action.anonymous.performedReset.success" BOOLEAN,
+	  "action.user.userId" UUID,
+	  "action.user.action.login" BOOLEAN,
+	  "action.user.action.firstLogin" BOOLEAN,
+	  "action.user.action.logout" BOOLEAN,
+	  "action.user.action.changeTimezone" VARCHAR,
+	  "action.user.action.changePassword" BOOLEAN,
+	  "action.user.action.clearProductPreferences" BOOLEAN,
+	  "action.user.action.clearAllPreferences" BOOLEAN,
+	  "action.user.action.changeTenant" UUID,
+	  "action.utenant.userId" UUID,
+	  "action.utenant.action.download.productFile.id" UUID,
+	  "action.utenant.action.download.productFile.filename" VARCHAR,
+	  "action.utenant.action.download.orderFile.id" VARCHAR,
+	  "action.utenant.action.download.orderFile.filename" VARCHAR,
+	  "action.utenant.action.download.orderLineFile.id" UUID,
+	  "action.utenant.action.download.orderLineFile.filename" VARCHAR,
+	  "action.utenant.action.download.dataHubData.mappingId" VARCHAR,
+	  "action.utenant.action.download.dataHubData.params" JSON,
+	  "action.utenant.action.visit.product" VARCHAR,
+	  "action.utenant.action.visit.library.terms.some" VARCHAR,
+	  "action.utenant.action.visit.library.terms.none" BOOLEAN,
+	  "action.utenant.action.visit.library.sort.some" VARCHAR,
+	  "action.utenant.action.visit.library.sort.none" BOOLEAN,
+	  "action.utenant.action.visit.library.view.chart" VARCHAR[],
+	  "action.utenant.action.visit.library.view.book" BOOLEAN,
+	  "action.utenant.action.visit.library.view.page" BOOLEAN,
+	  "action.utenant.action.visit.item.mappingId" VARCHAR,
+	  "action.utenant.action.visit.item.itemId.some" VARCHAR,
+	  "action.utenant.action.visit.item.itemId.none" BOOLEAN,
+	  "action.utenant.action.visit.override.mappingId" TEXT,
+	  "action.utenant.action.visit.override.itemId.some" VARCHAR,
+	  "action.utenant.action.visit.override.itemId.none" BOOLEAN,
+	  "action.utenant.action.visit.dataHub.mappingId" VARCHAR,
+	  "action.utenant.action.visit.dataHub.scale" VARCHAR,
+	  "action.utenant.action.visit.dataHub.params" JSON,
+	  "action.utenant.action.visit.cart" BOOLEAN,
+	  "action.utenant.action.visit.url" VARCHAR,
+	  "action.utenant.action.visit.myAccount" BOOLEAN,
+	  "action.utenant.action.visit.orderDetails" VARCHAR,
+	  "action.utenant.action.visit.orders" BOOLEAN,
+	  "action.utenant.action.visit.overrides.mappingId" VARCHAR,
+	  "action.utenant.action.visit.overrides.terms.some" VARCHAR,
+	  "action.utenant.action.visit.overrides.terms.none" BOOLEAN,
+	  "action.utenant.action.cartOrderLine.orderLineId" UUID,
+	  "action.utenant.action.cartOrderLine.action" VARCHAR,
+	  "action.utenant.action.placeOrder" VARCHAR,
+	  "action.utenant.action.override.overrideId" UUID,
+	  "action.utenant.action.override.action" VARCHAR,
+	  "action.utenant.action.definition.mappingId" VARCHAR,
+	  "action.utenant.action.definition.definitionId" VARCHAR,
+	  "action.utenant.action.definition.action" VARCHAR
+	);
+	
+	CREATE INDEX "index.session.sessionId" ON "userTrackings" ("session.sessionId");
+	CREATE INDEX "index.session.userId" ON "userTrackings" ("session.userId");
+	CREATE INDEX "index.session.ip" ON "userTrackings" ("session.ip");
+	CREATE INDEX "index.session.date" ON "userTrackings" ("session.date");
+	CREATE INDEX "index.action.anonymous.failedLogin" ON "userTrackings" ("action.anonymous.failedLogin");
+	CREATE INDEX "index.action.anonymous.init.cookieEnabled" ON "userTrackings" ("action.anonymous.init.cookieEnabled");
+	CREATE INDEX "index.action.anonymous.init.language.some" ON "userTrackings" ("action.anonymous.init.language.some");
+	CREATE INDEX "index.action.anonymous.init.language.none" ON "userTrackings" ("action.anonymous.init.language.none");
+	CREATE INDEX "index.action.anonymous.init.timeOffset" ON "userTrackings" ("action.anonymous.init.timeOffset");
+	CREATE INDEX "index.action.anonymous.init.screen.width" ON "userTrackings" ("action.anonymous.init.screen.width");
+	CREATE INDEX "index.action.anonymous.init.screen.height" ON "userTrackings" ("action.anonymous.init.screen.height");
+	CREATE INDEX "index.action.anonymous.init.screen.colorDepth" ON "userTrackings" ("action.anonymous.init.screen.colorDepth");
+	CREATE INDEX "index.action.anonymous.init.screen.orientation" ON "userTrackings" ("action.anonymous.init.screen.orientation");
+	CREATE INDEX "index.action.anonymous.init.screen.devicePixelRatio" ON "userTrackings" ("action.anonymous.init.screen.devicePixelRatio");
+	CREATE INDEX "index.action.anonymous.requestReset.username" ON "userTrackings" ("action.anonymous.requestReset.username");
+	CREATE INDEX "index.action.anonymous.requestReset.success" ON "userTrackings" ("action.anonymous.requestReset.success");
+	CREATE INDEX "index.action.anonymous.emailLink" ON "userTrackings" ("action.anonymous.emailLink");
+	CREATE INDEX "index.action.anonymous.performedReset.username" ON "userTrackings" ("action.anonymous.performedReset.username");
+	CREATE INDEX "index.action.anonymous.performedReset.success" ON "userTrackings" ("action.anonymous.performedReset.success");
+	CREATE INDEX "index.action.user.userId" ON "userTrackings" ("action.user.userId");
+	CREATE INDEX "index.action.user.action.login" ON "userTrackings" ("action.user.action.login");
+	CREATE INDEX "index.action.user.action.firstLogin" ON "userTrackings" ("action.user.action.firstLogin");
+	CREATE INDEX "index.action.user.action.logout" ON "userTrackings" ("action.user.action.logout");
+	CREATE INDEX "index.action.user.action.changeTimezone" ON "userTrackings" ("action.user.action.changeTimezone");
+	CREATE INDEX "index.action.user.action.changePassword" ON "userTrackings" ("action.user.action.changePassword");
+	CREATE INDEX "index.action.user.action.clearProductPreferences" ON "userTrackings" ("action.user.action.clearProductPreferences");
+	CREATE INDEX "index.action.user.action.clearAllPreferences" ON "userTrackings" ("action.user.action.clearAllPreferences");
+	CREATE INDEX "index.action.user.action.changeTenant" ON "userTrackings" ("action.user.action.changeTenant");
+	CREATE INDEX "index.action.utenant.userId" ON "userTrackings" ("action.utenant.userId");
+	CREATE INDEX "index.action.utenant.action.download.productFile.id" ON "userTrackings" ("action.utenant.action.download.productFile.id");
+	CREATE INDEX "index.action.utenant.action.download.productFile.filename" ON "userTrackings" ("action.utenant.action.download.productFile.filename");
+	CREATE INDEX "index.action.utenant.action.download.orderFile.id" ON "userTrackings" ("action.utenant.action.download.orderFile.id");
+	CREATE INDEX "index.action.utenant.action.download.orderFile.filename" ON "userTrackings" ("action.utenant.action.download.orderFile.filename");
+	CREATE INDEX "index.action.utenant.action.download.orderLineFile.id" ON "userTrackings" ("action.utenant.action.download.orderLineFile.id");
+	CREATE INDEX "index.action.utenant.action.download.orderLineFile.filename" ON "userTrackings" ("action.utenant.action.download.orderLineFile.filename");
+	CREATE INDEX "index.action.utenant.action.download.dataHubData.mappingId" ON "userTrackings" ("action.utenant.action.download.dataHubData.mappingId");
+	CREATE INDEX "index.action.utenant.action.visit.product" ON "userTrackings" ("action.utenant.action.visit.product");
+	CREATE INDEX "index.action.utenant.action.visit.library.terms.some" ON "userTrackings" ("action.utenant.action.visit.library.terms.some");
+	CREATE INDEX "index.action.utenant.action.visit.library.terms.none" ON "userTrackings" ("action.utenant.action.visit.library.terms.none");
+	CREATE INDEX "index.action.utenant.action.visit.library.sort.some" ON "userTrackings" ("action.utenant.action.visit.library.sort.some");
+	CREATE INDEX "index.action.utenant.action.visit.library.sort.none" ON "userTrackings" ("action.utenant.action.visit.library.sort.none");
+	CREATE INDEX "index.action.utenant.action.visit.library.view.chart" ON "userTrackings" ("action.utenant.action.visit.library.view.chart");
+	CREATE INDEX "index.action.utenant.action.visit.library.view.book" ON "userTrackings" ("action.utenant.action.visit.library.view.book");
+	CREATE INDEX "index.action.utenant.action.visit.library.view.page" ON "userTrackings" ("action.utenant.action.visit.library.view.page");
+	CREATE INDEX "index.action.utenant.action.visit.item.mappingId" ON "userTrackings" ("action.utenant.action.visit.item.mappingId");
+	CREATE INDEX "index.action.utenant.action.visit.item.itemId.some" ON "userTrackings" ("action.utenant.action.visit.item.itemId.some");
+	CREATE INDEX "index.action.utenant.action.visit.item.itemId.none" ON "userTrackings" ("action.utenant.action.visit.item.itemId.none");
+	CREATE INDEX "index.action.utenant.action.visit.override.mappingId" ON "userTrackings" ("action.utenant.action.visit.override.mappingId");
+	CREATE INDEX "index.action.utenant.action.visit.override.itemId.some" ON "userTrackings" ("action.utenant.action.visit.override.itemId.some");
+	CREATE INDEX "index.action.utenant.action.visit.override.itemId.none" ON "userTrackings" ("action.utenant.action.visit.override.itemId.none");
+	CREATE INDEX "index.action.utenant.action.visit.dataHub.mappingId" ON "userTrackings" ("action.utenant.action.visit.dataHub.mappingId");
+	CREATE INDEX "index.action.utenant.action.visit.dataHub.scale" ON "userTrackings" ("action.utenant.action.visit.dataHub.scale");
+	CREATE INDEX "index.action.utenant.action.visit.cart" ON "userTrackings" ("action.utenant.action.visit.cart");
+	CREATE INDEX "index.action.utenant.action.visit.url" ON "userTrackings" ("action.utenant.action.visit.url");
+	CREATE INDEX "index.action.utenant.action.visit.myAccount" ON "userTrackings" ("action.utenant.action.visit.myAccount");
+	CREATE INDEX "index.action.utenant.action.visit.orderDetails" ON "userTrackings" ("action.utenant.action.visit.orderDetails");
+	CREATE INDEX "index.action.utenant.action.visit.orders" ON "userTrackings" ("action.utenant.action.visit.orders");
+	CREATE INDEX "index.action.utenant.action.visit.overrides.mappingId" ON "userTrackings" ("action.utenant.action.visit.overrides.mappingId");
+	CREATE INDEX "index.action.utenant.action.visit.overrides.terms.some" ON "userTrackings" ("action.utenant.action.visit.overrides.terms.some");
+	CREATE INDEX "index.action.utenant.action.visit.overrides.terms.none" ON "userTrackings" ("action.utenant.action.visit.overrides.terms.none");
+	CREATE INDEX "index.action.utenant.action.cartOrderLine.orderLineId" ON "userTrackings" ("action.utenant.action.cartOrderLine.orderLineId");
+	CREATE INDEX "index.action.utenant.action.cartOrderLine.action" ON "userTrackings" ("action.utenant.action.cartOrderLine.action");
+	CREATE INDEX "index.action.utenant.action.placeOrder" ON "userTrackings" ("action.utenant.action.placeOrder");
+	CREATE INDEX "index.action.utenant.action.override.overrideId" ON "userTrackings" ("action.utenant.action.override.overrideId");
+	CREATE INDEX "index.action.utenant.action.override.action" ON "userTrackings" ("action.utenant.action.override.action");
+	CREATE INDEX "index.action.utenant.action.definition.mappingId" ON "userTrackings" ("action.utenant.action.definition.mappingId");
+	CREATE INDEX "index.action.utenant.action.definition.definitionId" ON "userTrackings" ("action.utenant.action.definition");
+	CREATE INDEX "index.action.utenant.action.definition.action" ON "userTrackings" ("action.utenant.action.definition.action");
+LOG:  autovacuum launcher shutting down
+LOG:  received smart shutdown request
+LOG:  shutting down
+LOG:  database system is shut down

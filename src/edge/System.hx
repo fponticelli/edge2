@@ -1,6 +1,6 @@
 package edge;
 
-interface System<Component, Element> {
+interface System<Payload, Component, Element> {
   var engine: Engine<Component, Element>;
-  function before(timeDelta: TimeSpan): Void;
+  function update(pl: Payload): Void;
 }

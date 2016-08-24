@@ -7,10 +7,6 @@
 
 edge.Engine
 edge.Entity
-edge.EntitySystem
-edge.EntityView
-edge.ElementSystem
-edge.ElementView
 edge.Phase
 edge.System
 edge.TimeSpan

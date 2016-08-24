@@ -685,28 +685,6 @@ Type["typeof"] = function(v) {
 		return ValueType.TUnknown;
 	}
 };
-var edge_System = function() { };
-edge_System.__name__ = ["edge","System"];
-edge_System.prototype = {
-	engine: null
-	,before: null
-	,__class__: edge_System
-};
-var edge_ElementSystem = function() { };
-edge_ElementSystem.__name__ = ["edge","ElementSystem"];
-edge_ElementSystem.__interfaces__ = [edge_System];
-edge_ElementSystem.prototype = {
-	update: null
-	,__class__: edge_ElementSystem
-};
-var edge_ElementView = function() { };
-edge_ElementView.__name__ = ["edge","ElementView"];
-edge_ElementView.prototype = {
-	onAddedElement: null
-	,onRemovedElement: null
-	,updateElementSystem: null
-	,__class__: edge_ElementView
-};
 var edge_Engine = function(createElementSet) {
 	this._entities = thx__$Set_Set_$Impl_$.createObject();
 	this._elements = createElementSet();
@@ -871,39 +849,20 @@ edge_EntityChange.Updated = ["Updated",0];
 edge_EntityChange.Updated.__enum__ = edge_EntityChange;
 edge_EntityChange.Destroyed = ["Destroyed",1];
 edge_EntityChange.Destroyed.__enum__ = edge_EntityChange;
-var edge_EntitySystem = function() { };
-edge_EntitySystem.__name__ = ["edge","EntitySystem"];
-edge_EntitySystem.__interfaces__ = [edge_System];
-edge_EntitySystem.prototype = {
-	each: null
-	,after: null
-	,__class__: edge_EntitySystem
-};
-var edge_EntityView = function() { };
-edge_EntityView.__name__ = ["edge","EntityView"];
-edge_EntityView.prototype = {
-	onAddedEntity: null
-	,onRemovedEntity: null
-	,onUpdatedEntity: null
-	,updateEntitySystem: null
-	,__class__: edge_EntityView
-};
 var edge_Phase = function() { };
 edge_Phase.__name__ = ["edge","Phase"];
 edge_Phase.prototype = {
-	addComponentSystem: function(view,system) {
-		throw new thx_error_NotImplemented({ fileName : "Phase.hx", lineNumber : 7, className : "edge.Phase", methodName : "addComponentSystem"});
-	}
-	,addElementSystem: function(view,system) {
-		throw new thx_error_NotImplemented({ fileName : "Phase.hx", lineNumber : 10, className : "edge.Phase", methodName : "addElementSystem"});
-	}
-	,addSystem: function(view,system) {
-		throw new thx_error_NotImplemented({ fileName : "Phase.hx", lineNumber : 13, className : "edge.Phase", methodName : "addSystem"});
-	}
-	,removeSystem: function(system) {
-		throw new thx_error_NotImplemented({ fileName : "Phase.hx", lineNumber : 16, className : "edge.Phase", methodName : "removeSystem"});
+	addView: function(view) {
+		throw new thx_error_NotImplemented({ fileName : "Phase.hx", lineNumber : 7, className : "edge.Phase", methodName : "addView"});
 	}
 	,__class__: edge_Phase
+};
+var edge_System = function() { };
+edge_System.__name__ = ["edge","System"];
+edge_System.prototype = {
+	engine: null
+	,update: null
+	,__class__: edge_System
 };
 var edge__$TimeSpan_TimeSpan_$Impl_$ = {};
 edge__$TimeSpan_TimeSpan_$Impl_$.__name__ = ["edge","_TimeSpan","TimeSpan_Impl_"];
@@ -924,7 +883,23 @@ edge__$TimeSpan_TimeSpan_$Impl_$.get_seconds = function(this1) {
 };
 var edge_View = function() { };
 edge_View.__name__ = ["edge","View"];
-edge_View.__interfaces__ = [edge_ElementView,edge_EntityView];
+edge_View.prototype = {
+	onAddedElement: null
+	,onRemovedElement: null
+	,onAddedEntity: null
+	,onRemovedEntity: null
+	,onUpdatedEntity: null
+	,updateSystem: null
+	,__class__: edge_View
+};
+var edge_ViewSystem = function() { };
+edge_ViewSystem.__name__ = ["edge","ViewSystem"];
+edge_ViewSystem.prototype = {
+	'with': function(system) {
+		return this;
+	}
+	,__class__: edge_ViewSystem
+};
 var haxe_StackItem = { __ename__ : ["haxe","StackItem"], __constructs__ : ["CFunction","Module","FilePos","Method","LocalFunction"] };
 haxe_StackItem.CFunction = ["CFunction",0];
 haxe_StackItem.CFunction.__enum__ = haxe_StackItem;

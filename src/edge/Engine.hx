@@ -24,6 +24,7 @@ class Engine<Component, Element> {
   var _entities: Set<Entity<Component, Element>>;
   public function createEntity(components: Iterable<Component>): Entity<Component, Element> {
     var entity = new Entity(entityChanged);
+    // TODO
     _entities.add(entity);
     return entity;
   }
@@ -62,6 +63,7 @@ class Engine<Component, Element> {
     }
     return removed;
   }
+
   public function clearEntities(): Engine<Component, Element> {
     removeEntities(function(_) return true);
     return this;
@@ -72,25 +74,37 @@ class Engine<Component, Element> {
 
   // Elements
   var _elements: Set<Element>;
-  public function addElement(Element: Element): Void {
-    return throw new thx.error.NotImplemented();
+  public function addElement(element: Element): Void {
+    // TODO
+    _elements.add(element);
+  }
+
+  function elementRemoved(element: Element) {
+    _elements.remove(element);
+    // TODO
   }
   public function removeElement(predicate: Element -> Bool): Bool {
-    return throw new thx.error.NotImplemented();
+    for(element in _elements) {
+      if(predicate(element)) {
+        elementRemoved(element);
+        return true;
+      }
+    }
+    return false;
   }
   public function removeElements(predicate: Element -> Bool): Bool {
-    return throw new thx.error.NotImplemented();
+    var removed = false;
+    for(element in _elements) {
+      if(predicate(element)) {
+        elementRemoved(element);
+        removed = true;
+      }
+    }
+    return removed;
   }
-  public function clearElements(): Void {
-    return throw new thx.error.NotImplemented();
-  }
-
-  public function allElements(predicate: Element -> Bool): Bool {
-    return throw new thx.error.NotImplemented();
-  }
-
-  public function anyElement(predicate: Element -> Bool): Bool {
-    return throw new thx.error.NotImplemented();
+  public function clearElements(): Engine<Component, Element> {
+    removeElements(function(_) return true);
+    return this;
   }
 
   public function elements(): Iterator<Element>

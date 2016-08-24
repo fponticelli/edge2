@@ -16,17 +16,11 @@ class TestElement {
     engine.addElement(Player({name: "Edgy1"}));
     engine.addElement(Player({name: "Edgy2"}));
     engine.addElement(Player({name: "Edgy3"}));
-    Assert.isTrue(engine.allElements(function(el) return switch el {
-      case _: true;
-    }));
-    Assert.isFalse(engine.allElements(function(el) return switch el {
-      case _: false;
-    }));
     Assert.isTrue(engine.removeElement(function(el) return switch el {
       case Player({ name: "Edgy1" }): true;
       case _: false;
     }));
-    Assert.isTrue(engine.anyElement(function(el) return switch el {
+    Assert.isTrue(engine.elements().any(function(el) return switch el {
       case Player({ name: "Edgy2" }): true;
       case _: false;
     }));
@@ -34,7 +28,7 @@ class TestElement {
       case Player(_): true;
       case _: false;
     }));
-    Assert.isFalse(engine.anyElement(function(el) return switch el {
+    Assert.isFalse(engine.elements().any(function(el) return switch el {
       case Player({ name: "Edgy2" }): true;
       case _: false;
     }));

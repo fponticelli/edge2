@@ -523,15 +523,9 @@ TestElement.prototype = {
 		engine.addElement(SampleElement.Player({ name : "Edgy1"}));
 		engine.addElement(SampleElement.Player({ name : "Edgy2"}));
 		engine.addElement(SampleElement.Player({ name : "Edgy3"}));
-		utest_Assert.isTrue(engine.allElements(function(el) {
-			return true;
-		}),null,{ fileName : "TestElement.hx", lineNumber : 19, className : "TestElement", methodName : "testBasics"});
-		utest_Assert.isFalse(engine.allElements(function(el1) {
-			return false;
-		}),null,{ fileName : "TestElement.hx", lineNumber : 22, className : "TestElement", methodName : "testBasics"});
-		utest_Assert.isTrue(engine.removeElement(function(el2) {
-			if(el2[1] == 1) {
-				if(el2[2].name == "Edgy1") {
+		utest_Assert.isTrue(engine.removeElement(function(el) {
+			if(el[1] == 1) {
+				if(el[2].name == "Edgy1") {
 					return true;
 				} else {
 					return false;
@@ -539,8 +533,26 @@ TestElement.prototype = {
 			} else {
 				return false;
 			}
-		}),null,{ fileName : "TestElement.hx", lineNumber : 25, className : "TestElement", methodName : "testBasics"});
-		utest_Assert.isTrue(engine.anyElement(function(el3) {
+		}),null,{ fileName : "TestElement.hx", lineNumber : 19, className : "TestElement", methodName : "testBasics"});
+		utest_Assert.isTrue(thx_Iterators.any(engine.elements(),function(el1) {
+			if(el1[1] == 1) {
+				if(el1[2].name == "Edgy2") {
+					return true;
+				} else {
+					return false;
+				}
+			} else {
+				return false;
+			}
+		}),null,{ fileName : "TestElement.hx", lineNumber : 23, className : "TestElement", methodName : "testBasics"});
+		utest_Assert.isTrue(engine.removeElements(function(el2) {
+			if(el2[1] == 1) {
+				return true;
+			} else {
+				return false;
+			}
+		}),null,{ fileName : "TestElement.hx", lineNumber : 27, className : "TestElement", methodName : "testBasics"});
+		utest_Assert.isFalse(thx_Iterators.any(engine.elements(),function(el3) {
 			if(el3[1] == 1) {
 				if(el3[2].name == "Edgy2") {
 					return true;
@@ -550,25 +562,7 @@ TestElement.prototype = {
 			} else {
 				return false;
 			}
-		}),null,{ fileName : "TestElement.hx", lineNumber : 29, className : "TestElement", methodName : "testBasics"});
-		utest_Assert.isTrue(engine.removeElements(function(el4) {
-			if(el4[1] == 1) {
-				return true;
-			} else {
-				return false;
-			}
-		}),null,{ fileName : "TestElement.hx", lineNumber : 33, className : "TestElement", methodName : "testBasics"});
-		utest_Assert.isFalse(engine.anyElement(function(el5) {
-			if(el5[1] == 1) {
-				if(el5[2].name == "Edgy2") {
-					return true;
-				} else {
-					return false;
-				}
-			} else {
-				return false;
-			}
-		}),null,{ fileName : "TestElement.hx", lineNumber : 37, className : "TestElement", methodName : "testBasics"});
+		}),null,{ fileName : "TestElement.hx", lineNumber : 31, className : "TestElement", methodName : "testBasics"});
 	}
 	,__class__: TestElement
 };
@@ -821,23 +815,40 @@ edge_Engine.prototype = {
 		return $iterator(thx__$Set_Set_$Impl_$)(this._entities);
 	}
 	,_elements: null
-	,addElement: function(Element) {
-		throw new thx_error_NotImplemented({ fileName : "Engine.hx", lineNumber : 76, className : "edge.Engine", methodName : "addElement"});
+	,addElement: function(element) {
+		thx__$Set_Set_$Impl_$.add(this._elements,element);
+	}
+	,elementRemoved: function(element) {
+		this._elements.remove(element);
 	}
 	,removeElement: function(predicate) {
-		throw new thx_error_NotImplemented({ fileName : "Engine.hx", lineNumber : 79, className : "edge.Engine", methodName : "removeElement"});
+		var tmp = $iterator(thx__$Set_Set_$Impl_$)(this._elements);
+		while(tmp.hasNext()) {
+			var element = tmp.next();
+			if(predicate(element)) {
+				this.elementRemoved(element);
+				return true;
+			}
+		}
+		return false;
 	}
 	,removeElements: function(predicate) {
-		throw new thx_error_NotImplemented({ fileName : "Engine.hx", lineNumber : 82, className : "edge.Engine", methodName : "removeElements"});
+		var removed = false;
+		var tmp = $iterator(thx__$Set_Set_$Impl_$)(this._elements);
+		while(tmp.hasNext()) {
+			var element = tmp.next();
+			if(predicate(element)) {
+				this.elementRemoved(element);
+				removed = true;
+			}
+		}
+		return removed;
 	}
 	,clearElements: function() {
-		throw new thx_error_NotImplemented({ fileName : "Engine.hx", lineNumber : 85, className : "edge.Engine", methodName : "clearElements"});
-	}
-	,allElements: function(predicate) {
-		throw new thx_error_NotImplemented({ fileName : "Engine.hx", lineNumber : 89, className : "edge.Engine", methodName : "allElements"});
-	}
-	,anyElement: function(predicate) {
-		throw new thx_error_NotImplemented({ fileName : "Engine.hx", lineNumber : 93, className : "edge.Engine", methodName : "anyElement"});
+		this.removeElements(function(_) {
+			return true;
+		});
+		return this;
 	}
 	,elements: function() {
 		return $iterator(thx__$Set_Set_$Impl_$)(this._elements);
@@ -908,12 +919,6 @@ edge_Entity.prototype = {
 		}
 		this.destroyed = true;
 		this.entityChange(this,edge_EntityChange.Destroyed);
-	}
-	,all: function(predicate) {
-		return thx_Arrays.all(this.list,predicate);
-	}
-	,any: function(predicate) {
-		return thx_Arrays.any(this.list,predicate);
 	}
 	,components: function() {
 		return HxOverrides.iter(this.list);

@@ -1,7 +1,5 @@
 package edge;
 
-using thx.Arrays;
-
 class Entity<Component, Element> {
   public var destroyed(default, null): Bool;
   var list: Array<Component>;
@@ -57,11 +55,6 @@ class Entity<Component, Element> {
     destroyed = true;
     entityChange(this, Destroyed);
   }
-  public function all(predicate: Component -> Bool): Bool
-    return list.all(predicate);
-
-  public function any(predicate: Component -> Bool): Bool
-    return list.any(predicate);
 
   public function components(): Iterator<Component>
     return list.iterator();

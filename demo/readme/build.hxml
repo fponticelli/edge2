@@ -1,5 +1,6 @@
 -lib minicanvas
 -lib thx.core
+-lib thx.color
 -cp src
 -cp ../../src
 -main Game

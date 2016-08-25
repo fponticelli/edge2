@@ -8,9 +8,9 @@ class RenderDots {
   public function new(mini : MiniCanvas)
     this.mini = mini;
 
-  public function update(list: ReadonlyArray<ItemEntity<Point, Components, Unit>>) {
+  public function update(list: ReadonlyArray<ItemEntity<{ position: Point, color: thx.color.Hsl }, Components, Unit>>) {
     mini.clear();
     for(item in list)
-      mini.dot(item.data.x, item.data.y, 2, 0x000000FF);
+      mini.dot(item.data.position.x, item.data.position.y, 2, item.data.color);
   }
 }

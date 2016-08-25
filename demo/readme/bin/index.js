@@ -6,9 +6,10 @@ function $extend(from, fields) {
 	if( fields.toString !== Object.prototype.toString ) proto.toString = fields.toString;
 	return proto;
 }
-var Components = { __ename__ : ["Components"], __constructs__ : ["Position","Velocity"] };
+var Components = { __ename__ : ["Components"], __constructs__ : ["Position","Velocity","Color"] };
 Components.Position = function(coords) { var $x = ["Position",0,coords]; $x.__enum__ = Components; return $x; };
 Components.Velocity = function(vector) { var $x = ["Velocity",1,vector]; $x.__enum__ = Components; return $x; };
+Components.Color = function(hsl) { var $x = ["Color",2,hsl]; $x.__enum__ = Components; return $x; };
 var DateTools = function() { };
 DateTools.__name__ = ["DateTools"];
 DateTools.getMonthDays = function(d) {
@@ -124,6 +125,7 @@ Game.main = function() {
 			case 1:
 				out_velocity = haxe_ds_Option.Some(comp[2]);
 				break;
+			default:
 			}
 		}
 		if(out_position[1] == 0) {
@@ -135,23 +137,34 @@ Game.main = function() {
 		} else {
 			return haxe_ds_Option.None;
 		}
-	}))["with"](Game.moveSystem);
+	}))["with"](Move.system);
 	phase.addView(edge_View.components(function(comps1) {
+		var out_position1;
+		var out_color;
+		out_position1 = haxe_ds_Option.None;
+		out_color = [0,0,0];
 		while(comps1.hasNext()) {
 			var comp1 = comps1.next();
-			if(comp1[1] == 0) {
-				return haxe_ds_Option.Some(comp1[2]);
+			switch(comp1[1]) {
+			case 0:
+				out_position1 = haxe_ds_Option.Some(comp1[2]);
+				break;
+			case 2:
+				out_color = comp1[2];
+				break;
+			default:
 			}
 		}
-		return haxe_ds_Option.None;
+		if(out_position1[1] == 0) {
+			return haxe_ds_Option.Some({ position : out_position1[2], color : out_color});
+		} else {
+			return haxe_ds_Option.None;
+		}
 	}))["with"](($_=new RenderDots(mini),$bind($_,$_.update)));
-	phase.addView(edge_View.components(function(comps2) {
-		return haxe_ds_Option.None;
-	}))["with"](Game.moveSystem);
 	var _g = 0;
 	while(_g < 300) {
 		++_g;
-		engine.createEntity([Components.Position(new Point(Game.size(Game.width),Game.size(Game.height))),Components.Velocity(new Point(Game.center(2),Game.center(2)))]);
+		engine.createEntity([Components.Position(new Point(Game.size(Game.width),Game.size(Game.height))),Components.Velocity(new Point(Game.center(5),Game.center(5))),Components.Color([Math.random() * 360,0.8,0.8])]);
 	}
 	var _g1 = 0;
 	while(_g1 < 30) {
@@ -165,26 +178,6 @@ Game.size = function(s) {
 };
 Game.center = function(s) {
 	return s * Math.random() - s / 2.0;
-};
-Game.moveSystem = function(list) {
-	var tmp = HxOverrides.iter(list);
-	while(tmp.hasNext()) {
-		var item = tmp.next();
-		var pos = item.data.position;
-		var vel = item.data.velocity;
-		var dx = pos.x + vel.x;
-		var dy = pos.y + vel.y;
-		if(dx <= 0 && vel.x < 0 || dx >= Game.width && vel.x > 0) {
-			vel.x = -vel.x;
-		} else {
-			pos.x = dx;
-		}
-		if(dy <= 0 && vel.y < 0 || dy >= Game.height && vel.y > 0) {
-			vel.y = -vel.y;
-		} else {
-			pos.y = dy;
-		}
-	}
 };
 Game.createLoop = function(update) {
 	var loop = null;
@@ -271,6 +264,28 @@ Lambda.has = function(it,elt) {
 	return false;
 };
 Math.__name__ = ["Math"];
+var Move = function() { };
+Move.__name__ = ["Move"];
+Move.system = function(list) {
+	var tmp = HxOverrides.iter(list);
+	while(tmp.hasNext()) {
+		var item = tmp.next();
+		var pos = item.data.position;
+		var vel = item.data.velocity;
+		var dx = pos.x + vel.x;
+		var dy = pos.y + vel.y;
+		if(dx <= 0 && vel.x < 0 || dx >= Game.width && vel.x > 0) {
+			vel.x = -vel.x;
+		} else {
+			pos.x = dx;
+		}
+		if(dy <= 0 && vel.y < 0 || dy >= Game.height && vel.y > 0) {
+			vel.y = -vel.y;
+		} else {
+			pos.y = dy;
+		}
+	}
+};
 var Point = function(x,y) {
 	this.x = x;
 	this.y = y;
@@ -372,7 +387,7 @@ RenderDots.prototype = {
 		var tmp = HxOverrides.iter(list);
 		while(tmp.hasNext()) {
 			var item = tmp.next();
-			this.mini.dot(item.data.x,item.data.y,2,thx_color__$Rgbxa_Rgbxa_$Impl_$.fromInt(255));
+			this.mini.dot(item.data.position.x,item.data.position.y,2,thx_color__$Hsl_Hsl_$Impl_$.toRgbxa(item.data.color));
 		}
 	}
 	,__class__: RenderDots
@@ -13055,8 +13070,8 @@ if(typeof(scope.performance.now) == "undefined") {
 	scope.performance.now = now;
 }
 DateTools.DAYS_OF_MONTH = [31,28,31,30,31,30,31,31,30,31,30,31];
-Game.width = 200;
-Game.height = 200;
+Game.width = 400;
+Game.height = 400;
 haxe__$Int32_Int32_$Impl_$._mul = Math.imul != null?Math.imul:function(a,b) {
 	return a * (b & 65535) + (a * (b >>> 16) << 16 | 0) | 0;
 };

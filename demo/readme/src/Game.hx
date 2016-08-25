@@ -2,12 +2,13 @@ import edge.*;
 import edge.View;
 import thx.Unit;
 using thx.ReadonlyArray;
+import thx.color.Hsl;
 import Components;
 import haxe.ds.Option;
 
 class Game {
-  public static var width(default, null) = 200;
-  public static var height(default, null) = 200;
+  public static var width(default, null) = 400;
+  public static var height(default, null) = 400;
 
   public static function main() {
     var mini = MiniCanvas.create(width, height).display("basic example"),
@@ -19,32 +20,34 @@ class Game {
       for(comp in comps) switch comp {
         case Position(point): out.position = Some(point);
         case Velocity(point): out.velocity = Some(point);
+        case _:
       }
       return switch out {
         case { position: Some(pos), velocity: Some(vel) }: Some({ position: pos, velocity: vel });
         case _: None;
       };
     }))
-      .with(moveSystem);
+      .with(Move.system);
 
     phase.addView(View.components(function(comps) {
+      var out = { position: None, color: Hsl.create(0, 0, 0) };
       for(comp in comps) switch comp {
-        case Position(point): return Some(point);
+        case Position(point): out.position = Some(point);
+        case Color(color): out.color = color;
         case _:
       }
-      return None;
+      return switch out {
+        case { position: Some(pos) }: Some({ position: pos, color: out.color });
+        case _: None;
+      };
     }))
       .with(new RenderDots(mini).update);
-
-    phase.addView(View.components(function(comps) {
-      return None;
-    }))
-      .with(moveSystem);
 
     for(i in 0...300)
       engine.createEntity([
         Position(new Point(size(width), size(height))),
-        Velocity(new Point(center(2), center(2))),
+        Velocity(new Point(center(5), center(5))),
+        Color(thx.color.Hsl.create(Math.random() * 360, 0.8, 0.8))
       ]);
     for(i in 0...30)
       engine.createEntity([
@@ -59,23 +62,6 @@ class Game {
 
   static function center(s: Float)
     return (s * Math.random()) - s / 2.0;
-
-  static function moveSystem(list: ReadonlyArray<ItemEntity<{ position: Point, velocity: Point }, Components, Unit>>) {
-    for(item in list) {
-      var pos = item.data.position,
-          vel = item.data.velocity,
-          dx = pos.x + vel.x,
-          dy = pos.y + vel.y;
-      if(dx <= 0 && vel.x < 0 || dx >= Game.width && vel.x > 0)
-        vel.x = -vel.x;
-      else
-        pos.x = dx;
-      if(dy <= 0 && vel.y < 0 || dy >= Game.height && vel.y > 0)
-        vel.y = -vel.y;
-      else
-        pos.y = dy;
-    }
-  }
 
   static function createLoop(update: Void -> Void) {
     function loop() {

@@ -12,10 +12,10 @@ class TestComponents {
 
   public function setup() {
     count = 0;
-    entity = new Entity(entityUpdated);
+    entity = new Entity(null, [], statusChange);
   }
 
-  public function entityUpdated<Component, Element>(e: Entity<Component, Element>, _)
+  public function statusChange<Component, Element>(_)
     count++;
 
   public function testBasics() {

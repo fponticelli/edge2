@@ -25,10 +25,11 @@ class Engine<Component, Element> {
 
   // entities
   var _entities: Set<Entity<Component, Element>>;
-  public function createEntity(components: Iterable<Component>): Entity<Component, Element> {
-    var entity = new Entity(entityChanged);
+  public function createEntity(components: Array<Component>): Entity<Component, Element> {
+    var entity = new Entity(this, components, statusChange);
     // TODO
     _entities.add(entity);
+    statusChange(EntityCreated(entity));
     return entity;
   }
 
@@ -51,9 +52,18 @@ class Engine<Component, Element> {
     // TODO
   }
 
-  function entityChanged(entity: Entity<Component, Element>, change: EntityChange) switch change {
-    case Updated: entityUpdated(entity);
-    case Destroyed: entityDestroyed(entity);
+  function statusChange(change: StatusChange<Component, Element>) {
+    switch change {
+      case EntityUpdated(e): entityUpdated(e);
+      case EntityCreated(e): entityUpdated(e);
+      case EntityRemoved(e): entityDestroyed(e);
+      case _: // TODO
+      // case ElementCreated(e): elementCreated(e);
+      // case ElementRemoved(e): elementRemoved(e);
+    }
+    for(phase in _phases) {
+      phase.propagate(change);
+    }
   }
 
   public function removeEntities(predicate: Entity<Component, Element> -> Bool): Bool {
@@ -86,6 +96,7 @@ class Engine<Component, Element> {
     _elements.remove(element);
     // TODO
   }
+
   public function removeElement(predicate: Element -> Bool): Bool {
     for(element in _elements) {
       if(predicate(element)) {

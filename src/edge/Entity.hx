@@ -2,31 +2,34 @@ package edge;
 
 class Entity<Component, Element> {
   public var destroyed(default, null): Bool;
-  var list: Array<Component>;
-  var entityChange: Entity<Component, Element> -> EntityChange -> Void;
+  public var engine(default, null): Engine<Component, Element>;
 
-  public function new(entityChange: Entity<Component, Element> -> EntityChange -> Void) {
-    destroyed = false;
-    list = [];
-    this.entityChange = entityChange;
+  var list: Array<Component>;
+  var change: StatusChange<Component, Element> -> Void;
+
+  public function new(engine: Engine<Component, Element>, components: Array<Component>, change: StatusChange<Component, Element> -> Void) {
+    this.engine = engine;
+    this.destroyed = false;
+    this.list = components;
+    this.change = change;
   }
 
   public function addComponent(c: Component) {
     list.push(c);
-    entityChange(this, Updated);
+    change(EntityUpdated(this));
     return this;
   }
 
   public function addComponents(cs: Array<Component>) {
     if(cs.length == 0) return this;
     list = list.concat(cs);
-    entityChange(this, Updated);
+    change(EntityUpdated(this));
     return this;
   }
 
   public function update(handler: Array<Component> -> Array<Component>) {
     list = handler(list);
-    entityChange(this, Updated);
+    change(EntityUpdated(this));
     return this;
   }
 
@@ -35,7 +38,7 @@ class Entity<Component, Element> {
     list = list.filter(function(v) return !predicate(v));
     if(list.length == len)
       return false;
-    entityChange(this, Updated);
+    change(EntityUpdated(this));
     return true;
   }
   public function removeComponent(predicate: Component -> Bool): Bool {
@@ -44,7 +47,7 @@ class Entity<Component, Element> {
       item = list[i];
       if(predicate(item)) {
         list.splice(i, 1);
-        entityChange(this, Updated);
+        change(EntityUpdated(this));
         return true;
       }
     }
@@ -53,17 +56,9 @@ class Entity<Component, Element> {
   public function destroy(): Void {
     if(destroyed) return;
     destroyed = true;
-    entityChange(this, Destroyed);
+    change(EntityRemoved(this));
   }
 
   public function components(): Iterator<Component>
     return list.iterator();
-
-  // maybe?
-  // public var engine: Engine<Component, Element>;
-}
-
-enum EntityChange {
-  Updated;
-  Destroyed;
 }

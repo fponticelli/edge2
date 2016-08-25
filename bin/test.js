@@ -452,9 +452,9 @@ TestComponents.prototype = {
 	,entity: null
 	,setup: function() {
 		this.count = 0;
-		this.entity = new edge_Entity($bind(this,this.entityUpdated));
+		this.entity = new edge_Entity(null,[],$bind(this,this.statusChange));
 	}
-	,entityUpdated: function(e,_) {
+	,statusChange: function(_) {
 		this.count++;
 	}
 	,testBasics: function() {
@@ -783,8 +783,9 @@ edge_Engine.prototype = {
 	}
 	,_entities: null
 	,createEntity: function(components) {
-		var entity = new edge_Entity($bind(this,this.entityChanged));
+		var entity = new edge_Entity(this,components,$bind(this,this.statusChange));
 		thx__$Set_Set_$Impl_$.add(this._entities,entity);
+		this.statusChange(edge_StatusChange.EntityCreated(entity));
 		return entity;
 	}
 	,removeEntity: function(predicate) {
@@ -803,14 +804,25 @@ edge_Engine.prototype = {
 	}
 	,entityUpdated: function(entity) {
 	}
-	,entityChanged: function(entity,change) {
+	,statusChange: function(change) {
 		switch(change[1]) {
-		case 0:
-			this.entityUpdated(entity);
+		case 2:
+			this.entityUpdated(change[2]);
 			break;
-		case 1:
-			this.entityDestroyed(entity);
+		case 3:
+			this.entityUpdated(change[2]);
 			break;
+		case 4:
+			this.entityDestroyed(change[2]);
+			break;
+		default:
+		}
+		var _g = 0;
+		var _g1 = this._phases;
+		while(_g < _g1.length) {
+			var phase = _g1[_g];
+			++_g;
+			phase.propagate(change);
 		}
 	}
 	,removeEntities: function(predicate) {
@@ -879,19 +891,21 @@ edge_Engine.prototype = {
 	}
 	,__class__: edge_Engine
 };
-var edge_Entity = function(entityChange) {
+var edge_Entity = function(engine,components,change) {
+	this.engine = engine;
 	this.destroyed = false;
-	this.list = [];
-	this.entityChange = entityChange;
+	this.list = components;
+	this.change = change;
 };
 edge_Entity.__name__ = ["edge","Entity"];
 edge_Entity.prototype = {
 	destroyed: null
+	,engine: null
 	,list: null
-	,entityChange: null
+	,change: null
 	,addComponent: function(c) {
 		this.list.push(c);
-		this.entityChange(this,edge_EntityChange.Updated);
+		this.change(edge_StatusChange.EntityUpdated(this));
 		return this;
 	}
 	,addComponents: function(cs) {
@@ -899,12 +913,12 @@ edge_Entity.prototype = {
 			return this;
 		}
 		this.list = this.list.concat(cs);
-		this.entityChange(this,edge_EntityChange.Updated);
+		this.change(edge_StatusChange.EntityUpdated(this));
 		return this;
 	}
 	,update: function(handler) {
 		this.list = handler(this.list);
-		this.entityChange(this,edge_EntityChange.Updated);
+		this.change(edge_StatusChange.EntityUpdated(this));
 		return this;
 	}
 	,removeComponents: function(predicate) {
@@ -915,7 +929,7 @@ edge_Entity.prototype = {
 		if(this.list.length == len) {
 			return false;
 		}
-		this.entityChange(this,edge_EntityChange.Updated);
+		this.change(edge_StatusChange.EntityUpdated(this));
 		return true;
 	}
 	,removeComponent: function(predicate) {
@@ -927,7 +941,7 @@ edge_Entity.prototype = {
 			item = this.list[i];
 			if(predicate(item)) {
 				this.list.splice(i,1);
-				this.entityChange(this,edge_EntityChange.Updated);
+				this.change(edge_StatusChange.EntityUpdated(this));
 				return true;
 			}
 		}
@@ -938,30 +952,54 @@ edge_Entity.prototype = {
 			return;
 		}
 		this.destroyed = true;
-		this.entityChange(this,edge_EntityChange.Destroyed);
+		this.change(edge_StatusChange.EntityRemoved(this));
 	}
 	,components: function() {
 		return HxOverrides.iter(this.list);
 	}
 	,__class__: edge_Entity
 };
-var edge_EntityChange = { __ename__ : ["edge","EntityChange"], __constructs__ : ["Updated","Destroyed"] };
-edge_EntityChange.Updated = ["Updated",0];
-edge_EntityChange.Updated.__enum__ = edge_EntityChange;
-edge_EntityChange.Destroyed = ["Destroyed",1];
-edge_EntityChange.Destroyed.__enum__ = edge_EntityChange;
 var edge_Phase = function() {
+	this._views = new haxe_ds_ObjectMap();
 };
 edge_Phase.__name__ = ["edge","Phase"];
 edge_Phase.prototype = {
-	addView: function(view) {
-		throw new thx_error_NotImplemented({ fileName : "Phase.hx", lineNumber : 9, className : "edge.Phase", methodName : "addView"});
+	_views: null
+	,addView: function(view) {
+		var viewSystem = this._views.h[view.__id__];
+		if(null == viewSystem) {
+			viewSystem = new edge_ViewSystem();
+			this._views.set(view,viewSystem);
+		}
+		return viewSystem;
 	}
 	,update: function() {
-		throw new thx_error_NotImplemented({ fileName : "Phase.hx", lineNumber : 13, className : "edge.Phase", methodName : "update"});
+		var tmp = this._views.keys();
+		while(tmp.hasNext()) {
+			var view = tmp.next();
+			var _g = view.payload;
+			switch(_g[1]) {
+			case 0:
+				this._views.h[view.__id__].update(_g[2]);
+				break;
+			case 1:
+				continue;
+				break;
+			}
+		}
+	}
+	,propagate: function(change) {
+		var tmp = this._views.keys();
+		while(tmp.hasNext()) tmp.next().onChange(change);
 	}
 	,__class__: edge_Phase
 };
+var edge_StatusChange = { __ename__ : ["edge","StatusChange"], __constructs__ : ["ElementCreated","ElementRemoved","EntityCreated","EntityUpdated","EntityRemoved"] };
+edge_StatusChange.ElementCreated = function(e) { var $x = ["ElementCreated",0,e]; $x.__enum__ = edge_StatusChange; return $x; };
+edge_StatusChange.ElementRemoved = function(e) { var $x = ["ElementRemoved",1,e]; $x.__enum__ = edge_StatusChange; return $x; };
+edge_StatusChange.EntityCreated = function(e) { var $x = ["EntityCreated",2,e]; $x.__enum__ = edge_StatusChange; return $x; };
+edge_StatusChange.EntityUpdated = function(e) { var $x = ["EntityUpdated",3,e]; $x.__enum__ = edge_StatusChange; return $x; };
+edge_StatusChange.EntityRemoved = function(e) { var $x = ["EntityRemoved",4,e]; $x.__enum__ = edge_StatusChange; return $x; };
 var edge__$TimeSpan_TimeSpan_$Impl_$ = {};
 edge__$TimeSpan_TimeSpan_$Impl_$.__name__ = ["edge","_TimeSpan","TimeSpan_Impl_"];
 edge__$TimeSpan_TimeSpan_$Impl_$.fromMillis = function(ms) {
@@ -982,19 +1020,29 @@ edge__$TimeSpan_TimeSpan_$Impl_$.get_seconds = function(this1) {
 var edge_View = function() { };
 edge_View.__name__ = ["edge","View"];
 edge_View.prototype = {
-	onAddedElement: null
-	,onRemovedElement: null
-	,onAddedEntity: null
-	,onRemovedEntity: null
-	,onUpdatedEntity: null
-	,updateSystem: null
+	onChange: function(change) {
+	}
+	,payload: null
 	,__class__: edge_View
 };
-var edge_ViewSystem = function() { };
+var edge_ViewSystem = function() {
+	this._systems = [];
+};
 edge_ViewSystem.__name__ = ["edge","ViewSystem"];
 edge_ViewSystem.prototype = {
-	'with': function(system) {
+	_systems: null
+	,'with': function(system) {
+		this._systems.push(system);
 		return this;
+	}
+	,update: function(payload) {
+		var _g = 0;
+		var _g1 = this._systems;
+		while(_g < _g1.length) {
+			var system = _g1[_g];
+			++_g;
+			system(payload);
+		}
 	}
 	,__class__: edge_ViewSystem
 };
@@ -2035,6 +2083,11 @@ js_html_compat_Uint8Array._subarray = function(start,end) {
 	var a = js_html_compat_Uint8Array._new(this.slice(start,end));
 	a.byteOffset = start;
 	return a;
+};
+var thx__$Any_Any_$Impl_$ = {};
+thx__$Any_Any_$Impl_$.__name__ = ["thx","_Any","Any_Impl_"];
+thx__$Any_Any_$Impl_$.__promote = function(this1) {
+	return this1;
 };
 var thx_Arrays = function() { };
 thx_Arrays.__name__ = ["thx","Arrays"];
@@ -7983,14 +8036,6 @@ thx_error_ErrorWrapper.__super__ = thx_Error;
 thx_error_ErrorWrapper.prototype = $extend(thx_Error.prototype,{
 	innerError: null
 	,__class__: thx_error_ErrorWrapper
-});
-var thx_error_NotImplemented = function(posInfo) {
-	thx_Error.call(this,"method " + posInfo.className + "." + posInfo.methodName + "() needs to be implemented",null,posInfo);
-};
-thx_error_NotImplemented.__name__ = ["thx","error","NotImplemented"];
-thx_error_NotImplemented.__super__ = thx_Error;
-thx_error_NotImplemented.prototype = $extend(thx_Error.prototype,{
-	__class__: thx_error_NotImplemented
 });
 var thx_fp__$Map_Map_$Impl_$ = {};
 thx_fp__$Map_Map_$Impl_$.__name__ = ["thx","fp","_Map","Map_Impl_"];

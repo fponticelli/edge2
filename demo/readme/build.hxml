@@ -1,0 +1,6 @@
+-lib minicanvas
+-lib thx.core
+-cp src
+-cp ../../src
+-main Game
+-js bin/index.js

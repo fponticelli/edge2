@@ -442,7 +442,7 @@ StringTools.replace = function(s,sub,by) {
 var TestAll = function() { };
 TestAll.__name__ = ["TestAll"];
 TestAll.main = function() {
-	utest_UTest.run([new TestComponents(),new TestElement(),new TestEntity(),new TestTimeSpan(),new TestPhase(),new TestView()]);
+	utest_UTest.run([new TestComponents(),new TestEnvironment(),new TestEntity(),new TestTimeSpan(),new TestPhase(),new TestView()]);
 };
 var TestComponents = function() {
 };
@@ -510,71 +510,12 @@ TestComponent.B = ["B",1];
 TestComponent.B.__enum__ = TestComponent;
 TestComponent.C = ["C",2];
 TestComponent.C.__enum__ = TestComponent;
-var TestElement = function() {
-};
-TestElement.__name__ = ["TestElement"];
-TestElement.prototype = {
-	testBasics: function() {
-		var engine = edge_Engine.withEnumElement();
-		utest_Assert.isFalse(engine.elements().hasNext(),null,{ fileName : "TestElement.hx", lineNumber : 12, className : "TestElement", methodName : "testBasics"});
-		var s = SampleElement.Score({ points : 1});
-		engine.addElement(s);
-		utest_Assert.equals(s,engine.elements().next(),null,{ fileName : "TestElement.hx", lineNumber : 15, className : "TestElement", methodName : "testBasics"});
-		engine.addElement(SampleElement.Player({ name : "Edgy1"}));
-		engine.addElement(SampleElement.Player({ name : "Edgy2"}));
-		engine.addElement(SampleElement.Player({ name : "Edgy3"}));
-		utest_Assert.isTrue(engine.removeElement(function(el) {
-			if(el[1] == 1) {
-				if(el[2].name == "Edgy1") {
-					return true;
-				} else {
-					return false;
-				}
-			} else {
-				return false;
-			}
-		}),null,{ fileName : "TestElement.hx", lineNumber : 19, className : "TestElement", methodName : "testBasics"});
-		utest_Assert.isTrue(thx_Iterators.any(engine.elements(),function(el1) {
-			if(el1[1] == 1) {
-				if(el1[2].name == "Edgy2") {
-					return true;
-				} else {
-					return false;
-				}
-			} else {
-				return false;
-			}
-		}),null,{ fileName : "TestElement.hx", lineNumber : 23, className : "TestElement", methodName : "testBasics"});
-		utest_Assert.isTrue(engine.removeElements(function(el2) {
-			if(el2[1] == 1) {
-				return true;
-			} else {
-				return false;
-			}
-		}),null,{ fileName : "TestElement.hx", lineNumber : 27, className : "TestElement", methodName : "testBasics"});
-		utest_Assert.isFalse(thx_Iterators.any(engine.elements(),function(el3) {
-			if(el3[1] == 1) {
-				if(el3[2].name == "Edgy2") {
-					return true;
-				} else {
-					return false;
-				}
-			} else {
-				return false;
-			}
-		}),null,{ fileName : "TestElement.hx", lineNumber : 31, className : "TestElement", methodName : "testBasics"});
-	}
-	,__class__: TestElement
-};
-var SampleElement = { __ename__ : ["SampleElement"], __constructs__ : ["Score","Player"] };
-SampleElement.Score = function(score) { var $x = ["Score",0,score]; $x.__enum__ = SampleElement; return $x; };
-SampleElement.Player = function(info) { var $x = ["Player",1,info]; $x.__enum__ = SampleElement; return $x; };
 var TestEntity = function() {
 };
 TestEntity.__name__ = ["TestEntity"];
 TestEntity.prototype = {
 	testBasics: function() {
-		var engine = edge_Engine.withEnumElement();
+		var engine = edge_Engine.withEnumEnvironment();
 		utest_Assert.isFalse(engine.entities().hasNext(),null,{ fileName : "TestEntity.hx", lineNumber : 12, className : "TestEntity", methodName : "testBasics"});
 		var entity = engine.createEntity([]);
 		utest_Assert.isTrue(engine.entities().hasNext(),null,{ fileName : "TestEntity.hx", lineNumber : 14, className : "TestEntity", methodName : "testBasics"});
@@ -586,7 +527,7 @@ TestEntity.prototype = {
 		utest_Assert.isTrue(entity.destroyed,null,{ fileName : "TestEntity.hx", lineNumber : 21, className : "TestEntity", methodName : "testBasics"});
 	}
 	,testRemove: function() {
-		var engine = edge_Engine.withEnumElement();
+		var engine = edge_Engine.withEnumEnvironment();
 		var entity = engine.createEntity([]);
 		engine.removeEntity(function(_) {
 			return false;
@@ -599,7 +540,7 @@ TestEntity.prototype = {
 		utest_Assert.isTrue(entity.destroyed,null,{ fileName : "TestEntity.hx", lineNumber : 31, className : "TestEntity", methodName : "testRemove"});
 	}
 	,testRemoveMany: function() {
-		var engine = edge_Engine.withEnumElement();
+		var engine = edge_Engine.withEnumEnvironment();
 		var e1 = engine.createEntity([]);
 		var e2 = engine.createEntity([]);
 		engine.removeEntities(function(e) {
@@ -609,6 +550,65 @@ TestEntity.prototype = {
 	}
 	,__class__: TestEntity
 };
+var TestEnvironment = function() {
+};
+TestEnvironment.__name__ = ["TestEnvironment"];
+TestEnvironment.prototype = {
+	testBasics: function() {
+		var engine = edge_Engine.withEnumEnvironment();
+		utest_Assert.isFalse(engine.environments().hasNext(),null,{ fileName : "TestEnvironment.hx", lineNumber : 12, className : "TestEnvironment", methodName : "testBasics"});
+		var s = SampleEnvironment.Score({ points : 1});
+		engine.addEnvironment(s);
+		utest_Assert.equals(s,engine.environments().next(),null,{ fileName : "TestEnvironment.hx", lineNumber : 15, className : "TestEnvironment", methodName : "testBasics"});
+		engine.addEnvironment(SampleEnvironment.Player({ name : "Edgy1"}));
+		engine.addEnvironment(SampleEnvironment.Player({ name : "Edgy2"}));
+		engine.addEnvironment(SampleEnvironment.Player({ name : "Edgy3"}));
+		utest_Assert.isTrue(engine.removeEnvironment(function(el) {
+			if(el[1] == 1) {
+				if(el[2].name == "Edgy1") {
+					return true;
+				} else {
+					return false;
+				}
+			} else {
+				return false;
+			}
+		}),null,{ fileName : "TestEnvironment.hx", lineNumber : 19, className : "TestEnvironment", methodName : "testBasics"});
+		utest_Assert.isTrue(thx_Iterators.any(engine.environments(),function(el1) {
+			if(el1[1] == 1) {
+				if(el1[2].name == "Edgy2") {
+					return true;
+				} else {
+					return false;
+				}
+			} else {
+				return false;
+			}
+		}),null,{ fileName : "TestEnvironment.hx", lineNumber : 23, className : "TestEnvironment", methodName : "testBasics"});
+		utest_Assert.isTrue(engine.removeEnvironments(function(el2) {
+			if(el2[1] == 1) {
+				return true;
+			} else {
+				return false;
+			}
+		}),null,{ fileName : "TestEnvironment.hx", lineNumber : 27, className : "TestEnvironment", methodName : "testBasics"});
+		utest_Assert.isFalse(thx_Iterators.any(engine.environments(),function(el3) {
+			if(el3[1] == 1) {
+				if(el3[2].name == "Edgy2") {
+					return true;
+				} else {
+					return false;
+				}
+			} else {
+				return false;
+			}
+		}),null,{ fileName : "TestEnvironment.hx", lineNumber : 31, className : "TestEnvironment", methodName : "testBasics"});
+	}
+	,__class__: TestEnvironment
+};
+var SampleEnvironment = { __ename__ : ["SampleEnvironment"], __constructs__ : ["Score","Player"] };
+SampleEnvironment.Score = function(score) { var $x = ["Score",0,score]; $x.__enum__ = SampleEnvironment; return $x; };
+SampleEnvironment.Player = function(info) { var $x = ["Player",1,info]; $x.__enum__ = SampleEnvironment; return $x; };
 var TestPhase = function() {
 };
 TestPhase.__name__ = ["TestPhase"];
@@ -760,13 +760,13 @@ Type["typeof"] = function(v) {
 		return ValueType.TUnknown;
 	}
 };
-var edge_Engine = function(createElementSet) {
+var edge_Engine = function(createEnvironmentSet) {
 	this._phases = [];
 	this._entities = thx__$Set_Set_$Impl_$.createObject();
-	this._elements = createElementSet();
+	this._environments = createEnvironmentSet();
 };
 edge_Engine.__name__ = ["edge","Engine"];
-edge_Engine.withEnumElement = function() {
+edge_Engine.withEnumEnvironment = function() {
 	return new edge_Engine(function() {
 		return thx__$Set_Set_$Impl_$.createEnum();
 	});
@@ -846,48 +846,48 @@ edge_Engine.prototype = {
 	,entities: function() {
 		return $iterator(thx__$Set_Set_$Impl_$)(this._entities);
 	}
-	,_elements: null
-	,addElement: function(element) {
-		thx__$Set_Set_$Impl_$.add(this._elements,element);
+	,_environments: null
+	,addEnvironment: function(environment) {
+		thx__$Set_Set_$Impl_$.add(this._environments,environment);
 	}
-	,elementRemoved: function(element) {
-		this._elements.remove(element);
+	,environmentRemoved: function(environment) {
+		this._environments.remove(environment);
 	}
-	,removeElement: function(predicate) {
-		var tmp = $iterator(thx__$Set_Set_$Impl_$)(this._elements);
+	,removeEnvironment: function(predicate) {
+		var tmp = $iterator(thx__$Set_Set_$Impl_$)(this._environments);
 		while(tmp.hasNext()) {
-			var element = tmp.next();
-			if(predicate(element)) {
-				this.elementRemoved(element);
+			var environment = tmp.next();
+			if(predicate(environment)) {
+				this.environmentRemoved(environment);
 				return true;
 			}
 		}
 		return false;
 	}
-	,removeElements: function(predicate) {
+	,removeEnvironments: function(predicate) {
 		var removed = false;
-		var tmp = $iterator(thx__$Set_Set_$Impl_$)(this._elements);
+		var tmp = $iterator(thx__$Set_Set_$Impl_$)(this._environments);
 		while(tmp.hasNext()) {
-			var element = tmp.next();
-			if(predicate(element)) {
-				this.elementRemoved(element);
+			var environment = tmp.next();
+			if(predicate(environment)) {
+				this.environmentRemoved(environment);
 				removed = true;
 			}
 		}
 		return removed;
 	}
-	,clearElements: function() {
-		this.removeElements(function(_) {
+	,clearEnvironments: function() {
+		this.removeEnvironments(function(_) {
 			return true;
 		});
 		return this;
 	}
-	,elements: function() {
-		return $iterator(thx__$Set_Set_$Impl_$)(this._elements);
+	,environments: function() {
+		return $iterator(thx__$Set_Set_$Impl_$)(this._environments);
 	}
 	,clear: function() {
 		this.clearEntities();
-		this.clearElements();
+		this.clearEnvironments();
 	}
 	,__class__: edge_Engine
 };
@@ -994,9 +994,9 @@ edge_Phase.prototype = {
 	}
 	,__class__: edge_Phase
 };
-var edge_StatusChange = { __ename__ : ["edge","StatusChange"], __constructs__ : ["ElementCreated","ElementRemoved","EntityCreated","EntityUpdated","EntityRemoved"] };
-edge_StatusChange.ElementCreated = function(e) { var $x = ["ElementCreated",0,e]; $x.__enum__ = edge_StatusChange; return $x; };
-edge_StatusChange.ElementRemoved = function(e) { var $x = ["ElementRemoved",1,e]; $x.__enum__ = edge_StatusChange; return $x; };
+var edge_StatusChange = { __ename__ : ["edge","StatusChange"], __constructs__ : ["EnvironmentCreated","EnvironmentRemoved","EntityCreated","EntityUpdated","EntityRemoved"] };
+edge_StatusChange.EnvironmentCreated = function(e) { var $x = ["EnvironmentCreated",0,e]; $x.__enum__ = edge_StatusChange; return $x; };
+edge_StatusChange.EnvironmentRemoved = function(e) { var $x = ["EnvironmentRemoved",1,e]; $x.__enum__ = edge_StatusChange; return $x; };
 edge_StatusChange.EntityCreated = function(e) { var $x = ["EntityCreated",2,e]; $x.__enum__ = edge_StatusChange; return $x; };
 edge_StatusChange.EntityUpdated = function(e) { var $x = ["EntityUpdated",3,e]; $x.__enum__ = edge_StatusChange; return $x; };
 edge_StatusChange.EntityRemoved = function(e) { var $x = ["EntityRemoved",4,e]; $x.__enum__ = edge_StatusChange; return $x; };
@@ -1019,12 +1019,62 @@ edge__$TimeSpan_TimeSpan_$Impl_$.get_seconds = function(this1) {
 };
 var edge_View = function() { };
 edge_View.__name__ = ["edge","View"];
+edge_View.components = function(extractor) {
+	return new edge_ComponentView(extractor);
+};
 edge_View.prototype = {
 	onChange: function(change) {
 	}
 	,payload: null
 	,__class__: edge_View
 };
+var edge_ComponentView = function(matchEntity) {
+	this.payload = haxe_ds_Option.None;
+	this.map = new thx_ObjectOrderedMap();
+	this.matchEntity = matchEntity;
+};
+edge_ComponentView.__name__ = ["edge","ComponentView"];
+edge_ComponentView.__super__ = edge_View;
+edge_ComponentView.prototype = $extend(edge_View.prototype,{
+	map: null
+	,matchEntity: null
+	,onChange: function(change) {
+		switch(change[1]) {
+		case 0:
+			break;
+		case 1:
+			break;
+		case 2:
+			var e = change[2];
+			var _g = this.matchEntity(e.components());
+			switch(_g[1]) {
+			case 0:
+				this.map.set(e,{ data : _g[2], entity : e});
+				break;
+			case 1:
+				break;
+			}
+			break;
+		case 3:
+			var e1 = change[2];
+			var _g1 = this.matchEntity(e1.components());
+			switch(_g1[1]) {
+			case 0:
+				this.map.set(e1,{ data : _g1[2], entity : e1});
+				break;
+			case 1:
+				this.map.remove(e1);
+				break;
+			}
+			break;
+		case 4:
+			this.map.remove(change[2]);
+			break;
+		}
+		this.payload = this.payload[1] == 1?this.map.length == 0?haxe_ds_Option.None:haxe_ds_Option.Some(this.map.toArray()):haxe_ds_Option.Some(this.map.toArray());
+	}
+	,__class__: edge_ComponentView
+});
 var edge_ViewSystem = function() {
 	this._systems = [];
 };
@@ -2265,6 +2315,9 @@ thx_Arrays.create = function(length,fillWith) {
 	}
 	return arr;
 };
+thx_Arrays.fromItem = function(t) {
+	return [t];
+};
 thx_Arrays.cross = function(a,b) {
 	var r = [];
 	var tmp = HxOverrides.iter(a);
@@ -2425,6 +2478,29 @@ thx_Arrays.findOption = function(array,predicate) {
 	}
 	return haxe_ds_Option.None;
 };
+thx_Arrays.findMap = function(values,f) {
+	var _g = 0;
+	while(_g < values.length) {
+		var value = values[_g];
+		++_g;
+		var opt = f(value);
+		if(!thx_Options.isNone(opt)) {
+			return opt;
+		}
+	}
+	return haxe_ds_Option.None;
+};
+thx_Arrays.findSome = function(options) {
+	var _g = 0;
+	while(_g < options.length) {
+		var option = options[_g];
+		++_g;
+		if(!thx_Options.isNone(option)) {
+			return option;
+		}
+	}
+	return haxe_ds_Option.None;
+};
 thx_Arrays.findIndex = function(array,predicate) {
 	var _g1 = 0;
 	var _g = array.length;
@@ -2494,7 +2570,7 @@ thx_Arrays.spanByIndex = function(arr,spanKey) {
 		var i = _g1++;
 		var k = spanKey(i);
 		if(k == null) {
-			throw new thx_Error("spanKey function returned null for index " + i,null,{ fileName : "Arrays.hx", lineNumber : 576, className : "thx.Arrays", methodName : "spanByIndex"});
+			throw new thx_Error("spanKey function returned null for index " + i,null,{ fileName : "Arrays.hx", lineNumber : 604, className : "thx.Arrays", methodName : "spanByIndex"});
 		}
 		if(cur == k) {
 			acc[j].push(arr[i]);
@@ -4694,6 +4770,9 @@ thx_Functions.identity = function(value) {
 };
 thx_Functions.noop = function() {
 };
+thx_Functions.lift = function(t,f) {
+	return f(t);
+};
 var thx_Ints = function() { };
 thx_Ints.__name__ = ["thx","Ints"];
 thx_Ints.abs = function(v) {
@@ -5917,7 +5996,9 @@ thx_Objects.getPath = function(o,path) {
 	while(_g < paths.length) {
 		var currentPath = paths[_g];
 		++_g;
-		if(thx_Strings.DIGITS.match(currentPath)) {
+		if(current == null) {
+			return null;
+		} else if(thx_Strings.DIGITS.match(currentPath)) {
 			var index = Std.parseInt(currentPath);
 			var value = current;
 			var arr = (value instanceof Array)?value:null;
@@ -6502,6 +6583,251 @@ thx_Orderings.negate = function(o) {
 		return thx_OrderingImpl.EQ;
 	}
 };
+var thx__$OrderedMap_OrderedMap_$Impl_$ = {};
+thx__$OrderedMap_OrderedMap_$Impl_$.__name__ = ["thx","_OrderedMap","OrderedMap_Impl_"];
+thx__$OrderedMap_OrderedMap_$Impl_$.createString = function() {
+	return new thx_StringOrderedMap();
+};
+thx__$OrderedMap_OrderedMap_$Impl_$.createInt = function() {
+	return new thx_IntOrderedMap();
+};
+thx__$OrderedMap_OrderedMap_$Impl_$.createObject = function() {
+	return new thx_ObjectOrderedMap();
+};
+thx__$OrderedMap_OrderedMap_$Impl_$.createEnum = function() {
+	return new thx_EnumValueOrderedMap();
+};
+thx__$OrderedMap_OrderedMap_$Impl_$._new = function(inst) {
+	return inst;
+};
+thx__$OrderedMap_OrderedMap_$Impl_$.getOption = function(this1,key) {
+	var value = this1.get(key);
+	if(null == value) {
+		return haxe_ds_Option.None;
+	} else {
+		return haxe_ds_Option.Some(value);
+	}
+};
+thx__$OrderedMap_OrderedMap_$Impl_$.empty = function(this1) {
+	return this1.empty();
+};
+thx__$OrderedMap_OrderedMap_$Impl_$.copyTo = function(this1,that) {
+	var tmp = this1.keys();
+	while(tmp.hasNext()) {
+		var key = tmp.next();
+		that.set(key,this1.get(key));
+	}
+	return that;
+};
+thx__$OrderedMap_OrderedMap_$Impl_$.clone = function(this1) {
+	var that = this1.empty();
+	var tmp = this1.keys();
+	while(tmp.hasNext()) {
+		var key = tmp.next();
+		that.set(key,this1.get(key));
+	}
+	return that;
+};
+thx__$OrderedMap_OrderedMap_$Impl_$.get = function(this1,key) {
+	return this1.get(key);
+};
+thx__$OrderedMap_OrderedMap_$Impl_$.at = function(this1,index) {
+	return this1.at(index);
+};
+thx__$OrderedMap_OrderedMap_$Impl_$.arrayWrite = function(this1,k,v) {
+	return this1.setValue(k,v);
+};
+thx__$OrderedMap_OrderedMap_$Impl_$.self = function(this1) {
+	return this1;
+};
+var thx_OrderedMapImpl = function(map) {
+	this.map = map;
+	this.arr = [];
+	this.length = 0;
+};
+thx_OrderedMapImpl.__name__ = ["thx","OrderedMapImpl"];
+thx_OrderedMapImpl.__interfaces__ = [haxe_IMap];
+thx_OrderedMapImpl.prototype = {
+	map: null
+	,arr: null
+	,length: null
+	,get: function(k) {
+		return this.map.get(k);
+	}
+	,keyAt: function(index) {
+		return this.arr[index];
+	}
+	,keyIndex: function(k) {
+		var _g1 = 0;
+		var _g = this.arr.length;
+		while(_g1 < _g) {
+			var i = _g1++;
+			if(this.arr[i] == k) {
+				return i;
+			}
+		}
+		return -1;
+	}
+	,valueIndex: function(v) {
+		var _g1 = 0;
+		var _g = this.arr.length;
+		while(_g1 < _g) {
+			var i = _g1++;
+			if(this.map.get(this.arr[i]) == v) {
+				return i;
+			}
+		}
+		return -1;
+	}
+	,at: function(index) {
+		return this.map.get(this.keyAt(index));
+	}
+	,set: function(k,v) {
+		if(!this.map.exists(k)) {
+			this.arr.push(k);
+			this.length++;
+		}
+		this.map.set(k,v);
+	}
+	,empty: function() {
+		throw new thx_error_AbstractMethod({ fileName : "OrderedMap.hx", lineNumber : 137, className : "thx.OrderedMapImpl", methodName : "empty"});
+	}
+	,setValue: function(k,v) {
+		this.set(k,v);
+		return v;
+	}
+	,insert: function(index,k,v) {
+		this.remove(k);
+		this.arr.splice(index,0,k);
+		this.map.set(k,v);
+		this.length++;
+	}
+	,exists: function(k) {
+		return this.map.exists(k);
+	}
+	,remove: function(k) {
+		if(!this.map.exists(k)) {
+			return false;
+		}
+		this.map.remove(k);
+		HxOverrides.remove(this.arr,k);
+		this.length--;
+		return true;
+	}
+	,removeAt: function(index) {
+		var key = this.arr[index];
+		if(key == null) {
+			return false;
+		}
+		this.map.remove(key);
+		HxOverrides.remove(this.arr,key);
+		this.length--;
+		return true;
+	}
+	,keys: function() {
+		return HxOverrides.iter(this.arr);
+	}
+	,iterator: function() {
+		return HxOverrides.iter(this.toArray());
+	}
+	,tuples: function() {
+		var _gthis = this;
+		return this.arr.map(function(key) {
+			return { _0 : key, _1 : _gthis.map.get(key)};
+		});
+	}
+	,toString: function() {
+		var s = "";
+		s = "[";
+		var it = this.keys();
+		while(it.hasNext()) {
+			var k = it.next();
+			s += Std.string(k);
+			s += " => ";
+			s += Std.string(this.map.get(k));
+			if(it.hasNext()) {
+				s += ", ";
+			}
+		}
+		s += "]";
+		return s;
+	}
+	,toArray: function() {
+		var values = [];
+		var _g = 0;
+		var _g1 = this.arr;
+		while(_g < _g1.length) {
+			var k = _g1[_g];
+			++_g;
+			values.push(this.map.get(k));
+		}
+		return values;
+	}
+	,__class__: thx_OrderedMapImpl
+};
+var thx_EnumValueOrderedMap = function() {
+	thx_OrderedMapImpl.call(this,new haxe_ds_EnumValueMap());
+};
+thx_EnumValueOrderedMap.__name__ = ["thx","EnumValueOrderedMap"];
+thx_EnumValueOrderedMap.__super__ = thx_OrderedMapImpl;
+thx_EnumValueOrderedMap.prototype = $extend(thx_OrderedMapImpl.prototype,{
+	empty: function() {
+		return new thx_EnumValueOrderedMap();
+	}
+	,__class__: thx_EnumValueOrderedMap
+});
+var thx_IntOrderedMap = function() {
+	thx_OrderedMapImpl.call(this,new haxe_ds_IntMap());
+};
+thx_IntOrderedMap.__name__ = ["thx","IntOrderedMap"];
+thx_IntOrderedMap.__super__ = thx_OrderedMapImpl;
+thx_IntOrderedMap.prototype = $extend(thx_OrderedMapImpl.prototype,{
+	empty: function() {
+		return new thx_IntOrderedMap();
+	}
+	,__class__: thx_IntOrderedMap
+});
+var thx_ObjectOrderedMap = function() {
+	thx_OrderedMapImpl.call(this,new haxe_ds_ObjectMap());
+};
+thx_ObjectOrderedMap.__name__ = ["thx","ObjectOrderedMap"];
+thx_ObjectOrderedMap.__super__ = thx_OrderedMapImpl;
+thx_ObjectOrderedMap.prototype = $extend(thx_OrderedMapImpl.prototype,{
+	empty: function() {
+		return new thx_ObjectOrderedMap();
+	}
+	,__class__: thx_ObjectOrderedMap
+});
+var thx_StringOrderedMap = function() {
+	thx_OrderedMapImpl.call(this,new haxe_ds_StringMap());
+};
+thx_StringOrderedMap.__name__ = ["thx","StringOrderedMap"];
+thx_StringOrderedMap.fromArray = function(array,toKey,toVal) {
+	var inst = new thx_StringOrderedMap();
+	return thx_Arrays.reduce(array,function(acc,curr) {
+		acc.set(toKey(curr),toVal(curr));
+		return acc;
+	},inst);
+};
+thx_StringOrderedMap.fromValueArray = function(array,toKey) {
+	return thx_StringOrderedMap.fromArray(array,toKey,function(val) {
+		return val;
+	});
+};
+thx_StringOrderedMap.fromTuples = function(array) {
+	return thx_StringOrderedMap.fromArray(array,function(t) {
+		return t._0;
+	},function(t1) {
+		return t1._1;
+	});
+};
+thx_StringOrderedMap.__super__ = thx_OrderedMapImpl;
+thx_StringOrderedMap.prototype = $extend(thx_OrderedMapImpl.prototype,{
+	empty: function() {
+		return new thx_StringOrderedMap();
+	}
+	,__class__: thx_StringOrderedMap
+});
 var thx__$ReadonlyArray_ReadonlyArray_$Impl_$ = {};
 thx__$ReadonlyArray_ReadonlyArray_$Impl_$.__name__ = ["thx","_ReadonlyArray","ReadonlyArray_Impl_"];
 thx__$ReadonlyArray_ReadonlyArray_$Impl_$.empty = function() {
@@ -8027,6 +8353,14 @@ thx_ValidationExtensions.appendVNels = function(target,items) {
 thx_ValidationExtensions.appendValidations = function(target,items) {
 	return thx_Arrays.reduce(items,thx_ValidationExtensions.appendValidation,target);
 };
+var thx_error_AbstractMethod = function(posInfo) {
+	thx_Error.call(this,"method " + posInfo.className + "." + posInfo.methodName + "() is abstract",null,posInfo);
+};
+thx_error_AbstractMethod.__name__ = ["thx","error","AbstractMethod"];
+thx_error_AbstractMethod.__super__ = thx_Error;
+thx_error_AbstractMethod.prototype = $extend(thx_Error.prototype,{
+	__class__: thx_error_AbstractMethod
+});
 var thx_error_ErrorWrapper = function(message,innerError,stack,pos) {
 	thx_Error.call(this,message,stack,pos);
 	this.innerError = innerError;

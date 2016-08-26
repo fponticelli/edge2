@@ -2,6 +2,7 @@ import edge.*;
 import edge.View;
 import thx.Unit;
 using thx.ReadonlyArray;
+import haxe.ds.Option;
 
 class Move {
   public static function system(list: ReadonlyArray<ItemEntity<{ position: Point, velocity: Point }, Components, Unit>>) {
@@ -19,5 +20,18 @@ class Move {
       else
         pos.y = dy;
     }
+  }
+
+  public static function extract(comps: Iterator<Components>) {
+    var out = { position: None, velocity: None };
+    for(comp in comps) switch comp {
+      case Position(point): out.position = Some(point);
+      case Velocity(point): out.velocity = Some(point);
+      case _:
+    }
+    return switch out {
+      case { position: Some(pos), velocity: Some(vel) }: Some({ position: pos, velocity: vel });
+      case _: None;
+    };
   }
 }

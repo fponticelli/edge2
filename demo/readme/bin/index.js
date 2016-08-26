@@ -110,57 +110,10 @@ var Game = function() { };
 Game.__name__ = ["Game"];
 Game.main = function() {
 	var mini = minicanvas_MiniCanvas.create(Game.width,Game.height).display("basic example");
-	var engine = edge_Engine.withEnumElement();
+	var engine = edge_Engine.withEnumEnvironment();
 	var phase = engine.createPhase();
-	phase.addView(edge_View.components(function(comps) {
-		var out_velocity;
-		var out_position = haxe_ds_Option.None;
-		out_velocity = haxe_ds_Option.None;
-		while(comps.hasNext()) {
-			var comp = comps.next();
-			switch(comp[1]) {
-			case 0:
-				out_position = haxe_ds_Option.Some(comp[2]);
-				break;
-			case 1:
-				out_velocity = haxe_ds_Option.Some(comp[2]);
-				break;
-			default:
-			}
-		}
-		if(out_position[1] == 0) {
-			if(out_velocity[1] == 0) {
-				return haxe_ds_Option.Some({ position : out_position[2], velocity : out_velocity[2]});
-			} else {
-				return haxe_ds_Option.None;
-			}
-		} else {
-			return haxe_ds_Option.None;
-		}
-	}))["with"](Move.system);
-	phase.addView(edge_View.components(function(comps1) {
-		var out_position1;
-		var out_color;
-		out_position1 = haxe_ds_Option.None;
-		out_color = [0,0,0];
-		while(comps1.hasNext()) {
-			var comp1 = comps1.next();
-			switch(comp1[1]) {
-			case 0:
-				out_position1 = haxe_ds_Option.Some(comp1[2]);
-				break;
-			case 2:
-				out_color = comp1[2];
-				break;
-			default:
-			}
-		}
-		if(out_position1[1] == 0) {
-			return haxe_ds_Option.Some({ position : out_position1[2], color : out_color});
-		} else {
-			return haxe_ds_Option.None;
-		}
-	}))["with"](($_=new RenderDots(mini),$bind($_,$_.update)));
+	phase.addView(edge_View.components(Move.extract))["with"](Move.system);
+	phase.addView(edge_View.components(RenderDots.extract))["with"](($_=new RenderDots(mini),$bind($_,$_.update)));
 	var _g = 0;
 	while(_g < 300) {
 		++_g;
@@ -286,14 +239,66 @@ Move.system = function(list) {
 		}
 	}
 };
+Move.extract = function(comps) {
+	var out_velocity;
+	var out_position = haxe_ds_Option.None;
+	out_velocity = haxe_ds_Option.None;
+	while(comps.hasNext()) {
+		var comp = comps.next();
+		switch(comp[1]) {
+		case 0:
+			out_position = haxe_ds_Option.Some(comp[2]);
+			break;
+		case 1:
+			out_velocity = haxe_ds_Option.Some(comp[2]);
+			break;
+		default:
+		}
+	}
+	if(out_position[1] == 0) {
+		if(out_velocity[1] == 0) {
+			return haxe_ds_Option.Some({ position : out_position[2], velocity : out_velocity[2]});
+		} else {
+			return haxe_ds_Option.None;
+		}
+	} else {
+		return haxe_ds_Option.None;
+	}
+};
 var Point = function(x,y) {
 	this.x = x;
 	this.y = y;
 };
 Point.__name__ = ["Point"];
+Point.normalizeDirection = function(v) {
+	v %= Point.turn;
+	if(v > Math.PI) {
+		v -= Point.turn;
+	} else if(v < -Math.PI) {
+		v += Point.turn;
+	}
+	return v;
+};
 Point.prototype = {
 	x: null
 	,y: null
+	,steerToward: function(from,to,maxSteer) {
+		var d = Point.normalizeDirection(new Point(to.x - from.x,to.y - from.y).angle() - this.angle());
+		this.rotate(Math.min(Math.abs(d),maxSteer) * (d < 0?-1:1));
+	}
+	,angle: function() {
+		return Math.atan2(this.y,this.x);
+	}
+	,length: function() {
+		return Math.sqrt(this.x * this.x + this.y * this.y);
+	}
+	,rotate: function(rot) {
+		var l = this.length();
+		var a = this.angle() + rot;
+		this.x = Math.cos(a) * l;
+		this.y = Math.sin(a) * l;
+		return this;
+	}
 	,__class__: Point
 };
 var Reflect = function() { };
@@ -380,6 +385,29 @@ var RenderDots = function(mini) {
 	this.mini = mini;
 };
 RenderDots.__name__ = ["RenderDots"];
+RenderDots.extract = function(comps) {
+	var out_position;
+	var out_color;
+	out_position = haxe_ds_Option.None;
+	out_color = [0,0,0];
+	while(comps.hasNext()) {
+		var comp = comps.next();
+		switch(comp[1]) {
+		case 0:
+			out_position = haxe_ds_Option.Some(comp[2]);
+			break;
+		case 2:
+			out_color = comp[2];
+			break;
+		default:
+		}
+	}
+	if(out_position[1] == 0) {
+		return haxe_ds_Option.Some({ position : out_position[2], color : out_color});
+	} else {
+		return haxe_ds_Option.None;
+	}
+};
 RenderDots.prototype = {
 	mini: null
 	,update: function(list) {
@@ -625,13 +653,13 @@ Type["typeof"] = function(v) {
 		return ValueType.TUnknown;
 	}
 };
-var edge_Engine = function(createElementSet) {
+var edge_Engine = function(createEnvironmentSet) {
 	this._phases = [];
 	this._entities = thx__$Set_Set_$Impl_$.createObject();
-	this._elements = createElementSet();
+	this._environments = createEnvironmentSet();
 };
 edge_Engine.__name__ = ["edge","Engine"];
-edge_Engine.withEnumElement = function() {
+edge_Engine.withEnumEnvironment = function() {
 	return new edge_Engine(function() {
 		return thx__$Set_Set_$Impl_$.createEnum();
 	});
@@ -711,48 +739,48 @@ edge_Engine.prototype = {
 	,entities: function() {
 		return $iterator(thx__$Set_Set_$Impl_$)(this._entities);
 	}
-	,_elements: null
-	,addElement: function(element) {
-		thx__$Set_Set_$Impl_$.add(this._elements,element);
+	,_environments: null
+	,addEnvironment: function(environment) {
+		thx__$Set_Set_$Impl_$.add(this._environments,environment);
 	}
-	,elementRemoved: function(element) {
-		this._elements.remove(element);
+	,environmentRemoved: function(environment) {
+		this._environments.remove(environment);
 	}
-	,removeElement: function(predicate) {
-		var tmp = $iterator(thx__$Set_Set_$Impl_$)(this._elements);
+	,removeEnvironment: function(predicate) {
+		var tmp = $iterator(thx__$Set_Set_$Impl_$)(this._environments);
 		while(tmp.hasNext()) {
-			var element = tmp.next();
-			if(predicate(element)) {
-				this.elementRemoved(element);
+			var environment = tmp.next();
+			if(predicate(environment)) {
+				this.environmentRemoved(environment);
 				return true;
 			}
 		}
 		return false;
 	}
-	,removeElements: function(predicate) {
+	,removeEnvironments: function(predicate) {
 		var removed = false;
-		var tmp = $iterator(thx__$Set_Set_$Impl_$)(this._elements);
+		var tmp = $iterator(thx__$Set_Set_$Impl_$)(this._environments);
 		while(tmp.hasNext()) {
-			var element = tmp.next();
-			if(predicate(element)) {
-				this.elementRemoved(element);
+			var environment = tmp.next();
+			if(predicate(environment)) {
+				this.environmentRemoved(environment);
 				removed = true;
 			}
 		}
 		return removed;
 	}
-	,clearElements: function() {
-		this.removeElements(function(_) {
+	,clearEnvironments: function() {
+		this.removeEnvironments(function(_) {
 			return true;
 		});
 		return this;
 	}
-	,elements: function() {
-		return $iterator(thx__$Set_Set_$Impl_$)(this._elements);
+	,environments: function() {
+		return $iterator(thx__$Set_Set_$Impl_$)(this._environments);
 	}
 	,clear: function() {
 		this.clearEntities();
-		this.clearElements();
+		this.clearEnvironments();
 	}
 	,__class__: edge_Engine
 };
@@ -859,9 +887,9 @@ edge_Phase.prototype = {
 	}
 	,__class__: edge_Phase
 };
-var edge_StatusChange = { __ename__ : ["edge","StatusChange"], __constructs__ : ["ElementCreated","ElementRemoved","EntityCreated","EntityUpdated","EntityRemoved"] };
-edge_StatusChange.ElementCreated = function(e) { var $x = ["ElementCreated",0,e]; $x.__enum__ = edge_StatusChange; return $x; };
-edge_StatusChange.ElementRemoved = function(e) { var $x = ["ElementRemoved",1,e]; $x.__enum__ = edge_StatusChange; return $x; };
+var edge_StatusChange = { __ename__ : ["edge","StatusChange"], __constructs__ : ["EnvironmentCreated","EnvironmentRemoved","EntityCreated","EntityUpdated","EntityRemoved"] };
+edge_StatusChange.EnvironmentCreated = function(e) { var $x = ["EnvironmentCreated",0,e]; $x.__enum__ = edge_StatusChange; return $x; };
+edge_StatusChange.EnvironmentRemoved = function(e) { var $x = ["EnvironmentRemoved",1,e]; $x.__enum__ = edge_StatusChange; return $x; };
 edge_StatusChange.EntityCreated = function(e) { var $x = ["EntityCreated",2,e]; $x.__enum__ = edge_StatusChange; return $x; };
 edge_StatusChange.EntityUpdated = function(e) { var $x = ["EntityUpdated",3,e]; $x.__enum__ = edge_StatusChange; return $x; };
 edge_StatusChange.EntityRemoved = function(e) { var $x = ["EntityRemoved",4,e]; $x.__enum__ = edge_StatusChange; return $x; };
@@ -2967,6 +2995,9 @@ thx_Arrays.create = function(length,fillWith) {
 	}
 	return arr;
 };
+thx_Arrays.fromItem = function(t) {
+	return [t];
+};
 thx_Arrays.cross = function(a,b) {
 	var r = [];
 	var tmp = HxOverrides.iter(a);
@@ -3127,6 +3158,29 @@ thx_Arrays.findOption = function(array,predicate) {
 	}
 	return haxe_ds_Option.None;
 };
+thx_Arrays.findMap = function(values,f) {
+	var _g = 0;
+	while(_g < values.length) {
+		var value = values[_g];
+		++_g;
+		var opt = f(value);
+		if(!thx_Options.isNone(opt)) {
+			return opt;
+		}
+	}
+	return haxe_ds_Option.None;
+};
+thx_Arrays.findSome = function(options) {
+	var _g = 0;
+	while(_g < options.length) {
+		var option = options[_g];
+		++_g;
+		if(!thx_Options.isNone(option)) {
+			return option;
+		}
+	}
+	return haxe_ds_Option.None;
+};
 thx_Arrays.findIndex = function(array,predicate) {
 	var _g1 = 0;
 	var _g = array.length;
@@ -3196,7 +3250,7 @@ thx_Arrays.spanByIndex = function(arr,spanKey) {
 		var i = _g1++;
 		var k = spanKey(i);
 		if(k == null) {
-			throw new thx_Error("spanKey function returned null for index " + i,null,{ fileName : "Arrays.hx", lineNumber : 576, className : "thx.Arrays", methodName : "spanByIndex"});
+			throw new thx_Error("spanKey function returned null for index " + i,null,{ fileName : "Arrays.hx", lineNumber : 604, className : "thx.Arrays", methodName : "spanByIndex"});
 		}
 		if(cur == k) {
 			acc[j].push(arr[i]);
@@ -5396,6 +5450,9 @@ thx_Functions.identity = function(value) {
 };
 thx_Functions.noop = function() {
 };
+thx_Functions.lift = function(t,f) {
+	return f(t);
+};
 var thx_Ints = function() { };
 thx_Ints.__name__ = ["thx","Ints"];
 thx_Ints.abs = function(v) {
@@ -6621,7 +6678,9 @@ thx_Objects.getPath = function(o,path) {
 	while(_g < paths.length) {
 		var currentPath = paths[_g];
 		++_g;
-		if(thx_Strings.DIGITS.match(currentPath)) {
+		if(current == null) {
+			return null;
+		} else if(thx_Strings.DIGITS.match(currentPath)) {
 			var index = Std.parseInt(currentPath);
 			var value = current;
 			var arr = (value instanceof Array)?value:null;
@@ -13072,6 +13131,7 @@ if(typeof(scope.performance.now) == "undefined") {
 DateTools.DAYS_OF_MONTH = [31,28,31,30,31,30,31,31,30,31,30,31];
 Game.width = 400;
 Game.height = 400;
+Point.turn = 2 * Math.PI;
 haxe__$Int32_Int32_$Impl_$._mul = Math.imul != null?Math.imul:function(a,b) {
 	return a * (b & 65535) + (a * (b >>> 16) << 16 | 0) | 0;
 };

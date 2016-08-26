@@ -1,13 +1,13 @@
 package edge;
 
-class Entity<Component, Element> {
+class Entity<Component, Environment> {
   public var destroyed(default, null): Bool;
-  public var engine(default, null): Engine<Component, Element>;
+  public var engine(default, null): Engine<Component, Environment>;
 
   var list: Array<Component>;
-  var change: StatusChange<Component, Element> -> Void;
+  var change: StatusChange<Component, Environment> -> Void;
 
-  public function new(engine: Engine<Component, Element>, components: Array<Component>, change: StatusChange<Component, Element> -> Void) {
+  public function new(engine: Engine<Component, Environment>, components: Array<Component>, change: StatusChange<Component, Environment> -> Void) {
     this.engine = engine;
     this.destroyed = false;
     this.list = components;

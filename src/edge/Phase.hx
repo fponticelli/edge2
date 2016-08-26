@@ -3,11 +3,11 @@ package edge;
 import haxe.ds.Option;
 import thx.Any;
 
-class Phase<Component, Element> {
-  var _views: Map<View<Dynamic, Component, Element>, ViewSystem<Dynamic>> = new Map(); // Dynamic should be Any
+class Phase<Component, Environment> {
+  var _views: Map<View<Dynamic, Component, Environment>, ViewSystem<Dynamic>> = new Map(); // Dynamic should be Any
   public function new() {}
 
-  public function addView<Payload>(view: View<Payload, Component, Element>): ViewSystem<Payload> {
+  public function addView<Payload>(view: View<Payload, Component, Environment>): ViewSystem<Payload> {
     var viewSystem = _views.get(view);
     if(null == viewSystem) {
       _views.set(view, viewSystem = new ViewSystem());
@@ -27,7 +27,7 @@ class Phase<Component, Element> {
     }
   }
 
-  public function propagate(change: StatusChange<Component, Element>) {
+  public function propagate(change: StatusChange<Component, Environment>) {
     for(view in _views.keys())
       view.onChange(change);
   }

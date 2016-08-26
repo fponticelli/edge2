@@ -8,7 +8,7 @@ class TestEntity {
   public function new() {}
 
   public function testBasics() {
-    var engine = Engine.withEnumElement();
+    var engine = Engine.withEnumEnvironment();
     Assert.isFalse(engine.entities().hasNext());
     var entity = engine.createEntity([]);
     Assert.isTrue(engine.entities().hasNext());
@@ -22,7 +22,7 @@ class TestEntity {
   }
 
   public function testRemove() {
-    var engine = Engine.withEnumElement();
+    var engine = Engine.withEnumEnvironment();
     var entity = engine.createEntity([]);
     engine.removeEntity(function(_) return false);
     Assert.isFalse(entity.destroyed);
@@ -32,7 +32,7 @@ class TestEntity {
   }
 
   public function testRemoveMany() {
-    var engine = Engine.withEnumElement();
+    var engine = Engine.withEnumEnvironment();
     var e1 = engine.createEntity([]);
     var e2 = engine.createEntity([]);
     engine.removeEntities(function(e) return e == e1);

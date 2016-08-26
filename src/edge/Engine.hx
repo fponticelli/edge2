@@ -3,29 +3,29 @@ package edge;
 import thx.Set;
 import edge.Entity;
 
-class Engine<Component, Element> {
-  public static function withEnumElement<Component, Element : EnumValue>(): Engine<Component, Element>
-    return new Engine(function(): Set<Element> return cast Set.createEnum());
+class Engine<Component, Environment> {
+  public static function withEnumEnvironment<Component, Environment : EnumValue>(): Engine<Component, Environment>
+    return new Engine(function(): Set<Environment> return cast Set.createEnum());
 
-  public function new(createElementSet : Void -> Set<Element>) {
+  public function new(createEnvironmentSet : Void -> Set<Environment>) {
     _entities = Set.createObject();
-    _elements = createElementSet();
+    _environments = createEnvironmentSet();
   }
 
   // phases
-  var _phases: Array<Phase<Component, Element>> = [];
-  public function createPhase(): Phase<Component, Element> {
+  var _phases: Array<Phase<Component, Environment>> = [];
+  public function createPhase(): Phase<Component, Environment> {
     // TODO
     var phase = new Phase();
     _phases.push(phase);
     return phase;
   }
-  public function phases(): Iterator<Phase<Component, Element>>
+  public function phases(): Iterator<Phase<Component, Environment>>
     return _phases.iterator();
 
   // entities
-  var _entities: Set<Entity<Component, Element>>;
-  public function createEntity(components: Array<Component>): Entity<Component, Element> {
+  var _entities: Set<Entity<Component, Environment>>;
+  public function createEntity(components: Array<Component>): Entity<Component, Environment> {
     var entity = new Entity(this, components, statusChange);
     // TODO
     _entities.add(entity);
@@ -33,7 +33,7 @@ class Engine<Component, Element> {
     return entity;
   }
 
-  public function removeEntity(predicate: Entity<Component, Element> -> Bool): Bool {
+  public function removeEntity(predicate: Entity<Component, Environment> -> Bool): Bool {
     for(entity in _entities) {
       if(predicate(entity)) {
         entity.destroy();
@@ -43,30 +43,30 @@ class Engine<Component, Element> {
     return false;
   }
 
-  function entityDestroyed(entity: Entity<Component, Element>) {
+  function entityDestroyed(entity: Entity<Component, Environment>) {
     _entities.remove(entity);
     // TODO
   }
 
-  function entityUpdated(entity: Entity<Component, Element>) {
+  function entityUpdated(entity: Entity<Component, Environment>) {
     // TODO
   }
 
-  function statusChange(change: StatusChange<Component, Element>) {
+  function statusChange(change: StatusChange<Component, Environment>) {
     switch change {
       case EntityUpdated(e): entityUpdated(e);
       case EntityCreated(e): entityUpdated(e);
       case EntityRemoved(e): entityDestroyed(e);
       case _: // TODO
-      // case ElementCreated(e): elementCreated(e);
-      // case ElementRemoved(e): elementRemoved(e);
+      // case EnvironmentCreated(e): environmentCreated(e);
+      // case EnvironmentRemoved(e): environmentRemoved(e);
     }
     for(phase in _phases) {
       phase.propagate(change);
     }
   }
 
-  public function removeEntities(predicate: Entity<Component, Element> -> Bool): Bool {
+  public function removeEntities(predicate: Entity<Component, Environment> -> Bool): Bool {
     var removed = false;
     for(entity in _entities) {
       if(predicate(entity)) {
@@ -77,55 +77,55 @@ class Engine<Component, Element> {
     return removed;
   }
 
-  public function clearEntities(): Engine<Component, Element> {
+  public function clearEntities(): Engine<Component, Environment> {
     removeEntities(function(_) return true);
     return this;
   }
 
-  public function entities(): Iterator<Entity<Component, Element>>
+  public function entities(): Iterator<Entity<Component, Environment>>
     return _entities.iterator();
 
-  // Elements
-  var _elements: Set<Element>;
-  public function addElement(element: Element): Void {
+  // Environments
+  var _environments: Set<Environment>;
+  public function addEnvironment(environment: Environment): Void {
     // TODO
-    _elements.add(element);
+    _environments.add(environment);
   }
 
-  function elementRemoved(element: Element) {
-    _elements.remove(element);
+  function environmentRemoved(environment: Environment) {
+    _environments.remove(environment);
     // TODO
   }
 
-  public function removeElement(predicate: Element -> Bool): Bool {
-    for(element in _elements) {
-      if(predicate(element)) {
-        elementRemoved(element);
+  public function removeEnvironment(predicate: Environment -> Bool): Bool {
+    for(environment in _environments) {
+      if(predicate(environment)) {
+        environmentRemoved(environment);
         return true;
       }
     }
     return false;
   }
-  public function removeElements(predicate: Element -> Bool): Bool {
+  public function removeEnvironments(predicate: Environment -> Bool): Bool {
     var removed = false;
-    for(element in _elements) {
-      if(predicate(element)) {
-        elementRemoved(element);
+    for(environment in _environments) {
+      if(predicate(environment)) {
+        environmentRemoved(environment);
         removed = true;
       }
     }
     return removed;
   }
-  public function clearElements(): Engine<Component, Element> {
-    removeElements(function(_) return true);
+  public function clearEnvironments(): Engine<Component, Environment> {
+    removeEnvironments(function(_) return true);
     return this;
   }
 
-  public function elements(): Iterator<Element>
-    return _elements.iterator();
+  public function environments(): Iterator<Environment>
+    return _environments.iterator();
 
   public function clear(): Void {
     clearEntities();
-    clearElements();
+    clearEnvironments();
   }
 }

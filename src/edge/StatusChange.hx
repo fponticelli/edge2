@@ -1,9 +1,9 @@
 package edge;
 
-enum StatusChange<Component, Element> {
-  ElementCreated(e: Element);
-  ElementRemoved(e: Element);
-  EntityCreated(e: Entity<Component, Element>);
-  EntityUpdated(e: Entity<Component, Element>);
-  EntityRemoved(e: Entity<Component, Element>);
+enum StatusChange<Component, Environment> {
+  EnvironmentCreated(e: Environment);
+  EnvironmentRemoved(e: Environment);
+  EntityCreated(e: Entity<Component, Environment>);
+  EntityUpdated(e: Entity<Component, Environment>);
+  EntityRemoved(e: Entity<Component, Environment>);
 }

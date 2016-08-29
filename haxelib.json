@@ -1,0 +1,11 @@
+{
+  "name": "edge",
+  "url": "https://github.com/fponticelli/edge2",
+  "license": "MIT",
+  "classPath": "src",
+  "tags": ["ecs", "entity", "component", "game"],
+  "description": "ECS for haxe",
+  "releasenote": "first release",
+  "version": "2.0.0",
+  "contributors": ["fponticelli"]
+}

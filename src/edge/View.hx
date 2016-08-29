@@ -7,9 +7,33 @@ import thx.ReadonlyArray;
 class View<Payload, Component, Environment> {
   public static function components<ItemPayload, Component>(extractor: Iterator<Component> -> Option<ItemPayload>)
     return new ComponentView(extractor);
+  public static function environment<ItemPayload, Environment>(extractor: Environment -> Option<ItemPayload>)
+    return new EnvironmentView(extractor);
 
   public function onChange(change: StatusChange<Component, Environment>): Void {}
   public var payload(default, null): Option<Payload>;
+}
+
+class EnvironmentView<ItemPayload, Component, Environment> extends View<ItemPayload, Component, Environment> {
+  var matchEnvironment: Environment -> Option<ItemPayload>;
+  public function new(matchEnvironment: Environment -> Option<ItemPayload>) {
+    payload = None;
+    this.matchEnvironment = matchEnvironment;
+  }
+
+  override public function onChange(change: StatusChange<Component, Environment>): Void {
+    switch change {
+      case EnvironmentCreated(e):
+        switch matchEnvironment(e) {
+          case v = Some(_): payload = v;
+          case None:
+        }
+      case EnvironmentRemoved(e):
+        payload = None;
+      case EntityCreated(_), EntityUpdated(_), EntityRemoved(_):
+        // do nothing
+    }
+  }
 }
 
 class ComponentView<ItemPayload, Component, Environment> extends View<ReadonlyArray<ItemEntity<ItemPayload, Component, Environment>>, Component, Environment> {

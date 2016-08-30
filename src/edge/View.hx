@@ -93,7 +93,7 @@ class EnvironmentView<Payload, Component, Environment> extends View<Payload, Com
 
   override public function onChange(change: StatusChange<Component, Environment>): Void {
     switch change {
-      case EnvironmentCreated(e):
+      case EnvironmentAdded(e):
         switch matchEnvironment(e) {
           case v = Some(_): _payload = v;
           case None:
@@ -119,7 +119,7 @@ class EnvironmentsView<Payload, Component, Environment> extends View<Payload, Co
 
   override public function onChange(change: StatusChange<Component, Environment>): Void {
     switch change {
-      case EnvironmentCreated(e):
+      case EnvironmentAdded(e):
         environments.push(e);
         switch matchEnvironments(environments.iterator()) {
           case v = Some(_): _payload = v;
@@ -165,7 +165,7 @@ class ComponentView<Payload, Component, Environment> extends View<ReadonlyArray<
         }
       case EntityRemoved(e):
         map.remove(e);
-      case EnvironmentCreated(e): // do nothing
+      case EnvironmentAdded(e): // do nothing
       case EnvironmentRemoved(e): // do nothing
     }
     _payload = switch _payload {

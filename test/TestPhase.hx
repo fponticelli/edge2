@@ -13,14 +13,14 @@ class TestPhase {
   public function new() {}
 
   public function testBasics() {
-    var p = new Phase();
+    var p = new Phase(null);
     var v = new TPView();
     var vs = p.addView(v);
     Assert.notNull(vs);
     Assert.same([], v.collected);
     var e = new Entity(null, [CA], function(_) {});
     var events = [
-      EnvironmentCreated(EA),
+      EnvironmentAdded(EA),
       EnvironmentRemoved(EA),
       EntityCreated(e),
       EntityUpdated(e),

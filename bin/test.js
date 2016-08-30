@@ -521,11 +521,105 @@ var TestEngine = function() {
 };
 TestEngine.__name__ = ["TestEngine"];
 TestEngine.prototype = {
-	testPropagationBeforeSystem: function() {
+	testPropagationAfterSystem: function() {
+		var engine = edge_Engine.withEnumEnvironment();
+		var phase = engine.createPhase();
+		var countComps = 0;
+		var countEnv = 0;
+		phase.addView(edge_View.componentsEnvironments(function(e) {
+			countComps = countComps + 1;
+			utest_Assert.same(AComponent.CA,e.next(),null,null,null,{ fileName : "TestEngine.hx", lineNumber : 24, className : "TestEngine", methodName : "testPropagationAfterSystem"});
+			return haxe_ds_Option.None;
+		},function(e1) {
+			countEnv = countEnv + 1;
+			utest_Assert.same(AEnvironment.EA,e1.next(),null,null,null,{ fileName : "TestEngine.hx", lineNumber : 29, className : "TestEngine", methodName : "testPropagationAfterSystem"});
+			return haxe_ds_Option.None;
+		}));
+		utest_Assert.equals(0,countComps,null,{ fileName : "TestEngine.hx", lineNumber : 34, className : "TestEngine", methodName : "testPropagationAfterSystem"});
+		utest_Assert.equals(0,countEnv,null,{ fileName : "TestEngine.hx", lineNumber : 35, className : "TestEngine", methodName : "testPropagationAfterSystem"});
+		engine.createEntity([AComponent.CA]);
+		engine.addEnvironment(AEnvironment.EA);
+		utest_Assert.equals(1,countComps,null,{ fileName : "TestEngine.hx", lineNumber : 38, className : "TestEngine", methodName : "testPropagationAfterSystem"});
+		utest_Assert.equals(1,countEnv,null,{ fileName : "TestEngine.hx", lineNumber : 39, className : "TestEngine", methodName : "testPropagationAfterSystem"});
 	}
-	,testPropagationAfterSystem: function() {
+	,testPropagationBeforeSystem: function() {
+		var engine = edge_Engine.withEnumEnvironment();
+		var phase = engine.createPhase();
+		var countComps = 0;
+		var countEnv = 0;
+		engine.createEntity([AComponent.CA]);
+		engine.addEnvironment(AEnvironment.EA);
+		phase.addView(edge_View.componentsEnvironments(function(e) {
+			countComps = countComps + 1;
+			utest_Assert.same(AComponent.CA,e.next(),null,null,null,{ fileName : "TestEngine.hx", lineNumber : 53, className : "TestEngine", methodName : "testPropagationBeforeSystem"});
+			return haxe_ds_Option.None;
+		},function(e1) {
+			countEnv = countEnv + 1;
+			utest_Assert.same(AEnvironment.EA,e1.next(),null,null,null,{ fileName : "TestEngine.hx", lineNumber : 58, className : "TestEngine", methodName : "testPropagationBeforeSystem"});
+			return haxe_ds_Option.None;
+		}));
+		utest_Assert.equals(1,countComps,null,{ fileName : "TestEngine.hx", lineNumber : 63, className : "TestEngine", methodName : "testPropagationBeforeSystem"});
+		utest_Assert.equals(1,countEnv,null,{ fileName : "TestEngine.hx", lineNumber : 64, className : "TestEngine", methodName : "testPropagationBeforeSystem"});
+		engine.createEntity([AComponent.CA]);
+		engine.addEnvironment(AEnvironment.EA);
+		utest_Assert.equals(2,countComps,null,{ fileName : "TestEngine.hx", lineNumber : 67, className : "TestEngine", methodName : "testPropagationBeforeSystem"});
+		utest_Assert.equals(2,countEnv,null,{ fileName : "TestEngine.hx", lineNumber : 68, className : "TestEngine", methodName : "testPropagationBeforeSystem"});
 	}
 	,testPropagationAfterPhase: function() {
+		var engine = edge_Engine.withEnumEnvironment();
+		var countComps = 0;
+		var countEnv = 0;
+		engine.createEntity([AComponent.CA]);
+		engine.addEnvironment(AEnvironment.EA);
+		engine.createPhase().addView(edge_View.componentsEnvironments(function(e) {
+			countComps = countComps + 1;
+			utest_Assert.same(AComponent.CA,e.next(),null,null,null,{ fileName : "TestEngine.hx", lineNumber : 82, className : "TestEngine", methodName : "testPropagationAfterPhase"});
+			return haxe_ds_Option.None;
+		},function(e1) {
+			countEnv = countEnv + 1;
+			utest_Assert.same(AEnvironment.EA,e1.next(),null,null,null,{ fileName : "TestEngine.hx", lineNumber : 87, className : "TestEngine", methodName : "testPropagationAfterPhase"});
+			return haxe_ds_Option.None;
+		}));
+		utest_Assert.equals(1,countComps,null,{ fileName : "TestEngine.hx", lineNumber : 92, className : "TestEngine", methodName : "testPropagationAfterPhase"});
+		utest_Assert.equals(1,countEnv,null,{ fileName : "TestEngine.hx", lineNumber : 93, className : "TestEngine", methodName : "testPropagationAfterPhase"});
+		engine.createEntity([AComponent.CA]);
+		engine.addEnvironment(AEnvironment.EA);
+		utest_Assert.equals(2,countComps,null,{ fileName : "TestEngine.hx", lineNumber : 96, className : "TestEngine", methodName : "testPropagationAfterPhase"});
+		utest_Assert.equals(2,countEnv,null,{ fileName : "TestEngine.hx", lineNumber : 97, className : "TestEngine", methodName : "testPropagationAfterPhase"});
+	}
+	,testAddRemoveComponent: function() {
+		var engine = edge_Engine.withEnumEnvironment();
+		var phase = engine.createPhase();
+		var comps = null;
+		phase.addView(edge_View.components(function(e) {
+			comps = thx_Iterators.toArray(e);
+			return haxe_ds_Option.None;
+		}));
+		var e1 = engine.createEntity([AComponent.CA]);
+		utest_Assert.same([AComponent.CA],comps,null,null,null,{ fileName : "TestEngine.hx", lineNumber : 113, className : "TestEngine", methodName : "testAddRemoveComponent"});
+		e1.addComponent(AComponent.CB);
+		utest_Assert.same([AComponent.CA,AComponent.CB],comps,null,null,null,{ fileName : "TestEngine.hx", lineNumber : 115, className : "TestEngine", methodName : "testAddRemoveComponent"});
+		e1.removeComponent(function(c) {
+			return c == AComponent.CA;
+		});
+		utest_Assert.same([AComponent.CB],comps,null,null,null,{ fileName : "TestEngine.hx", lineNumber : 117, className : "TestEngine", methodName : "testAddRemoveComponent"});
+	}
+	,testRemoveEnvironment: function() {
+		var engine = edge_Engine.withEnumEnvironment();
+		var phase = engine.createPhase();
+		var envs = null;
+		phase.addView(edge_View.environments(function(e) {
+			envs = thx_Iterators.toArray(e);
+			return haxe_ds_Option.None;
+		}));
+		engine.addEnvironment(AEnvironment.EA);
+		utest_Assert.same([AEnvironment.EA],envs,null,null,null,{ fileName : "TestEngine.hx", lineNumber : 133, className : "TestEngine", methodName : "testRemoveEnvironment"});
+		engine.addEnvironment(AEnvironment.EB);
+		utest_Assert.same([AEnvironment.EA,AEnvironment.EB],envs,null,null,null,{ fileName : "TestEngine.hx", lineNumber : 135, className : "TestEngine", methodName : "testRemoveEnvironment"});
+		engine.removeEnvironment(function(e1) {
+			return e1 == AEnvironment.EA;
+		});
+		utest_Assert.same([AEnvironment.EB],envs,null,null,null,{ fileName : "TestEngine.hx", lineNumber : 137, className : "TestEngine", methodName : "testRemoveEnvironment"});
 	}
 	,__class__: TestEngine
 };
@@ -633,20 +727,20 @@ var TestPhase = function() {
 TestPhase.__name__ = ["TestPhase"];
 TestPhase.prototype = {
 	testBasics: function() {
-		var p = new edge_Phase();
+		var p = new edge_Phase(null);
 		var v = new TPView();
-		utest_Assert.notNull(p.addView(v),null,{ fileName : "TestPhase.hx", lineNumber : 20, className : "TestPhase", methodName : "testBasics"});
-		utest_Assert.same([],v.collected,null,null,null,{ fileName : "TestPhase.hx", lineNumber : 21, className : "TestPhase", methodName : "testBasics"});
+		utest_Assert.notNull(p.addView(v),null,{ fileName : "TestPhase.hx", lineNumber : 19, className : "TestPhase", methodName : "testBasics"});
+		utest_Assert.same([],v.collected,null,null,null,{ fileName : "TestPhase.hx", lineNumber : 20, className : "TestPhase", methodName : "testBasics"});
 		var e = new edge_Entity(null,[AComponent.CA],function(_) {
 		});
-		var events = [edge_StatusChange.EnvironmentCreated(AEnvironment.EA),edge_StatusChange.EnvironmentRemoved(AEnvironment.EA),edge_StatusChange.EntityCreated(e),edge_StatusChange.EntityUpdated(e),edge_StatusChange.EntityRemoved(e)];
+		var events = [edge_StatusChange.EnvironmentAdded(AEnvironment.EA),edge_StatusChange.EnvironmentRemoved(AEnvironment.EA),edge_StatusChange.EntityCreated(e),edge_StatusChange.EntityUpdated(e),edge_StatusChange.EntityRemoved(e)];
 		var _g = 0;
 		while(_g < events.length) {
 			var e1 = events[_g];
 			++_g;
 			p.propagate(e1);
 		}
-		utest_Assert.same(events,v.collected,null,null,null,{ fileName : "TestPhase.hx", lineNumber : 32, className : "TestPhase", methodName : "testBasics"});
+		utest_Assert.same(events,v.collected,null,null,null,{ fileName : "TestPhase.hx", lineNumber : 31, className : "TestPhase", methodName : "testBasics"});
 	}
 	,__class__: TestPhase
 };
@@ -706,13 +800,13 @@ TestTimeSpan.prototype = {
 var TestView = function() {
 	var e = new edge_Entity(null,[AComponent.CA],function(_) {
 	});
-	this.events = [edge_StatusChange.EnvironmentCreated(AEnvironment.EA),edge_StatusChange.EnvironmentRemoved(AEnvironment.EA),edge_StatusChange.EntityCreated(e),edge_StatusChange.EntityUpdated(e),edge_StatusChange.EntityRemoved(e)];
+	this.events = [edge_StatusChange.EnvironmentAdded(AEnvironment.EA),edge_StatusChange.EnvironmentRemoved(AEnvironment.EA),edge_StatusChange.EntityCreated(e),edge_StatusChange.EntityUpdated(e),edge_StatusChange.EntityRemoved(e)];
 };
 TestView.__name__ = ["TestView"];
 TestView.prototype = {
 	events: null
 	,testBasics: function() {
-		var p = new edge_Phase();
+		var p = new edge_Phase(null);
 		var comps = [];
 		var envs = [];
 		p.addView(edge_View.componentsEnvironments(function(e) {
@@ -730,7 +824,7 @@ TestView.prototype = {
 			p.propagate(e2);
 		}
 		utest_Assert.same([[AComponent.CA],[AComponent.CA]],comps,null,null,null,{ fileName : "TestView.hx", lineNumber : 43, className : "TestView", methodName : "testBasics"});
-		utest_Assert.same([AEnvironment.EA],envs,null,null,null,{ fileName : "TestView.hx", lineNumber : 44, className : "TestView", methodName : "testBasics"});
+		utest_Assert.same([[AEnvironment.EA],[]],envs,null,null,null,{ fileName : "TestView.hx", lineNumber : 44, className : "TestView", methodName : "testBasics"});
 	}
 	,__class__: TestView
 };
@@ -871,7 +965,7 @@ edge_Engine.withEnumEnvironment = function() {
 edge_Engine.prototype = {
 	_phases: null
 	,createPhase: function() {
-		var phase = new edge_Phase();
+		var phase = new edge_Phase(this);
 		this._phases.push(phase);
 		return phase;
 	}
@@ -896,23 +990,9 @@ edge_Engine.prototype = {
 		}
 		return false;
 	}
-	,entityDestroyed: function(entity) {
-		this._entities.remove(entity);
-	}
-	,entityUpdated: function(entity) {
-	}
 	,statusChange: function(change) {
-		switch(change[1]) {
-		case 2:
-			this.entityUpdated(change[2]);
-			break;
-		case 3:
-			this.entityUpdated(change[2]);
-			break;
-		case 4:
-			this.entityDestroyed(change[2]);
-			break;
-		default:
+		if(change[1] == 4) {
+			this._entities.remove(change[2]);
 		}
 		var _g = 0;
 		var _g1 = this._phases;
@@ -946,16 +1026,18 @@ edge_Engine.prototype = {
 	,_environments: null
 	,addEnvironment: function(environment) {
 		thx__$Set_Set_$Impl_$.add(this._environments,environment);
+		this.statusChange(edge_StatusChange.EnvironmentAdded(environment));
 	}
-	,environmentRemoved: function(environment) {
+	,_removeEnvironment: function(environment) {
 		this._environments.remove(environment);
+		this.statusChange(edge_StatusChange.EnvironmentRemoved(environment));
 	}
 	,removeEnvironment: function(predicate) {
 		var tmp = $iterator(thx__$Set_Set_$Impl_$)(this._environments);
 		while(tmp.hasNext()) {
 			var environment = tmp.next();
 			if(predicate(environment)) {
-				this.environmentRemoved(environment);
+				this._removeEnvironment(environment);
 				return true;
 			}
 		}
@@ -967,7 +1049,7 @@ edge_Engine.prototype = {
 		while(tmp.hasNext()) {
 			var environment = tmp.next();
 			if(predicate(environment)) {
-				this.environmentRemoved(environment);
+				this._removeEnvironment(environment);
 				removed = true;
 			}
 		}
@@ -1056,17 +1138,25 @@ edge_Entity.prototype = {
 	}
 	,__class__: edge_Entity
 };
-var edge_Phase = function() {
+var edge_Phase = function(engine) {
 	this._views = new haxe_ds_ObjectMap();
+	this.engine = engine;
 };
 edge_Phase.__name__ = ["edge","Phase"];
 edge_Phase.prototype = {
 	_views: null
+	,engine: null
 	,addView: function(view) {
 		var viewSystem = this._views.h[view.__id__];
 		if(null == viewSystem) {
 			viewSystem = new edge_ViewSystem();
 			this._views.set(view,viewSystem);
+		}
+		if(null != this.engine) {
+			var tmp = this.engine.environments();
+			while(tmp.hasNext()) view.onChange(edge_StatusChange.EnvironmentAdded(tmp.next()));
+			var tmp1 = this.engine.entities();
+			while(tmp1.hasNext()) view.onChange(edge_StatusChange.EntityCreated(tmp1.next()));
 		}
 		return viewSystem;
 	}
@@ -1091,8 +1181,8 @@ edge_Phase.prototype = {
 	}
 	,__class__: edge_Phase
 };
-var edge_StatusChange = { __ename__ : ["edge","StatusChange"], __constructs__ : ["EnvironmentCreated","EnvironmentRemoved","EntityCreated","EntityUpdated","EntityRemoved"] };
-edge_StatusChange.EnvironmentCreated = function(e) { var $x = ["EnvironmentCreated",0,e]; $x.__enum__ = edge_StatusChange; return $x; };
+var edge_StatusChange = { __ename__ : ["edge","StatusChange"], __constructs__ : ["EnvironmentAdded","EnvironmentRemoved","EntityCreated","EntityUpdated","EntityRemoved"] };
+edge_StatusChange.EnvironmentAdded = function(e) { var $x = ["EnvironmentAdded",0,e]; $x.__enum__ = edge_StatusChange; return $x; };
 edge_StatusChange.EnvironmentRemoved = function(e) { var $x = ["EnvironmentRemoved",1,e]; $x.__enum__ = edge_StatusChange; return $x; };
 edge_StatusChange.EntityCreated = function(e) { var $x = ["EntityCreated",2,e]; $x.__enum__ = edge_StatusChange; return $x; };
 edge_StatusChange.EntityUpdated = function(e) { var $x = ["EntityUpdated",3,e]; $x.__enum__ = edge_StatusChange; return $x; };

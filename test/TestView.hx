@@ -16,7 +16,7 @@ class TestView {
   public function new() {
     var e = new Entity(null, [CA], function(_) {});
     events = [
-      EnvironmentCreated(EA),
+      EnvironmentAdded(EA),
       EnvironmentRemoved(EA),
       EntityCreated(e),
       EntityUpdated(e),
@@ -25,7 +25,7 @@ class TestView {
   }
 
   public function testBasics() {
-    var p = new Phase(),
+    var p = new Phase(null),
         comps = [],
         envs = [];
     p.addView(View.componentsEnvironments(
@@ -41,10 +41,6 @@ class TestView {
     for(e in events)
       p.propagate(e);
     Assert.same([[CA], [CA]], comps);
-    Assert.same([EA], envs);
+    Assert.same([[EA], []], envs);
   }
 }
-/*
-public function onChange(change: StatusChange<Component, Environment>): Void {}
-public function payload(): Option<Payload> return None;
-*/

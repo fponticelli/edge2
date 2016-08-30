@@ -5,22 +5,89 @@ import thx.OrderedMap;
 import thx.ReadonlyArray;
 
 class View<Payload, Component, Environment> {
-  public static function components<ItemPayload, Component>(extractor: Iterator<Component> -> Option<ItemPayload>)
+  public static function components<Payload, Component, Environment>(extractor: Iterator<Component> -> Option<Payload>): View<ReadonlyArray<ItemEntity<Payload, Component, Environment>>, Component, Environment>
     return new ComponentView(extractor);
-  public static function environment<ItemPayload, Environment>(extractor: Environment -> Option<ItemPayload>)
+  public static function environment<Payload, Component, Environment>(extractor: Environment -> Option<Payload>): View<Payload, Component, Environment>
     return new EnvironmentView(extractor);
-  public static function environments<ItemPayload, Environment>(extractor: Iterator<Environment> -> Option<ItemPayload>)
+  public static function environments<Payload, Component, Environment>(extractor: Iterator<Environment> -> Option<Payload>): View<Payload, Component, Environment>
     return new EnvironmentsView(extractor);
+  public static function componentsEnvironment<ComponentsPayload, EnvironmentPayload, Payload, Component, Environment>(
+    extractorEntity: Iterator<Component> -> Option<ComponentsPayload>,
+    extractorEnvironment: Environment -> Option<EnvironmentPayload>
+  ): View<{
+    items: ReadonlyArray<ItemEntity<ComponentsPayload, Component, Environment>>,
+    environment: EnvironmentPayload
+  }, Component, Environment>
+    return new ComponentsAndEnvironmentView(extractorEntity, extractorEnvironment, function(c, e) return {
+      items: c,
+      environment: e
+    });
+  public static function componentsEnvironments<ComponentsPayload, EnvironmentPayload, Payload, Component, Environment>(
+    extractorEntity: Iterator<Component> -> Option<ComponentsPayload>,
+    extractorEnvironment: Iterator<Environment> -> Option<EnvironmentPayload>
+  ): View<{
+    items: ReadonlyArray<ItemEntity<ComponentsPayload, Component, Environment>>,
+    environment: EnvironmentPayload
+  }, Component, Environment>
+    return new ComponentsAndEnvironmentsView(extractorEntity, extractorEnvironment, function(c, e) return {
+      items: c,
+      environment: e
+    });
 
   public function onChange(change: StatusChange<Component, Environment>): Void {}
   public function payload(): Option<Payload> return None;
+}
+
+class ComponentsAndEnvironmentView<ComponentsPayload, EnvironmentPayload, Payload, Component, Environment> extends View<Payload, Component, Environment> {
+  var _payload = None;
+  var viewComponents: View<ReadonlyArray<ItemEntity<ComponentsPayload, Component, Environment>>, Component, Environment>;
+  var viewEnvironment: View<EnvironmentPayload, Component, Environment>;
+  var compose: ReadonlyArray<ItemEntity<ComponentsPayload, Component, Environment>> -> EnvironmentPayload -> Payload;
+  public function new(matchEntity: Iterator<Component> -> Option<ComponentsPayload>, matchEnvironment: Environment -> Option<EnvironmentPayload>, compose: ReadonlyArray<ItemEntity<ComponentsPayload, Component, Environment>> -> EnvironmentPayload -> Payload) {
+    this.viewComponents = View.components(matchEntity);
+    this.viewEnvironment = View.environment(matchEnvironment);
+    this.compose = compose;
+  }
+
+  override public function onChange(change: StatusChange<Component, Environment>): Void {
+    viewComponents.onChange(change);
+    viewEnvironment.onChange(change);
+    _payload = switch [viewComponents.payload(), viewEnvironment.payload()] {
+      case [Some(c), Some(e)]: Some(compose(c, e));
+      case _: None;
+    }
+  }
+
+  override function payload(): Option<Payload> return _payload;
+}
+
+class ComponentsAndEnvironmentsView<ComponentsPayload, EnvironmentPayload, Payload, Component, Environment> extends View<Payload, Component, Environment> {
+  var _payload = None;
+  var viewComponents: View<ReadonlyArray<ItemEntity<ComponentsPayload, Component, Environment>>, Component, Environment>;
+  var viewEnvironment: View<EnvironmentPayload, Component, Environment>;
+  var compose: ReadonlyArray<ItemEntity<ComponentsPayload, Component, Environment>> -> EnvironmentPayload -> Payload;
+  public function new(matchEntity: Iterator<Component> -> Option<ComponentsPayload>, matchEnvironment: Iterator<Environment> -> Option<EnvironmentPayload>, compose: ReadonlyArray<ItemEntity<ComponentsPayload, Component, Environment>> -> EnvironmentPayload -> Payload) {
+    this.viewComponents = View.components(matchEntity);
+    this.viewEnvironment = View.environments(matchEnvironment);
+    this.compose = compose;
+  }
+
+  override public function onChange(change: StatusChange<Component, Environment>): Void {
+    viewComponents.onChange(change);
+    viewEnvironment.onChange(change);
+    _payload = switch [viewComponents.payload(), viewEnvironment.payload()] {
+      case [Some(c), Some(e)]: Some(compose(c, e));
+      case _: None;
+    }
+  }
+
+  override function payload(): Option<Payload> return _payload;
 }
 
 class EnvironmentView<Payload, Component, Environment> extends View<Payload, Component, Environment> {
   var _payload = None;
   var matchEnvironment: Environment -> Option<Payload>;
   public function new(matchEnvironment: Environment -> Option<Payload>) {
-    _payload = None;
     this.matchEnvironment = matchEnvironment;
   }
 
@@ -46,7 +113,6 @@ class EnvironmentsView<Payload, Component, Environment> extends View<Payload, Co
   var environments: Array<Environment>;
   var _payload = None;
   public function new(matchEnvironments: Iterator<Environment> -> Option<Payload>) {
-    _payload = None;
     this.matchEnvironments = matchEnvironments;
     environments = [];
   }
@@ -78,7 +144,6 @@ class ComponentView<Payload, Component, Environment> extends View<ReadonlyArray<
   var matchEntity: Iterator<Component> -> Option<Payload>;
   var _payload = None;
   public function new(matchEntity: Iterator<Component> -> Option<Payload>) {
-    _payload = None;
     map = OrderedMap.createObject();
     this.matchEntity = matchEntity;
   }

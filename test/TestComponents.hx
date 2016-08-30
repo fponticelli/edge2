@@ -1,8 +1,5 @@
-import edge.TimeSpan;
-
 import utest.Assert;
 import edge.Entity;
-using thx.Iterators;
 import thx.Nil;
 import AComponent;
 
@@ -33,8 +30,6 @@ class TestComponents {
     entity.update(function(_) return [CA]);
     Assert.equals(CA, entity.components().next());
     Assert.equals(3, count);
-// removeComponent
-// removeComponents
   }
 
   public function testRemoveComponent() {

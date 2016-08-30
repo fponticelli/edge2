@@ -1,8 +1,5 @@
-import edge.TimeSpan;
-
 import utest.Assert;
 import edge.Engine;
-using thx.Iterators;
 
 class TestEntity {
   public function new() {}

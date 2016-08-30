@@ -2,21 +2,40 @@ import edge.TimeSpan;
 
 import utest.Assert;
 import edge.Engine;
-using thx.Iterators;
+import edge.Entity;
+import edge.Phase;
+import edge.StatusChange;
+import edge.View;
+import AComponent;
+import AEnvironment;
 
 class TestPhase {
   public function new() {}
 
   public function testBasics() {
-/*
-public function addView<Payload>(view: View<Payload, Component, Environment>): ViewSystem<Payload> {
+    var p = new Phase();
+    var v = new TPView();
+    var vs = p.addView(v);
+    Assert.notNull(vs);
+    Assert.same([], v.collected);
+    var e = new Entity(null, [CA], function(_) {});
+    var events = [
+      EnvironmentCreated(EA),
+      EnvironmentRemoved(EA),
+      EntityCreated(e),
+      EntityUpdated(e),
+      EntityRemoved(e)
+    ];
+    for(e in events)
+      p.propagate(e);
+    Assert.same(events, v.collected);
+  }
 }
 
-public function update() {
-}
-
-public function propagate(change: StatusChange<Component, Environment>) {
-}
-*/
+class TPView<Payload, Component, Environment> extends View<Payload, Component, Environment> {
+  public var collected: Array<StatusChange<Component, Environment>> = [];
+  public function new() {}
+  override public function onChange(change: StatusChange<Component, Environment>): Void {
+    collected.push(change);
   }
 }

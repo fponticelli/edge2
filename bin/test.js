@@ -6,6 +6,13 @@ function $extend(from, fields) {
 	if( fields.toString !== Object.prototype.toString ) proto.toString = fields.toString;
 	return proto;
 }
+var AComponent = { __ename__ : ["AComponent"], __constructs__ : ["CA","CB","CC"] };
+AComponent.CA = ["CA",0];
+AComponent.CA.__enum__ = AComponent;
+AComponent.CB = ["CB",1];
+AComponent.CB.__enum__ = AComponent;
+AComponent.CC = ["CC",2];
+AComponent.CC.__enum__ = AComponent;
 var DateTools = function() { };
 DateTools.__name__ = ["DateTools"];
 DateTools.getMonthDays = function(d) {
@@ -458,58 +465,51 @@ TestComponents.prototype = {
 		this.count++;
 	}
 	,testBasics: function() {
-		utest_Assert.equals(0,this.count,null,{ fileName : "TestComponents.hx", lineNumber : 22, className : "TestComponents", methodName : "testBasics"});
-		this.entity.addComponent(TestComponent.A);
-		utest_Assert.equals(TestComponent.A,this.entity.components().next(),null,{ fileName : "TestComponents.hx", lineNumber : 24, className : "TestComponents", methodName : "testBasics"});
-		utest_Assert.equals(1,this.count,null,{ fileName : "TestComponents.hx", lineNumber : 25, className : "TestComponents", methodName : "testBasics"});
-		this.entity.addComponents([TestComponent.B,TestComponent.C]);
+		utest_Assert.equals(0,this.count,null,{ fileName : "TestComponents.hx", lineNumber : 23, className : "TestComponents", methodName : "testBasics"});
+		this.entity.addComponent(AComponent.CA);
+		utest_Assert.equals(AComponent.CA,this.entity.components().next(),null,{ fileName : "TestComponents.hx", lineNumber : 25, className : "TestComponents", methodName : "testBasics"});
+		utest_Assert.equals(1,this.count,null,{ fileName : "TestComponents.hx", lineNumber : 26, className : "TestComponents", methodName : "testBasics"});
+		this.entity.addComponents([AComponent.CB,AComponent.CC]);
 		var it = this.entity.components();
-		utest_Assert.equals(TestComponent.A,it.next(),null,{ fileName : "TestComponents.hx", lineNumber : 28, className : "TestComponents", methodName : "testBasics"});
-		utest_Assert.equals(TestComponent.B,it.next(),null,{ fileName : "TestComponents.hx", lineNumber : 29, className : "TestComponents", methodName : "testBasics"});
-		utest_Assert.equals(TestComponent.C,it.next(),null,{ fileName : "TestComponents.hx", lineNumber : 30, className : "TestComponents", methodName : "testBasics"});
-		utest_Assert.equals(2,this.count,null,{ fileName : "TestComponents.hx", lineNumber : 31, className : "TestComponents", methodName : "testBasics"});
+		utest_Assert.equals(AComponent.CA,it.next(),null,{ fileName : "TestComponents.hx", lineNumber : 29, className : "TestComponents", methodName : "testBasics"});
+		utest_Assert.equals(AComponent.CB,it.next(),null,{ fileName : "TestComponents.hx", lineNumber : 30, className : "TestComponents", methodName : "testBasics"});
+		utest_Assert.equals(AComponent.CC,it.next(),null,{ fileName : "TestComponents.hx", lineNumber : 31, className : "TestComponents", methodName : "testBasics"});
+		utest_Assert.equals(2,this.count,null,{ fileName : "TestComponents.hx", lineNumber : 32, className : "TestComponents", methodName : "testBasics"});
 		this.entity.update(function(_) {
-			return [TestComponent.A];
+			return [AComponent.CA];
 		});
-		utest_Assert.equals(TestComponent.A,this.entity.components().next(),null,{ fileName : "TestComponents.hx", lineNumber : 33, className : "TestComponents", methodName : "testBasics"});
-		utest_Assert.equals(3,this.count,null,{ fileName : "TestComponents.hx", lineNumber : 34, className : "TestComponents", methodName : "testBasics"});
+		utest_Assert.equals(AComponent.CA,this.entity.components().next(),null,{ fileName : "TestComponents.hx", lineNumber : 34, className : "TestComponents", methodName : "testBasics"});
+		utest_Assert.equals(3,this.count,null,{ fileName : "TestComponents.hx", lineNumber : 35, className : "TestComponents", methodName : "testBasics"});
 	}
 	,testRemoveComponent: function() {
-		this.entity.addComponents([TestComponent.A,TestComponent.B]);
-		utest_Assert.equals(1,this.count,null,{ fileName : "TestComponents.hx", lineNumber : 41, className : "TestComponents", methodName : "testRemoveComponent"});
+		this.entity.addComponents([AComponent.CA,AComponent.CB]);
+		utest_Assert.equals(1,this.count,null,{ fileName : "TestComponents.hx", lineNumber : 42, className : "TestComponents", methodName : "testRemoveComponent"});
 		utest_Assert.isFalse(this.entity.removeComponent(function(v) {
-			return v == TestComponent.C;
-		}),null,{ fileName : "TestComponents.hx", lineNumber : 42, className : "TestComponents", methodName : "testRemoveComponent"});
-		utest_Assert.equals(1,this.count,null,{ fileName : "TestComponents.hx", lineNumber : 43, className : "TestComponents", methodName : "testRemoveComponent"});
+			return v == AComponent.CC;
+		}),null,{ fileName : "TestComponents.hx", lineNumber : 43, className : "TestComponents", methodName : "testRemoveComponent"});
+		utest_Assert.equals(1,this.count,null,{ fileName : "TestComponents.hx", lineNumber : 44, className : "TestComponents", methodName : "testRemoveComponent"});
 		utest_Assert.isTrue(this.entity.removeComponent(function(v1) {
-			return v1 == TestComponent.A;
-		}),null,{ fileName : "TestComponents.hx", lineNumber : 44, className : "TestComponents", methodName : "testRemoveComponent"});
-		utest_Assert.equals(2,this.count,null,{ fileName : "TestComponents.hx", lineNumber : 45, className : "TestComponents", methodName : "testRemoveComponent"});
-		utest_Assert.equals(TestComponent.B,this.entity.components().next(),null,{ fileName : "TestComponents.hx", lineNumber : 46, className : "TestComponents", methodName : "testRemoveComponent"});
+			return v1 == AComponent.CA;
+		}),null,{ fileName : "TestComponents.hx", lineNumber : 45, className : "TestComponents", methodName : "testRemoveComponent"});
+		utest_Assert.equals(2,this.count,null,{ fileName : "TestComponents.hx", lineNumber : 46, className : "TestComponents", methodName : "testRemoveComponent"});
+		utest_Assert.equals(AComponent.CB,this.entity.components().next(),null,{ fileName : "TestComponents.hx", lineNumber : 47, className : "TestComponents", methodName : "testRemoveComponent"});
 	}
 	,testRemoveComponents: function() {
-		this.entity.addComponents([TestComponent.A,TestComponent.B,TestComponent.C]);
-		utest_Assert.equals(1,this.count,null,{ fileName : "TestComponents.hx", lineNumber : 51, className : "TestComponents", methodName : "testRemoveComponents"});
+		this.entity.addComponents([AComponent.CA,AComponent.CB,AComponent.CC]);
+		utest_Assert.equals(1,this.count,null,{ fileName : "TestComponents.hx", lineNumber : 52, className : "TestComponents", methodName : "testRemoveComponents"});
 		utest_Assert.isFalse(this.entity.removeComponents(function(_) {
 			return false;
-		}),null,{ fileName : "TestComponents.hx", lineNumber : 52, className : "TestComponents", methodName : "testRemoveComponents"});
-		utest_Assert.equals(1,this.count,null,{ fileName : "TestComponents.hx", lineNumber : 53, className : "TestComponents", methodName : "testRemoveComponents"});
-		utest_Assert.isTrue(this.entity.components().hasNext(),null,{ fileName : "TestComponents.hx", lineNumber : 54, className : "TestComponents", methodName : "testRemoveComponents"});
+		}),null,{ fileName : "TestComponents.hx", lineNumber : 53, className : "TestComponents", methodName : "testRemoveComponents"});
+		utest_Assert.equals(1,this.count,null,{ fileName : "TestComponents.hx", lineNumber : 54, className : "TestComponents", methodName : "testRemoveComponents"});
+		utest_Assert.isTrue(this.entity.components().hasNext(),null,{ fileName : "TestComponents.hx", lineNumber : 55, className : "TestComponents", methodName : "testRemoveComponents"});
 		utest_Assert.isTrue(this.entity.removeComponents(function(_1) {
 			return true;
-		}),null,{ fileName : "TestComponents.hx", lineNumber : 55, className : "TestComponents", methodName : "testRemoveComponents"});
-		utest_Assert.equals(2,this.count,null,{ fileName : "TestComponents.hx", lineNumber : 56, className : "TestComponents", methodName : "testRemoveComponents"});
-		utest_Assert.isFalse(this.entity.components().hasNext(),null,{ fileName : "TestComponents.hx", lineNumber : 57, className : "TestComponents", methodName : "testRemoveComponents"});
+		}),null,{ fileName : "TestComponents.hx", lineNumber : 56, className : "TestComponents", methodName : "testRemoveComponents"});
+		utest_Assert.equals(2,this.count,null,{ fileName : "TestComponents.hx", lineNumber : 57, className : "TestComponents", methodName : "testRemoveComponents"});
+		utest_Assert.isFalse(this.entity.components().hasNext(),null,{ fileName : "TestComponents.hx", lineNumber : 58, className : "TestComponents", methodName : "testRemoveComponents"});
 	}
 	,__class__: TestComponents
 };
-var TestComponent = { __ename__ : ["TestComponent"], __constructs__ : ["A","B","C"] };
-TestComponent.A = ["A",0];
-TestComponent.A.__enum__ = TestComponent;
-TestComponent.B = ["B",1];
-TestComponent.B.__enum__ = TestComponent;
-TestComponent.C = ["C",2];
-TestComponent.C.__enum__ = TestComponent;
 var TestEntity = function() {
 };
 TestEntity.__name__ = ["TestEntity"];
@@ -633,7 +633,11 @@ var TestView = function() {
 };
 TestView.__name__ = ["TestView"];
 TestView.prototype = {
-	testBasics: function() {
+	testEventsBeforeSystem: function() {
+	}
+	,testEventsAfterSystem: function() {
+	}
+	,testEventsAfterPhase: function() {
 	}
 	,__class__: TestView
 };
@@ -977,7 +981,7 @@ edge_Phase.prototype = {
 		var tmp = this._views.keys();
 		while(tmp.hasNext()) {
 			var view = tmp.next();
-			var _g = view.payload;
+			var _g = view.payload();
 			switch(_g[1]) {
 			case 0:
 				this._views.h[view.__id__].update(_g[2]);
@@ -1022,14 +1026,102 @@ edge_View.__name__ = ["edge","View"];
 edge_View.components = function(extractor) {
 	return new edge_ComponentView(extractor);
 };
+edge_View.environment = function(extractor) {
+	return new edge_EnvironmentView(extractor);
+};
+edge_View.environments = function(extractor) {
+	return new edge_EnvironmentsView(extractor);
+};
 edge_View.prototype = {
 	onChange: function(change) {
 	}
-	,payload: null
+	,payload: function() {
+		return haxe_ds_Option.None;
+	}
 	,__class__: edge_View
 };
+var edge_EnvironmentView = function(matchEnvironment) {
+	this._payload = haxe_ds_Option.None;
+	this._payload = haxe_ds_Option.None;
+	this.matchEnvironment = matchEnvironment;
+};
+edge_EnvironmentView.__name__ = ["edge","EnvironmentView"];
+edge_EnvironmentView.__super__ = edge_View;
+edge_EnvironmentView.prototype = $extend(edge_View.prototype,{
+	_payload: null
+	,matchEnvironment: null
+	,onChange: function(change) {
+		switch(change[1]) {
+		case 0:
+			var _g = this.matchEnvironment(change[2]);
+			switch(_g[1]) {
+			case 0:
+				this._payload = _g;
+				break;
+			case 1:
+				break;
+			}
+			break;
+		case 1:
+			this._payload = haxe_ds_Option.None;
+			break;
+		case 2:case 3:case 4:
+			break;
+		}
+	}
+	,payload: function() {
+		return this._payload;
+	}
+	,__class__: edge_EnvironmentView
+});
+var edge_EnvironmentsView = function(matchEnvironments) {
+	this._payload = haxe_ds_Option.None;
+	this._payload = haxe_ds_Option.None;
+	this.matchEnvironments = matchEnvironments;
+	this.environments = [];
+};
+edge_EnvironmentsView.__name__ = ["edge","EnvironmentsView"];
+edge_EnvironmentsView.__super__ = edge_View;
+edge_EnvironmentsView.prototype = $extend(edge_View.prototype,{
+	matchEnvironments: null
+	,environments: null
+	,_payload: null
+	,onChange: function(change) {
+		switch(change[1]) {
+		case 0:
+			this.environments.push(change[2]);
+			var _g = this.matchEnvironments(HxOverrides.iter(this.environments));
+			switch(_g[1]) {
+			case 0:
+				this._payload = _g;
+				break;
+			case 1:
+				break;
+			}
+			break;
+		case 1:
+			HxOverrides.remove(this.environments,change[2]);
+			var _g1 = this.matchEnvironments(HxOverrides.iter(this.environments));
+			switch(_g1[1]) {
+			case 0:
+				this._payload = _g1;
+				break;
+			case 1:
+				break;
+			}
+			break;
+		case 2:case 3:case 4:
+			break;
+		}
+	}
+	,payload: function() {
+		return this._payload;
+	}
+	,__class__: edge_EnvironmentsView
+});
 var edge_ComponentView = function(matchEntity) {
-	this.payload = haxe_ds_Option.None;
+	this._payload = haxe_ds_Option.None;
+	this._payload = haxe_ds_Option.None;
 	this.map = new thx_ObjectOrderedMap();
 	this.matchEntity = matchEntity;
 };
@@ -1038,6 +1130,7 @@ edge_ComponentView.__super__ = edge_View;
 edge_ComponentView.prototype = $extend(edge_View.prototype,{
 	map: null
 	,matchEntity: null
+	,_payload: null
 	,onChange: function(change) {
 		switch(change[1]) {
 		case 0:
@@ -1071,7 +1164,10 @@ edge_ComponentView.prototype = $extend(edge_View.prototype,{
 			this.map.remove(change[2]);
 			break;
 		}
-		this.payload = this.payload[1] == 1?this.map.length == 0?haxe_ds_Option.None:haxe_ds_Option.Some(this.map.toArray()):haxe_ds_Option.Some(this.map.toArray());
+		this._payload = this._payload[1] == 1?this.map.length == 0?haxe_ds_Option.None:haxe_ds_Option.Some(this.map.toArray()):haxe_ds_Option.Some(this.map.toArray());
+	}
+	,payload: function() {
+		return this._payload;
 	}
 	,__class__: edge_ComponentView
 });

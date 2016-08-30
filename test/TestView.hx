@@ -7,6 +7,12 @@ using thx.Iterators;
 class TestView {
   public function new() {}
 
-  public function testBasics() {
+  public function testEventsBeforeSystem() {
+  }
+
+  public function testEventsAfterSystem() {
+  }
+
+  public function testEventsAfterPhase() {
   }
 }

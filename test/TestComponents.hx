@@ -4,10 +4,11 @@ import utest.Assert;
 import edge.Entity;
 using thx.Iterators;
 import thx.Nil;
+import AComponent;
 
 class TestComponents {
   var count: Int;
-  var entity: Entity<TestComponent, Nil>;
+  var entity: Entity<AComponent, Nil>;
   public function new() {}
 
   public function setup() {
@@ -20,34 +21,34 @@ class TestComponents {
 
   public function testBasics() {
     Assert.equals(0, count);
-    entity.addComponent(A);
-    Assert.equals(A, entity.components().next());
+    entity.addComponent(CA);
+    Assert.equals(CA, entity.components().next());
     Assert.equals(1, count);
-    entity.addComponents([B, C]);
+    entity.addComponents([CB, CC]);
     var it = entity.components();
-    Assert.equals(A, it.next());
-    Assert.equals(B, it.next());
-    Assert.equals(C, it.next());
+    Assert.equals(CA, it.next());
+    Assert.equals(CB, it.next());
+    Assert.equals(CC, it.next());
     Assert.equals(2, count);
-    entity.update(function(_) return [A]);
-    Assert.equals(A, entity.components().next());
+    entity.update(function(_) return [CA]);
+    Assert.equals(CA, entity.components().next());
     Assert.equals(3, count);
 // removeComponent
 // removeComponents
   }
 
   public function testRemoveComponent() {
-    entity.addComponents([A, B]);
+    entity.addComponents([CA, CB]);
     Assert.equals(1, count);
-    Assert.isFalse(entity.removeComponent(function(v) return v == C));
+    Assert.isFalse(entity.removeComponent(function(v) return v == CC));
     Assert.equals(1, count);
-    Assert.isTrue(entity.removeComponent(function(v) return v == A));
+    Assert.isTrue(entity.removeComponent(function(v) return v == CA));
     Assert.equals(2, count);
-    Assert.equals(B, entity.components().next());
+    Assert.equals(CB, entity.components().next());
   }
 
   public function testRemoveComponents() {
-    entity.addComponents([A, B, C]);
+    entity.addComponents([CA, CB, CC]);
     Assert.equals(1, count);
     Assert.isFalse(entity.removeComponents(function(_) return false));
     Assert.equals(1, count);
@@ -56,10 +57,4 @@ class TestComponents {
     Assert.equals(2, count);
     Assert.isFalse(entity.components().hasNext());
   }
-}
-
-enum TestComponent {
-  A;
-  B;
-  C;
 }

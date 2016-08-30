@@ -18,7 +18,7 @@ class Phase<Component, Environment> {
 
   public function update() {
     for(view in _views.keys()) {
-      switch view.payload {
+      switch view.payload() {
         case None: continue;
         case Some(pl):
           var viewSystem = _views.get(view);

@@ -667,7 +667,7 @@ edge_Engine.withEnumEnvironment = function() {
 edge_Engine.prototype = {
 	_phases: null
 	,createPhase: function() {
-		var phase = new edge_Phase();
+		var phase = new edge_Phase(this);
 		this._phases.push(phase);
 		return phase;
 	}
@@ -692,23 +692,9 @@ edge_Engine.prototype = {
 		}
 		return false;
 	}
-	,entityDestroyed: function(entity) {
-		this._entities.remove(entity);
-	}
-	,entityUpdated: function(entity) {
-	}
 	,statusChange: function(change) {
-		switch(change[1]) {
-		case 2:
-			this.entityUpdated(change[2]);
-			break;
-		case 3:
-			this.entityUpdated(change[2]);
-			break;
-		case 4:
-			this.entityDestroyed(change[2]);
-			break;
-		default:
+		if(change[1] == 4) {
+			this._entities.remove(change[2]);
 		}
 		var _g = 0;
 		var _g1 = this._phases;
@@ -742,16 +728,18 @@ edge_Engine.prototype = {
 	,_environments: null
 	,addEnvironment: function(environment) {
 		thx__$Set_Set_$Impl_$.add(this._environments,environment);
+		this.statusChange(edge_StatusChange.EnvironmentAdded(environment));
 	}
-	,environmentRemoved: function(environment) {
+	,_removeEnvironment: function(environment) {
 		this._environments.remove(environment);
+		this.statusChange(edge_StatusChange.EnvironmentRemoved(environment));
 	}
 	,removeEnvironment: function(predicate) {
 		var tmp = $iterator(thx__$Set_Set_$Impl_$)(this._environments);
 		while(tmp.hasNext()) {
 			var environment = tmp.next();
 			if(predicate(environment)) {
-				this.environmentRemoved(environment);
+				this._removeEnvironment(environment);
 				return true;
 			}
 		}
@@ -763,7 +751,7 @@ edge_Engine.prototype = {
 		while(tmp.hasNext()) {
 			var environment = tmp.next();
 			if(predicate(environment)) {
-				this.environmentRemoved(environment);
+				this._removeEnvironment(environment);
 				removed = true;
 			}
 		}
@@ -852,17 +840,25 @@ edge_Entity.prototype = {
 	}
 	,__class__: edge_Entity
 };
-var edge_Phase = function() {
+var edge_Phase = function(engine) {
 	this._views = new haxe_ds_ObjectMap();
+	this.engine = engine;
 };
 edge_Phase.__name__ = ["edge","Phase"];
 edge_Phase.prototype = {
 	_views: null
+	,engine: null
 	,addView: function(view) {
 		var viewSystem = this._views.h[view.__id__];
 		if(null == viewSystem) {
 			viewSystem = new edge_ViewSystem();
 			this._views.set(view,viewSystem);
+		}
+		if(null != this.engine) {
+			var tmp = this.engine.environments();
+			while(tmp.hasNext()) view.onChange(edge_StatusChange.EnvironmentAdded(tmp.next()));
+			var tmp1 = this.engine.entities();
+			while(tmp1.hasNext()) view.onChange(edge_StatusChange.EntityCreated(tmp1.next()));
 		}
 		return viewSystem;
 	}
@@ -870,7 +866,7 @@ edge_Phase.prototype = {
 		var tmp = this._views.keys();
 		while(tmp.hasNext()) {
 			var view = tmp.next();
-			var _g = view.payload;
+			var _g = view.payload();
 			switch(_g[1]) {
 			case 0:
 				this._views.h[view.__id__].update(_g[2]);
@@ -887,8 +883,8 @@ edge_Phase.prototype = {
 	}
 	,__class__: edge_Phase
 };
-var edge_StatusChange = { __ename__ : ["edge","StatusChange"], __constructs__ : ["EnvironmentCreated","EnvironmentRemoved","EntityCreated","EntityUpdated","EntityRemoved"] };
-edge_StatusChange.EnvironmentCreated = function(e) { var $x = ["EnvironmentCreated",0,e]; $x.__enum__ = edge_StatusChange; return $x; };
+var edge_StatusChange = { __ename__ : ["edge","StatusChange"], __constructs__ : ["EnvironmentAdded","EnvironmentRemoved","EntityCreated","EntityUpdated","EntityRemoved"] };
+edge_StatusChange.EnvironmentAdded = function(e) { var $x = ["EnvironmentAdded",0,e]; $x.__enum__ = edge_StatusChange; return $x; };
 edge_StatusChange.EnvironmentRemoved = function(e) { var $x = ["EnvironmentRemoved",1,e]; $x.__enum__ = edge_StatusChange; return $x; };
 edge_StatusChange.EntityCreated = function(e) { var $x = ["EntityCreated",2,e]; $x.__enum__ = edge_StatusChange; return $x; };
 edge_StatusChange.EntityUpdated = function(e) { var $x = ["EntityUpdated",3,e]; $x.__enum__ = edge_StatusChange; return $x; };
@@ -898,14 +894,159 @@ edge_View.__name__ = ["edge","View"];
 edge_View.components = function(extractor) {
 	return new edge_ComponentView(extractor);
 };
+edge_View.environment = function(extractor) {
+	return new edge_EnvironmentView(extractor);
+};
+edge_View.environments = function(extractor) {
+	return new edge_EnvironmentsView(extractor);
+};
+edge_View.componentsEnvironment = function(extractorEntity,extractorEnvironment) {
+	return new edge_ComponentsAndEnvironmentView(extractorEntity,extractorEnvironment,function(c,e) {
+		return { items : c, environment : e};
+	});
+};
+edge_View.componentsEnvironments = function(extractorEntity,extractorEnvironment) {
+	return new edge_ComponentsAndEnvironmentsView(extractorEntity,extractorEnvironment,function(c,e) {
+		return { items : c, environment : e};
+	});
+};
 edge_View.prototype = {
 	onChange: function(change) {
 	}
-	,payload: null
+	,payload: function() {
+		return haxe_ds_Option.None;
+	}
 	,__class__: edge_View
 };
+var edge_ComponentsAndEnvironmentView = function(matchEntity,matchEnvironment,compose) {
+	this._payload = haxe_ds_Option.None;
+	this.viewComponents = edge_View.components(matchEntity);
+	this.viewEnvironment = edge_View.environment(matchEnvironment);
+	this.compose = compose;
+};
+edge_ComponentsAndEnvironmentView.__name__ = ["edge","ComponentsAndEnvironmentView"];
+edge_ComponentsAndEnvironmentView.__super__ = edge_View;
+edge_ComponentsAndEnvironmentView.prototype = $extend(edge_View.prototype,{
+	_payload: null
+	,viewComponents: null
+	,viewEnvironment: null
+	,compose: null
+	,onChange: function(change) {
+		this.viewComponents.onChange(change);
+		this.viewEnvironment.onChange(change);
+		var _g = this.viewEnvironment.payload();
+		var _g1 = this.viewComponents.payload();
+		this._payload = _g1[1] == 0?_g[1] == 0?haxe_ds_Option.Some(this.compose(_g1[2],_g[2])):haxe_ds_Option.None:haxe_ds_Option.None;
+	}
+	,payload: function() {
+		return this._payload;
+	}
+	,__class__: edge_ComponentsAndEnvironmentView
+});
+var edge_ComponentsAndEnvironmentsView = function(matchEntity,matchEnvironment,compose) {
+	this._payload = haxe_ds_Option.None;
+	this.viewComponents = edge_View.components(matchEntity);
+	this.viewEnvironment = edge_View.environments(matchEnvironment);
+	this.compose = compose;
+};
+edge_ComponentsAndEnvironmentsView.__name__ = ["edge","ComponentsAndEnvironmentsView"];
+edge_ComponentsAndEnvironmentsView.__super__ = edge_View;
+edge_ComponentsAndEnvironmentsView.prototype = $extend(edge_View.prototype,{
+	_payload: null
+	,viewComponents: null
+	,viewEnvironment: null
+	,compose: null
+	,onChange: function(change) {
+		this.viewComponents.onChange(change);
+		this.viewEnvironment.onChange(change);
+		var _g = this.viewEnvironment.payload();
+		var _g1 = this.viewComponents.payload();
+		this._payload = _g1[1] == 0?_g[1] == 0?haxe_ds_Option.Some(this.compose(_g1[2],_g[2])):haxe_ds_Option.None:haxe_ds_Option.None;
+	}
+	,payload: function() {
+		return this._payload;
+	}
+	,__class__: edge_ComponentsAndEnvironmentsView
+});
+var edge_EnvironmentView = function(matchEnvironment) {
+	this._payload = haxe_ds_Option.None;
+	this.matchEnvironment = matchEnvironment;
+};
+edge_EnvironmentView.__name__ = ["edge","EnvironmentView"];
+edge_EnvironmentView.__super__ = edge_View;
+edge_EnvironmentView.prototype = $extend(edge_View.prototype,{
+	_payload: null
+	,matchEnvironment: null
+	,onChange: function(change) {
+		switch(change[1]) {
+		case 0:
+			var _g = this.matchEnvironment(change[2]);
+			switch(_g[1]) {
+			case 0:
+				this._payload = _g;
+				break;
+			case 1:
+				break;
+			}
+			break;
+		case 1:
+			this._payload = haxe_ds_Option.None;
+			break;
+		case 2:case 3:case 4:
+			break;
+		}
+	}
+	,payload: function() {
+		return this._payload;
+	}
+	,__class__: edge_EnvironmentView
+});
+var edge_EnvironmentsView = function(matchEnvironments) {
+	this._payload = haxe_ds_Option.None;
+	this.matchEnvironments = matchEnvironments;
+	this.environments = [];
+};
+edge_EnvironmentsView.__name__ = ["edge","EnvironmentsView"];
+edge_EnvironmentsView.__super__ = edge_View;
+edge_EnvironmentsView.prototype = $extend(edge_View.prototype,{
+	matchEnvironments: null
+	,environments: null
+	,_payload: null
+	,onChange: function(change) {
+		switch(change[1]) {
+		case 0:
+			this.environments.push(change[2]);
+			var _g = this.matchEnvironments(HxOverrides.iter(this.environments));
+			switch(_g[1]) {
+			case 0:
+				this._payload = _g;
+				break;
+			case 1:
+				break;
+			}
+			break;
+		case 1:
+			HxOverrides.remove(this.environments,change[2]);
+			var _g1 = this.matchEnvironments(HxOverrides.iter(this.environments));
+			switch(_g1[1]) {
+			case 0:
+				this._payload = _g1;
+				break;
+			case 1:
+				break;
+			}
+			break;
+		case 2:case 3:case 4:
+			break;
+		}
+	}
+	,payload: function() {
+		return this._payload;
+	}
+	,__class__: edge_EnvironmentsView
+});
 var edge_ComponentView = function(matchEntity) {
-	this.payload = haxe_ds_Option.None;
+	this._payload = haxe_ds_Option.None;
 	this.map = new thx_ObjectOrderedMap();
 	this.matchEntity = matchEntity;
 };
@@ -914,6 +1055,7 @@ edge_ComponentView.__super__ = edge_View;
 edge_ComponentView.prototype = $extend(edge_View.prototype,{
 	map: null
 	,matchEntity: null
+	,_payload: null
 	,onChange: function(change) {
 		switch(change[1]) {
 		case 0:
@@ -947,7 +1089,10 @@ edge_ComponentView.prototype = $extend(edge_View.prototype,{
 			this.map.remove(change[2]);
 			break;
 		}
-		this.payload = this.payload[1] == 1?this.map.length == 0?haxe_ds_Option.None:haxe_ds_Option.Some(this.map.toArray()):haxe_ds_Option.Some(this.map.toArray());
+		this._payload = this._payload[1] == 1?this.map.length == 0?haxe_ds_Option.None:haxe_ds_Option.Some(this.map.toArray()):haxe_ds_Option.Some(this.map.toArray());
+	}
+	,payload: function() {
+		return this._payload;
 	}
 	,__class__: edge_ComponentView
 });

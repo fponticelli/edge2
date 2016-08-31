@@ -1198,11 +1198,25 @@ edge__$TimeSpan_TimeSpan_$Impl_$.fromSeconds = function(s) {
 edge__$TimeSpan_TimeSpan_$Impl_$._new = function(v) {
 	return v;
 };
+edge__$TimeSpan_TimeSpan_$Impl_$.toFramesPerSecond = function(this1) {
+	return 1.0 / (this1 / 1000.0);
+};
 edge__$TimeSpan_TimeSpan_$Impl_$.get_millis = function(this1) {
 	return this1;
 };
 edge__$TimeSpan_TimeSpan_$Impl_$.get_seconds = function(this1) {
 	return this1 / 1000.0;
+};
+edge__$TimeSpan_TimeSpan_$Impl_$.perSecond = function(this1,value) {
+	return value * this1 / 1000;
+};
+edge__$TimeSpan_TimeSpan_$Impl_$.average = function(arr) {
+	return edge__$TimeSpan_TimeSpan_$Impl_$.sum(arr) / arr.length;
+};
+edge__$TimeSpan_TimeSpan_$Impl_$.sum = function(arr) {
+	return thx_Arrays.reduce(arr,function(tot,v) {
+		return tot + v;
+	},0.0);
 };
 var edge_ComponentsAndEnvironmentView = function(matchEntity,matchEnvironment,compose) {
 	this._payload = haxe_ds_Option.None;

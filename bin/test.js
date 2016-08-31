@@ -466,7 +466,7 @@ TestComponents.prototype = {
 	,entity: null
 	,setup: function() {
 		this.count = 0;
-		this.entity = new edge_Entity(null,[],$bind(this,this.statusChange));
+		this.entity = new edge_Entity([],$bind(this,this.statusChange));
 	}
 	,statusChange: function(_) {
 		this.count++;
@@ -731,7 +731,7 @@ TestPhase.prototype = {
 		var v = new TPView();
 		utest_Assert.notNull(p.addView(v),null,{ fileName : "TestPhase.hx", lineNumber : 19, className : "TestPhase", methodName : "testBasics"});
 		utest_Assert.same([],v.collected,null,null,null,{ fileName : "TestPhase.hx", lineNumber : 20, className : "TestPhase", methodName : "testBasics"});
-		var e = new edge_Entity(null,[AComponent.CA],function(_) {
+		var e = new edge_Entity([AComponent.CA],function(_) {
 		});
 		var events = [edge_StatusChange.EnvironmentAdded(AEnvironment.EA),edge_StatusChange.EnvironmentRemoved(AEnvironment.EA),edge_StatusChange.EntityCreated(e),edge_StatusChange.EntityUpdated(e),edge_StatusChange.EntityRemoved(e)];
 		var _g = 0;
@@ -798,7 +798,7 @@ TestTimeSpan.prototype = {
 	,__class__: TestTimeSpan
 };
 var TestView = function() {
-	var e = new edge_Entity(null,[AComponent.CA],function(_) {
+	var e = new edge_Entity([AComponent.CA],function(_) {
 	});
 	this.events = [edge_StatusChange.EnvironmentAdded(AEnvironment.EA),edge_StatusChange.EnvironmentRemoved(AEnvironment.EA),edge_StatusChange.EntityCreated(e),edge_StatusChange.EntityUpdated(e),edge_StatusChange.EntityRemoved(e)];
 };
@@ -974,7 +974,7 @@ edge_Engine.prototype = {
 	}
 	,_entities: null
 	,createEntity: function(components) {
-		var entity = new edge_Entity(this,components,$bind(this,this.statusChange));
+		var entity = new edge_Entity(components,$bind(this,this.statusChange));
 		thx__$Set_Set_$Impl_$.add(this._entities,entity);
 		this.statusChange(edge_StatusChange.EntityCreated(entity));
 		return entity;
@@ -1070,8 +1070,7 @@ edge_Engine.prototype = {
 	}
 	,__class__: edge_Engine
 };
-var edge_Entity = function(engine,components,change) {
-	this.engine = engine;
+var edge_Entity = function(components,change) {
 	this.destroyed = false;
 	this.list = components;
 	this.change = change;
@@ -1079,7 +1078,6 @@ var edge_Entity = function(engine,components,change) {
 edge_Entity.__name__ = ["edge","Entity"];
 edge_Entity.prototype = {
 	destroyed: null
-	,engine: null
 	,list: null
 	,change: null
 	,addComponent: function(c) {

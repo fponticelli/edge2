@@ -18,7 +18,7 @@ class TestPhase {
     var vs = p.addView(v);
     Assert.notNull(vs);
     Assert.same([], v.collected);
-    var e = new Entity(null, [CA], function(_) {});
+    var e = new Entity([CA], function(_) {});
     var events = [
       EnvironmentAdded(EA),
       EnvironmentRemoved(EA),

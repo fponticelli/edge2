@@ -10,7 +10,7 @@ class TestComponents {
 
   public function setup() {
     count = 0;
-    entity = new Entity(null, [], statusChange);
+    entity = new Entity([], statusChange);
   }
 
   public function statusChange<Component, Environment>(_)

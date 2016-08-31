@@ -14,7 +14,7 @@ using thx.Iterators;
 class TestView {
   var events: Array<StatusChange<AComponent, AEnvironment>>;
   public function new() {
-    var e = new Entity(null, [CA], function(_) {});
+    var e = new Entity([CA], function(_) {});
     events = [
       EnvironmentAdded(EA),
       EnvironmentRemoved(EA),

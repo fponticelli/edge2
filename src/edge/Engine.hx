@@ -25,7 +25,7 @@ class Engine<Component, Environment> {
   // entities
   var _entities: Set<Entity<Component, Environment>>;
   public function createEntity(components: Array<Component>): Entity<Component, Environment> {
-    var entity = new Entity(this, components, statusChange);
+    var entity = new Entity(components, statusChange);
     _entities.add(entity);
     statusChange(EntityCreated(entity));
     return entity;

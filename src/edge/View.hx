@@ -4,55 +4,55 @@ import haxe.ds.Option;
 import thx.OrderedMap;
 import thx.ReadonlyArray;
 
-class View<Payload, Component, Environment> {
-  public static function components<Payload, Component, Environment>(extractor: Iterator<Component> -> Option<Payload>): View<ReadonlyArray<ItemEntity<Payload, Component>>, Component, Environment>
+class View<Payload, Component, Property> {
+  public static function components<Payload, Component, Property>(extractor: Iterator<Component> -> Option<Payload>): View<ReadonlyArray<ItemEntity<Payload, Component>>, Component, Property>
     return new ComponentView(extractor);
-  public static function environment<Payload, Component, Environment>(extractor: Environment -> Option<Payload>): View<Payload, Component, Environment>
-    return new EnvironmentView(extractor);
-  public static function environments<Payload, Component, Environment>(extractor: Iterator<Environment> -> Option<Payload>): View<Payload, Component, Environment>
-    return new EnvironmentsView(extractor);
-  public static function componentsEnvironment<ComponentsPayload, EnvironmentPayload, Payload, Component, Environment>(
+  public static function property<Payload, Component, Property>(extractor: Property -> Option<Payload>): View<Payload, Component, Property>
+    return new PropertyView(extractor);
+  public static function properties<Payload, Component, Property>(extractor: Iterator<Property> -> Option<Payload>): View<Payload, Component, Property>
+    return new PropertiesView(extractor);
+  public static function componentsProperty<ComponentsPayload, PropertyPayload, Payload, Component, Property>(
     extractorEntity: Iterator<Component> -> Option<ComponentsPayload>,
-    extractorEnvironment: Environment -> Option<EnvironmentPayload>
+    extractorProperty: Property -> Option<PropertyPayload>
   ): View<{
     items: ReadonlyArray<ItemEntity<ComponentsPayload, Component>>,
-    environment: EnvironmentPayload
-  }, Component, Environment>
-    return new ComponentsAndEnvironmentView(extractorEntity, extractorEnvironment, function(c, e) return {
+    property: PropertyPayload
+  }, Component, Property>
+    return new ComponentsAndPropertyView(extractorEntity, extractorProperty, function(c, e) return {
       items: c,
-      environment: e
+      property: e
     });
-  public static function componentsEnvironments<ComponentsPayload, EnvironmentPayload, Payload, Component, Environment>(
+  public static function componentsProperties<ComponentsPayload, PropertyPayload, Payload, Component, Property>(
     extractorEntity: Iterator<Component> -> Option<ComponentsPayload>,
-    extractorEnvironment: Iterator<Environment> -> Option<EnvironmentPayload>
+    extractorProperty: Iterator<Property> -> Option<PropertyPayload>
   ): View<{
     items: ReadonlyArray<ItemEntity<ComponentsPayload, Component>>,
-    environment: EnvironmentPayload
-  }, Component, Environment>
-    return new ComponentsAndEnvironmentsView(extractorEntity, extractorEnvironment, function(c, e) return {
+    property: PropertyPayload
+  }, Component, Property>
+    return new ComponentsAndPropertiesView(extractorEntity, extractorProperty, function(c, e) return {
       items: c,
-      environment: e
+      property: e
     });
 
-  public function onChange(change: StatusChange<Component, Environment>): Void {}
+  public function onChange(change: StatusChange<Component, Property>): Void {}
   public function payload(): Option<Payload> return None;
 }
 
-class ComponentsAndEnvironmentView<ComponentsPayload, EnvironmentPayload, Payload, Component, Environment> extends View<Payload, Component, Environment> {
+class ComponentsAndPropertyView<ComponentsPayload, PropertyPayload, Payload, Component, Property> extends View<Payload, Component, Property> {
   var _payload = None;
-  var viewComponents: View<ReadonlyArray<ItemEntity<ComponentsPayload, Component>>, Component, Environment>;
-  var viewEnvironment: View<EnvironmentPayload, Component, Environment>;
-  var compose: ReadonlyArray<ItemEntity<ComponentsPayload, Component>> -> EnvironmentPayload -> Payload;
-  public function new(matchEntity: Iterator<Component> -> Option<ComponentsPayload>, matchEnvironment: Environment -> Option<EnvironmentPayload>, compose: ReadonlyArray<ItemEntity<ComponentsPayload, Component>> -> EnvironmentPayload -> Payload) {
+  var viewComponents: View<ReadonlyArray<ItemEntity<ComponentsPayload, Component>>, Component, Property>;
+  var viewProperty: View<PropertyPayload, Component, Property>;
+  var compose: ReadonlyArray<ItemEntity<ComponentsPayload, Component>> -> PropertyPayload -> Payload;
+  public function new(matchEntity: Iterator<Component> -> Option<ComponentsPayload>, matchProperty: Property -> Option<PropertyPayload>, compose: ReadonlyArray<ItemEntity<ComponentsPayload, Component>> -> PropertyPayload -> Payload) {
     this.viewComponents = View.components(matchEntity);
-    this.viewEnvironment = View.environment(matchEnvironment);
+    this.viewProperty = View.property(matchProperty);
     this.compose = compose;
   }
 
-  override public function onChange(change: StatusChange<Component, Environment>): Void {
+  override public function onChange(change: StatusChange<Component, Property>): Void {
     viewComponents.onChange(change);
-    viewEnvironment.onChange(change);
-    _payload = switch [viewComponents.payload(), viewEnvironment.payload()] {
+    viewProperty.onChange(change);
+    _payload = switch [viewComponents.payload(), viewProperty.payload()] {
       case [Some(c), Some(e)]: Some(compose(c, e));
       case _: None;
     }
@@ -61,21 +61,21 @@ class ComponentsAndEnvironmentView<ComponentsPayload, EnvironmentPayload, Payloa
   override function payload(): Option<Payload> return _payload;
 }
 
-class ComponentsAndEnvironmentsView<ComponentsPayload, EnvironmentPayload, Payload, Component, Environment> extends View<Payload, Component, Environment> {
+class ComponentsAndPropertiesView<ComponentsPayload, PropertyPayload, Payload, Component, Property> extends View<Payload, Component, Property> {
   var _payload = None;
-  var viewComponents: View<ReadonlyArray<ItemEntity<ComponentsPayload, Component>>, Component, Environment>;
-  var viewEnvironment: View<EnvironmentPayload, Component, Environment>;
-  var compose: ReadonlyArray<ItemEntity<ComponentsPayload, Component>> -> EnvironmentPayload -> Payload;
-  public function new(matchEntity: Iterator<Component> -> Option<ComponentsPayload>, matchEnvironment: Iterator<Environment> -> Option<EnvironmentPayload>, compose: ReadonlyArray<ItemEntity<ComponentsPayload, Component>> -> EnvironmentPayload -> Payload) {
+  var viewComponents: View<ReadonlyArray<ItemEntity<ComponentsPayload, Component>>, Component, Property>;
+  var viewProperty: View<PropertyPayload, Component, Property>;
+  var compose: ReadonlyArray<ItemEntity<ComponentsPayload, Component>> -> PropertyPayload -> Payload;
+  public function new(matchEntity: Iterator<Component> -> Option<ComponentsPayload>, matchProperty: Iterator<Property> -> Option<PropertyPayload>, compose: ReadonlyArray<ItemEntity<ComponentsPayload, Component>> -> PropertyPayload -> Payload) {
     this.viewComponents = View.components(matchEntity);
-    this.viewEnvironment = View.environments(matchEnvironment);
+    this.viewProperty = View.properties(matchProperty);
     this.compose = compose;
   }
 
-  override public function onChange(change: StatusChange<Component, Environment>): Void {
+  override public function onChange(change: StatusChange<Component, Property>): Void {
     viewComponents.onChange(change);
-    viewEnvironment.onChange(change);
-    _payload = switch [viewComponents.payload(), viewEnvironment.payload()] {
+    viewProperty.onChange(change);
+    _payload = switch [viewComponents.payload(), viewProperty.payload()] {
       case [Some(c), Some(e)]: Some(compose(c, e));
       case _: None;
     }
@@ -84,21 +84,21 @@ class ComponentsAndEnvironmentsView<ComponentsPayload, EnvironmentPayload, Paylo
   override function payload(): Option<Payload> return _payload;
 }
 
-class EnvironmentView<Payload, Component, Environment> extends View<Payload, Component, Environment> {
+class PropertyView<Payload, Component, Property> extends View<Payload, Component, Property> {
   var _payload = None;
-  var matchEnvironment: Environment -> Option<Payload>;
-  public function new(matchEnvironment: Environment -> Option<Payload>) {
-    this.matchEnvironment = matchEnvironment;
+  var matchProperty: Property -> Option<Payload>;
+  public function new(matchProperty: Property -> Option<Payload>) {
+    this.matchProperty = matchProperty;
   }
 
-  override public function onChange(change: StatusChange<Component, Environment>): Void {
+  override public function onChange(change: StatusChange<Component, Property>): Void {
     switch change {
-      case EnvironmentAdded(e):
-        switch matchEnvironment(e) {
+      case PropertyAdded(e):
+        switch matchProperty(e) {
           case v = Some(_): _payload = v;
           case None:
         }
-      case EnvironmentRemoved(e):
+      case PropertyRemoved(e):
         _payload = None;
       case EntityCreated(_), EntityUpdated(_), EntityRemoved(_):
         // do nothing
@@ -108,26 +108,26 @@ class EnvironmentView<Payload, Component, Environment> extends View<Payload, Com
   override function payload(): Option<Payload> return _payload;
 }
 
-class EnvironmentsView<Payload, Component, Environment> extends View<Payload, Component, Environment> {
-  var matchEnvironments: Iterator<Environment> -> Option<Payload>;
-  var environments: Array<Environment>;
+class PropertiesView<Payload, Component, Property> extends View<Payload, Component, Property> {
+  var matchProperties: Iterator<Property> -> Option<Payload>;
+  var properties: Array<Property>;
   var _payload = None;
-  public function new(matchEnvironments: Iterator<Environment> -> Option<Payload>) {
-    this.matchEnvironments = matchEnvironments;
-    environments = [];
+  public function new(matchProperties: Iterator<Property> -> Option<Payload>) {
+    this.matchProperties = matchProperties;
+    properties = [];
   }
 
-  override public function onChange(change: StatusChange<Component, Environment>): Void {
+  override public function onChange(change: StatusChange<Component, Property>): Void {
     switch change {
-      case EnvironmentAdded(e):
-        environments.push(e);
-        switch matchEnvironments(environments.iterator()) {
+      case PropertyAdded(e):
+        properties.push(e);
+        switch matchProperties(properties.iterator()) {
           case v = Some(_): _payload = v;
           case None:
         }
-      case EnvironmentRemoved(e):
-        environments.remove(e);
-        switch matchEnvironments(environments.iterator()) {
+      case PropertyRemoved(e):
+        properties.remove(e);
+        switch matchProperties(properties.iterator()) {
           case v = Some(_): _payload = v;
           case None:
         }
@@ -139,7 +139,7 @@ class EnvironmentsView<Payload, Component, Environment> extends View<Payload, Co
   override function payload(): Option<Payload> return _payload;
 }
 
-class ComponentView<Payload, Component, Environment> extends View<ReadonlyArray<ItemEntity<Payload, Component>>, Component, Environment> {
+class ComponentView<Payload, Component, Property> extends View<ReadonlyArray<ItemEntity<Payload, Component>>, Component, Property> {
   var map: OrderedMap<Entity<Component>, ItemEntity<Payload, Component>>;
   var matchEntity: Iterator<Component> -> Option<Payload>;
   var _payload = None;
@@ -148,7 +148,7 @@ class ComponentView<Payload, Component, Environment> extends View<ReadonlyArray<
     this.matchEntity = matchEntity;
   }
 
-  override public function onChange(change: StatusChange<Component, Environment>): Void {
+  override public function onChange(change: StatusChange<Component, Property>): Void {
     switch change {
       case EntityCreated(e):
         switch matchEntity(e.components()) {
@@ -165,8 +165,8 @@ class ComponentView<Payload, Component, Environment> extends View<ReadonlyArray<
         }
       case EntityRemoved(e):
         map.remove(e);
-      case EnvironmentAdded(e): // do nothing
-      case EnvironmentRemoved(e): // do nothing
+      case PropertyAdded(e): // do nothing
+      case PropertyRemoved(e): // do nothing
     }
     _payload = switch _payload {
       case None if(map.length == 0): None;

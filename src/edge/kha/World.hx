@@ -6,12 +6,12 @@ import kha.System;
 import edge.Phase;
 import edge.TimeSpan;
 
-class World<Component, Environment> {
-  public var frame(default, null): DeltaPhase<Component, Environment>;
-  public var physics(default, null): DeltaPhase<Component, Environment>;
-  public var render(default, null): DeltaPhase<Component, Environment>;
-  public var engine(default, null): Engine<Component, Environment>;
-  public var collision(default, null): DeltaPhase<Component, Environment>;
+class World<Component, Property> {
+  public var frame(default, null): DeltaPhase<Component, Property>;
+  public var physics(default, null): DeltaPhase<Component, Property>;
+  public var render(default, null): DeltaPhase<Component, Property>;
+  public var engine(default, null): Engine<Component, Property>;
+  public var collision(default, null): DeltaPhase<Component, Property>;
   public var collisionDelay(default, null): Float;
   public var delta(default, null): Float;
   var _framebuffer: Framebuffer;
@@ -21,7 +21,7 @@ class World<Component, Environment> {
   var remainder : Float;
   var last: Float;
   var t: Float;
-  public function new(engine: Engine<Component, Environment>, ?delta : Float = 16, ?collisionDelay : Float = 50) {
+  public function new(engine: Engine<Component, Property>, ?delta : Float = 16, ?collisionDelay : Float = 50) {
     this.engine    = engine;
     this.frame     = new DeltaPhase(engine.createPhase());
     this.physics   = new DeltaPhase(engine.createPhase());
@@ -65,12 +65,12 @@ class World<Component, Environment> {
     return System.time * 1000;
 }
 
-class DeltaPhase<Component, Environment> {
-  public var phase(default, null): Phase<Component, Environment>;
+class DeltaPhase<Component, Property> {
+  public var phase(default, null): Phase<Component, Property>;
 
   var span: Float;
   var latest: Float;
-  public function new(phase: Phase<Component, Environment>) {
+  public function new(phase: Phase<Component, Property>) {
     this.phase = phase;
     this.latest = System.time;
   }

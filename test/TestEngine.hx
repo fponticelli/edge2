@@ -1,5 +1,5 @@
 import AComponent;
-import AEnvironment;
+import AProperty;
 import utest.Assert;
 import edge.Engine;
 import edge.Entity;
@@ -13,12 +13,12 @@ class TestEngine {
   public function new() {}
 
   public function testPropagationAfterSystem() {
-    var engine = Engine.withEnumEnvironment(),
+    var engine = Engine.withEnumProperty(),
         phase = engine.createPhase(),
         countComps = 0,
         countEnv = 0;
     phase.addView(
-      View.componentsEnvironments(
+      View.componentsProperties(
         function(e) {
           countComps++;
           Assert.same(CA, e.next());
@@ -34,20 +34,20 @@ class TestEngine {
     Assert.equals(0, countComps);
     Assert.equals(0, countEnv);
     engine.createEntity([CA]);
-    engine.addEnvironment(EA);
+    engine.addProperty(EA);
     Assert.equals(1, countComps);
     Assert.equals(1, countEnv);
   }
 
   public function testPropagationBeforeSystem() {
-    var engine = Engine.withEnumEnvironment(),
+    var engine = Engine.withEnumProperty(),
         phase = engine.createPhase(),
         countComps = 0,
         countEnv = 0;
     engine.createEntity([CA]);
-    engine.addEnvironment(EA);
+    engine.addProperty(EA);
     phase.addView(
-      View.componentsEnvironments(
+      View.componentsProperties(
         function(e) {
           countComps++;
           Assert.same(CA, e.next());
@@ -63,20 +63,20 @@ class TestEngine {
     Assert.equals(1, countComps);
     Assert.equals(1, countEnv);
     engine.createEntity([CA]);
-    engine.addEnvironment(EA);
+    engine.addProperty(EA);
     Assert.equals(2, countComps);
     Assert.equals(2, countEnv);
   }
 
   public function testPropagationAfterPhase() {
-    var engine = Engine.withEnumEnvironment(),
+    var engine = Engine.withEnumProperty(),
         countComps = 0,
         countEnv = 0;
     engine.createEntity([CA]);
-    engine.addEnvironment(EA);
+    engine.addProperty(EA);
     var phase = engine.createPhase();
     phase.addView(
-      View.componentsEnvironments(
+      View.componentsProperties(
         function(e) {
           countComps++;
           Assert.same(CA, e.next());
@@ -92,13 +92,13 @@ class TestEngine {
     Assert.equals(1, countComps);
     Assert.equals(1, countEnv);
     engine.createEntity([CA]);
-    engine.addEnvironment(EA);
+    engine.addProperty(EA);
     Assert.equals(2, countComps);
     Assert.equals(2, countEnv);
   }
 
   public function testAddRemoveComponent() {
-    var engine = Engine.withEnumEnvironment(),
+    var engine = Engine.withEnumProperty(),
         phase = engine.createPhase(),
         comps = null;
     phase.addView(
@@ -117,23 +117,23 @@ class TestEngine {
     Assert.same([CB], comps);
   }
 
-  public function testRemoveEnvironment() {
-    var engine = Engine.withEnumEnvironment(),
+  public function testRemoveProperty() {
+    var engine = Engine.withEnumProperty(),
         phase = engine.createPhase(),
         envs = null;
     phase.addView(
-      View.environments(
+      View.properties(
         function(e) {
           envs = e.toArray();
           return None;
         }
       )
     );
-    engine.addEnvironment(EA);
+    engine.addProperty(EA);
     Assert.same([EA], envs);
-    engine.addEnvironment(EB);
+    engine.addProperty(EB);
     Assert.same([EA, EB], envs);
-    engine.removeEnvironment(function(e) return e == EA);
+    engine.removeProperty(function(e) return e == EA);
     Assert.same([EB], envs);
   }
 }

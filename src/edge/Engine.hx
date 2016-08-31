@@ -3,23 +3,23 @@ package edge;
 import thx.Set;
 import edge.Entity;
 
-class Engine<Component, Environment> {
-  public static function withEnumEnvironment<Component, Environment : EnumValue>(): Engine<Component, Environment>
-    return new Engine(function(): Set<Environment> return cast Set.createEnum());
+class Engine<Component, Property> {
+  public static function withEnumProperty<Component, Property : EnumValue>(): Engine<Component, Property>
+    return new Engine(function(): Set<Property> return cast Set.createEnum());
 
-  public function new(createEnvironmentSet : Void -> Set<Environment>) {
+  public function new(createPropertySet : Void -> Set<Property>) {
     _entities = Set.createObject();
-    _environments = createEnvironmentSet();
+    _properties = createPropertySet();
   }
 
   // phases
-  var _phases: Array<Phase<Component, Environment>> = [];
-  public function createPhase(): Phase<Component, Environment> {
+  var _phases: Array<Phase<Component, Property>> = [];
+  public function createPhase(): Phase<Component, Property> {
     var phase = new Phase(this);
     _phases.push(phase);
     return phase;
   }
-  public function phases(): Iterator<Phase<Component, Environment>>
+  public function phases(): Iterator<Phase<Component, Property>>
     return _phases.iterator();
 
   // entities
@@ -41,7 +41,7 @@ class Engine<Component, Environment> {
     return false;
   }
 
-  function statusChange(change: StatusChange<Component, Environment>) {
+  function statusChange(change: StatusChange<Component, Property>) {
     switch change {
       case EntityRemoved(e):
         _entities.remove(e);
@@ -64,7 +64,7 @@ class Engine<Component, Environment> {
     return removed;
   }
 
-  public function clearEntities(): Engine<Component, Environment> {
+  public function clearEntities(): Engine<Component, Property> {
     removeEntities(function(_) return true);
     return this;
   }
@@ -72,47 +72,47 @@ class Engine<Component, Environment> {
   public function entities(): Iterator<Entity<Component>>
     return _entities.iterator();
 
-  // Environments
-  var _environments: Set<Environment>;
-  public function addEnvironment(environment: Environment): Void {
-    _environments.add(environment);
-    statusChange(EnvironmentAdded(environment));
+  // properties
+  var _properties: Set<Property>;
+  public function addProperty(property: Property): Void {
+    _properties.add(property);
+    statusChange(PropertyAdded(property));
   }
 
-  function _removeEnvironment(environment) {
-    _environments.remove(environment);
-    statusChange(EnvironmentRemoved(environment));
+  function _removeProperty(property) {
+    _properties.remove(property);
+    statusChange(PropertyRemoved(property));
   }
 
-  public function removeEnvironment(predicate: Environment -> Bool): Bool {
-    for(environment in _environments) {
-      if(predicate(environment)) {
-        _removeEnvironment(environment);
+  public function removeProperty(predicate: Property -> Bool): Bool {
+    for(property in _properties) {
+      if(predicate(property)) {
+        _removeProperty(property);
         return true;
       }
     }
     return false;
   }
-  public function removeEnvironments(predicate: Environment -> Bool): Bool {
+  public function removeProperties(predicate: Property -> Bool): Bool {
     var removed = false;
-    for(environment in _environments) {
-      if(predicate(environment)) {
-        _removeEnvironment(environment);
+    for(property in _properties) {
+      if(predicate(property)) {
+        _removeProperty(property);
         removed = true;
       }
     }
     return removed;
   }
-  public function clearEnvironments(): Engine<Component, Environment> {
-    removeEnvironments(function(_) return true);
+  public function clearProperties(): Engine<Component, Property> {
+    removeProperties(function(_) return true);
     return this;
   }
 
-  public function environments(): Iterator<Environment>
-    return _environments.iterator();
+  public function properties(): Iterator<Property>
+    return _properties.iterator();
 
   public function clear(): Void {
     clearEntities();
-    clearEnvironments();
+    clearProperties();
   }
 }

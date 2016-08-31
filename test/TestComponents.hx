@@ -13,7 +13,7 @@ class TestComponents {
     entity = new Entity([], statusChange);
   }
 
-  public function statusChange<Component, Environment>(_)
+  public function statusChange<Component, Property>(_)
     count++;
 
   public function testBasics() {

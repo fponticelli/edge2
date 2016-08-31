@@ -12,7 +12,7 @@ class Game {
 
   public static function main() {
     var mini = MiniCanvas.create(width, height).display("basic example"),
-        engine = Engine.withEnumEnvironment(),
+        engine = Engine.withEnumProperty(),
         phase = engine.createPhase();
 
     phase.addView(View.components(Move.extract))

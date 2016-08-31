@@ -1,4 +1,4 @@
-enum AEnvironment {
+enum AProperty {
   EA;
   EB;
   EC;

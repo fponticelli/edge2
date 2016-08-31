@@ -7,7 +7,7 @@ import edge.Phase;
 import edge.StatusChange;
 import edge.View;
 import AComponent;
-import AEnvironment;
+import AProperty;
 
 class TestPhase {
   public function new() {}
@@ -20,8 +20,8 @@ class TestPhase {
     Assert.same([], v.collected);
     var e = new Entity([CA], function(_) {});
     var events = [
-      EnvironmentAdded(EA),
-      EnvironmentRemoved(EA),
+      PropertyAdded(EA),
+      PropertyRemoved(EA),
       EntityCreated(e),
       EntityUpdated(e),
       EntityRemoved(e)
@@ -32,10 +32,10 @@ class TestPhase {
   }
 }
 
-class TPView<Payload, Component, Environment> extends View<Payload, Component, Environment> {
-  public var collected: Array<StatusChange<Component, Environment>> = [];
+class TPView<Payload, Component, Property> extends View<Payload, Component, Property> {
+  public var collected: Array<StatusChange<Component, Property>> = [];
   public function new() {}
-  override public function onChange(change: StatusChange<Component, Environment>): Void {
+  override public function onChange(change: StatusChange<Component, Property>): Void {
     collected.push(change);
   }
 }

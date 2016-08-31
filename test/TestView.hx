@@ -1,7 +1,7 @@
 import edge.TimeSpan;
 
 import AComponent;
-import AEnvironment;
+import AProperty;
 import utest.Assert;
 import edge.Engine;
 import edge.Entity;
@@ -12,12 +12,12 @@ import edge.ViewSystem;
 using thx.Iterators;
 
 class TestView {
-  var events: Array<StatusChange<AComponent, AEnvironment>>;
+  var events: Array<StatusChange<AComponent, AProperty>>;
   public function new() {
     var e = new Entity([CA], function(_) {});
     events = [
-      EnvironmentAdded(EA),
-      EnvironmentRemoved(EA),
+      PropertyAdded(EA),
+      PropertyRemoved(EA),
       EntityCreated(e),
       EntityUpdated(e),
       EntityRemoved(e)
@@ -28,12 +28,12 @@ class TestView {
     var p = new Phase(null),
         comps = [],
         envs = [];
-    p.addView(View.componentsEnvironments(
+    p.addView(View.componentsProperties(
       function(e: Iterator<AComponent>) {
         comps.push(e.toArray());
         return Some("comp");
       },
-      function(e: Iterator<AEnvironment>) {
+      function(e: Iterator<AProperty>) {
         envs.push(e.toArray());
         return Some("env");
       }

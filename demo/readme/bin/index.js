@@ -656,7 +656,7 @@ Type["typeof"] = function(v) {
 var edge_Engine = function(createEnvironmentSet) {
 	this._phases = [];
 	this._entities = thx__$Set_Set_$Impl_$.createObject();
-	this._environments = createEnvironmentSet();
+	this._properties = createEnvironmentSet();
 };
 edge_Engine.__name__ = ["edge","Engine"];
 edge_Engine.withEnumEnvironment = function() {
@@ -725,17 +725,17 @@ edge_Engine.prototype = {
 	,entities: function() {
 		return $iterator(thx__$Set_Set_$Impl_$)(this._entities);
 	}
-	,_environments: null
+	,_properties: null
 	,addEnvironment: function(environment) {
-		thx__$Set_Set_$Impl_$.add(this._environments,environment);
+		thx__$Set_Set_$Impl_$.add(this._properties,environment);
 		this.statusChange(edge_StatusChange.EnvironmentAdded(environment));
 	}
 	,_removeEnvironment: function(environment) {
-		this._environments.remove(environment);
+		this._properties.remove(environment);
 		this.statusChange(edge_StatusChange.EnvironmentRemoved(environment));
 	}
 	,removeEnvironment: function(predicate) {
-		var tmp = $iterator(thx__$Set_Set_$Impl_$)(this._environments);
+		var tmp = $iterator(thx__$Set_Set_$Impl_$)(this._properties);
 		while(tmp.hasNext()) {
 			var environment = tmp.next();
 			if(predicate(environment)) {
@@ -747,7 +747,7 @@ edge_Engine.prototype = {
 	}
 	,removeEnvironments: function(predicate) {
 		var removed = false;
-		var tmp = $iterator(thx__$Set_Set_$Impl_$)(this._environments);
+		var tmp = $iterator(thx__$Set_Set_$Impl_$)(this._properties);
 		while(tmp.hasNext()) {
 			var environment = tmp.next();
 			if(predicate(environment)) {
@@ -763,8 +763,8 @@ edge_Engine.prototype = {
 		});
 		return this;
 	}
-	,environments: function() {
-		return $iterator(thx__$Set_Set_$Impl_$)(this._environments);
+	,properties: function() {
+		return $iterator(thx__$Set_Set_$Impl_$)(this._properties);
 	}
 	,clear: function() {
 		this.clearEntities();
@@ -853,7 +853,7 @@ edge_Phase.prototype = {
 			this._views.set(view,viewSystem);
 		}
 		if(null != this.engine) {
-			var tmp = this.engine.environments();
+			var tmp = this.engine.properties();
 			while(tmp.hasNext()) view.onChange(edge_StatusChange.EnvironmentAdded(tmp.next()));
 			var tmp1 = this.engine.entities();
 			while(tmp1.hasNext()) view.onChange(edge_StatusChange.EntityCreated(tmp1.next()));
@@ -895,7 +895,7 @@ edge_View.components = function(extractor) {
 edge_View.environment = function(extractor) {
 	return new edge_EnvironmentView(extractor);
 };
-edge_View.environments = function(extractor) {
+edge_View.properties = function(extractor) {
 	return new edge_EnvironmentsView(extractor);
 };
 edge_View.componentsEnvironment = function(extractorEntity,extractorEnvironment) {
@@ -944,7 +944,7 @@ edge_ComponentsAndEnvironmentView.prototype = $extend(edge_View.prototype,{
 var edge_ComponentsAndEnvironmentsView = function(matchEntity,matchEnvironment,compose) {
 	this._payload = haxe_ds_Option.None;
 	this.viewComponents = edge_View.components(matchEntity);
-	this.viewEnvironment = edge_View.environments(matchEnvironment);
+	this.viewEnvironment = edge_View.properties(matchEnvironment);
 	this.compose = compose;
 };
 edge_ComponentsAndEnvironmentsView.__name__ = ["edge","ComponentsAndEnvironmentsView"];
@@ -1002,19 +1002,19 @@ edge_EnvironmentView.prototype = $extend(edge_View.prototype,{
 var edge_EnvironmentsView = function(matchEnvironments) {
 	this._payload = haxe_ds_Option.None;
 	this.matchEnvironments = matchEnvironments;
-	this.environments = [];
+	this.properties = [];
 };
 edge_EnvironmentsView.__name__ = ["edge","EnvironmentsView"];
 edge_EnvironmentsView.__super__ = edge_View;
 edge_EnvironmentsView.prototype = $extend(edge_View.prototype,{
 	matchEnvironments: null
-	,environments: null
+	,properties: null
 	,_payload: null
 	,onChange: function(change) {
 		switch(change[1]) {
 		case 0:
-			this.environments.push(change[2]);
-			var _g = this.matchEnvironments(HxOverrides.iter(this.environments));
+			this.properties.push(change[2]);
+			var _g = this.matchEnvironments(HxOverrides.iter(this.properties));
 			switch(_g[1]) {
 			case 0:
 				this._payload = _g;
@@ -1024,8 +1024,8 @@ edge_EnvironmentsView.prototype = $extend(edge_View.prototype,{
 			}
 			break;
 		case 1:
-			HxOverrides.remove(this.environments,change[2]);
-			var _g1 = this.matchEnvironments(HxOverrides.iter(this.environments));
+			HxOverrides.remove(this.properties,change[2]);
+			var _g1 = this.matchEnvironments(HxOverrides.iter(this.properties));
 			switch(_g1[1]) {
 			case 0:
 				this._payload = _g1;

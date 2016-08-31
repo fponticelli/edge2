@@ -3,7 +3,7 @@ class TestAll {
     utest.UTest.run([
       new TestComponents(),
       new TestEngine(),
-      new TestEnvironment(),
+      new TestProperty(),
       new TestEntity(),
       new TestTimeSpan(),
       new TestPhase(),

@@ -1363,7 +1363,7 @@ var edge_ProcessorSystem = function() {
 edge_ProcessorSystem.__name__ = ["edge","ProcessorSystem"];
 edge_ProcessorSystem.prototype = {
 	systems: null
-	,'with': function(system) {
+	,feed: function(system) {
 		this.systems.push(system);
 		return this;
 	}

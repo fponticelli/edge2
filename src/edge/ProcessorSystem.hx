@@ -5,7 +5,7 @@ class ProcessorSystem<Payload> {
 
   public function new() {}
 
-  public function with(system: System<Payload>): ProcessorSystem<Payload> {
+  public function feed(system: System<Payload>): ProcessorSystem<Payload> {
     systems.push(system);
     return this;
   }

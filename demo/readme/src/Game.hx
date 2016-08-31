@@ -16,10 +16,10 @@ class Game {
         phase = engine.createPhase();
 
     phase.addView(View.components(Move.extract))
-      .with(Move.system);
+      .feed(Move.system);
 
     phase.addView(View.components(RenderDots.extract))
-      .with(new RenderDots(mini).update);
+      .feed(new RenderDots(mini).update);
 
     for(i in 0...300)
       engine.createEntity([

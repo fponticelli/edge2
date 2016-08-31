@@ -4,32 +4,32 @@ import haxe.ds.Option;
 import thx.OrderedMap;
 import thx.ReadonlyArray;
 
-class View<Payload, Component, Property> {
-  public static function components<Payload, Component, Property>(extractor: Iterator<Component> -> Option<Payload>): View<ReadonlyArray<ItemEntity<Payload, Component>>, Component, Property>
-    return new ComponentView(extractor);
-  public static function property<Payload, Component, Property>(extractor: Property -> Option<Payload>): View<Payload, Component, Property>
-    return new PropertyView(extractor);
-  public static function properties<Payload, Component, Property>(extractor: Iterator<Property> -> Option<Payload>): View<Payload, Component, Property>
-    return new PropertiesView(extractor);
+class Processor<Payload, Component, Property> {
+  public static function components<Payload, Component, Property>(extractor: Iterator<Component> -> Option<Payload>): Processor<ReadonlyArray<ItemEntity<Payload, Component>>, Component, Property>
+    return new ComponentProcessor(extractor);
+  public static function property<Payload, Component, Property>(extractor: Property -> Option<Payload>): Processor<Payload, Component, Property>
+    return new PropertyProcessor(extractor);
+  public static function properties<Payload, Component, Property>(extractor: Iterator<Property> -> Option<Payload>): Processor<Payload, Component, Property>
+    return new PropertiesProcessor(extractor);
   public static function componentsProperty<ComponentsPayload, PropertyPayload, Payload, Component, Property>(
     extractorEntity: Iterator<Component> -> Option<ComponentsPayload>,
     extractorProperty: Property -> Option<PropertyPayload>
-  ): View<{
+  ): Processor<{
     items: ReadonlyArray<ItemEntity<ComponentsPayload, Component>>,
     property: PropertyPayload
   }, Component, Property>
-    return new ComponentsAndPropertyView(extractorEntity, extractorProperty, function(c, e) return {
+    return new ComponentsAndPropertyProcessor(extractorEntity, extractorProperty, function(c, e) return {
       items: c,
       property: e
     });
   public static function componentsProperties<ComponentsPayload, PropertyPayload, Payload, Component, Property>(
     extractorEntity: Iterator<Component> -> Option<ComponentsPayload>,
     extractorProperty: Iterator<Property> -> Option<PropertyPayload>
-  ): View<{
+  ): Processor<{
     items: ReadonlyArray<ItemEntity<ComponentsPayload, Component>>,
     property: PropertyPayload
   }, Component, Property>
-    return new ComponentsAndPropertiesView(extractorEntity, extractorProperty, function(c, e) return {
+    return new ComponentsAndPropertiesProcessor(extractorEntity, extractorProperty, function(c, e) return {
       items: c,
       property: e
     });
@@ -38,14 +38,14 @@ class View<Payload, Component, Property> {
   public function payload(): Option<Payload> return None;
 }
 
-class ComponentsAndPropertyView<ComponentsPayload, PropertyPayload, Payload, Component, Property> extends View<Payload, Component, Property> {
+class ComponentsAndPropertyProcessor<ComponentsPayload, PropertyPayload, Payload, Component, Property> extends Processor<Payload, Component, Property> {
   var _payload = None;
-  var viewComponents: View<ReadonlyArray<ItemEntity<ComponentsPayload, Component>>, Component, Property>;
-  var viewProperty: View<PropertyPayload, Component, Property>;
+  var viewComponents: Processor<ReadonlyArray<ItemEntity<ComponentsPayload, Component>>, Component, Property>;
+  var viewProperty: Processor<PropertyPayload, Component, Property>;
   var compose: ReadonlyArray<ItemEntity<ComponentsPayload, Component>> -> PropertyPayload -> Payload;
   public function new(matchEntity: Iterator<Component> -> Option<ComponentsPayload>, matchProperty: Property -> Option<PropertyPayload>, compose: ReadonlyArray<ItemEntity<ComponentsPayload, Component>> -> PropertyPayload -> Payload) {
-    this.viewComponents = View.components(matchEntity);
-    this.viewProperty = View.property(matchProperty);
+    this.viewComponents = Processor.components(matchEntity);
+    this.viewProperty = Processor.property(matchProperty);
     this.compose = compose;
   }
 
@@ -61,14 +61,14 @@ class ComponentsAndPropertyView<ComponentsPayload, PropertyPayload, Payload, Com
   override function payload(): Option<Payload> return _payload;
 }
 
-class ComponentsAndPropertiesView<ComponentsPayload, PropertyPayload, Payload, Component, Property> extends View<Payload, Component, Property> {
+class ComponentsAndPropertiesProcessor<ComponentsPayload, PropertyPayload, Payload, Component, Property> extends Processor<Payload, Component, Property> {
   var _payload = None;
-  var viewComponents: View<ReadonlyArray<ItemEntity<ComponentsPayload, Component>>, Component, Property>;
-  var viewProperty: View<PropertyPayload, Component, Property>;
+  var viewComponents: Processor<ReadonlyArray<ItemEntity<ComponentsPayload, Component>>, Component, Property>;
+  var viewProperty: Processor<PropertyPayload, Component, Property>;
   var compose: ReadonlyArray<ItemEntity<ComponentsPayload, Component>> -> PropertyPayload -> Payload;
   public function new(matchEntity: Iterator<Component> -> Option<ComponentsPayload>, matchProperty: Iterator<Property> -> Option<PropertyPayload>, compose: ReadonlyArray<ItemEntity<ComponentsPayload, Component>> -> PropertyPayload -> Payload) {
-    this.viewComponents = View.components(matchEntity);
-    this.viewProperty = View.properties(matchProperty);
+    this.viewComponents = Processor.components(matchEntity);
+    this.viewProperty = Processor.properties(matchProperty);
     this.compose = compose;
   }
 
@@ -84,7 +84,7 @@ class ComponentsAndPropertiesView<ComponentsPayload, PropertyPayload, Payload, C
   override function payload(): Option<Payload> return _payload;
 }
 
-class PropertyView<Payload, Component, Property> extends View<Payload, Component, Property> {
+class PropertyProcessor<Payload, Component, Property> extends Processor<Payload, Component, Property> {
   var _payload = None;
   var matchProperty: Property -> Option<Payload>;
   public function new(matchProperty: Property -> Option<Payload>) {
@@ -108,7 +108,7 @@ class PropertyView<Payload, Component, Property> extends View<Payload, Component
   override function payload(): Option<Payload> return _payload;
 }
 
-class PropertiesView<Payload, Component, Property> extends View<Payload, Component, Property> {
+class PropertiesProcessor<Payload, Component, Property> extends Processor<Payload, Component, Property> {
   var matchProperties: Iterator<Property> -> Option<Payload>;
   var properties: Array<Property>;
   var _payload = None;
@@ -139,7 +139,7 @@ class PropertiesView<Payload, Component, Property> extends View<Payload, Compone
   override function payload(): Option<Payload> return _payload;
 }
 
-class ComponentView<Payload, Component, Property> extends View<ReadonlyArray<ItemEntity<Payload, Component>>, Component, Property> {
+class ComponentProcessor<Payload, Component, Property> extends Processor<ReadonlyArray<ItemEntity<Payload, Component>>, Component, Property> {
   var map: OrderedMap<Entity<Component>, ItemEntity<Payload, Component>>;
   var matchEntity: Iterator<Component> -> Option<Payload>;
   var _payload = None;

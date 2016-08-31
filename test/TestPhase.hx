@@ -5,7 +5,7 @@ import edge.Engine;
 import edge.Entity;
 import edge.Phase;
 import edge.StatusChange;
-import edge.View;
+import edge.Processor;
 import AComponent;
 import AProperty;
 
@@ -14,8 +14,8 @@ class TestPhase {
 
   public function testBasics() {
     var p = new Phase(null);
-    var v = new TPView();
-    var vs = p.addView(v);
+    var v = new TPProcessor();
+    var vs = p.addProcessor(v);
     Assert.notNull(vs);
     Assert.same([], v.collected);
     var e = new Entity([CA], function(_) {});
@@ -32,7 +32,7 @@ class TestPhase {
   }
 }
 
-class TPView<Payload, Component, Property> extends View<Payload, Component, Property> {
+class TPProcessor<Payload, Component, Property> extends Processor<Payload, Component, Property> {
   public var collected: Array<StatusChange<Component, Property>> = [];
   public function new() {}
   override public function onChange(change: StatusChange<Component, Property>): Void {

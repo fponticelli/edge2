@@ -7,11 +7,11 @@ import edge.Engine;
 import edge.Entity;
 import edge.Phase;
 import edge.StatusChange;
-import edge.View;
-import edge.ViewSystem;
+import edge.Processor;
+import edge.ProcessorSystem;
 using thx.Iterators;
 
-class TestView {
+class TestProcessor {
   var events: Array<StatusChange<AComponent, AProperty>>;
   public function new() {
     var e = new Entity([CA], function(_) {});
@@ -28,7 +28,7 @@ class TestView {
     var p = new Phase(null),
         comps = [],
         envs = [];
-    p.addView(View.componentsProperties(
+    p.addProcessor(Processor.componentsProperties(
       function(e: Iterator<AComponent>) {
         comps.push(e.toArray());
         return Some("comp");

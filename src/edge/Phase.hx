@@ -4,16 +4,16 @@ import haxe.ds.Option;
 import thx.Any;
 
 class Phase<Component, Property> {
-  var _views: Map<View<Dynamic, Component, Property>, ViewSystem<Dynamic>> = new Map(); // Dynamic should be Any
+  var processors: Map<Processor<Dynamic, Component, Property>, ProcessorSystem<Dynamic>> = new Map(); // Dynamic should be Any
   public var engine(default, null): Engine<Component, Property>;
   public function new(engine: Engine<Component, Property>) {
     this.engine = engine;
   }
 
-  public function addView<Payload>(view: View<Payload, Component, Property>): ViewSystem<Payload> {
-    var viewSystem = _views.get(view);
+  public function addProcessor<Payload>(view: Processor<Payload, Component, Property>): ProcessorSystem<Payload> {
+    var viewSystem = processors.get(view);
     if(null == viewSystem) {
-      _views.set(view, viewSystem = new ViewSystem());
+      processors.set(view, viewSystem = new ProcessorSystem());
     }
     if(null != engine) {
       for(e in engine.properties())
@@ -25,18 +25,18 @@ class Phase<Component, Property> {
   }
 
   public function update() {
-    for(view in _views.keys()) {
+    for(view in processors.keys()) {
       switch view.payload() {
         case None: continue;
         case Some(pl):
-          var viewSystem = _views.get(view);
+          var viewSystem = processors.get(view);
           viewSystem.update(pl);
       }
     }
   }
 
   public function propagate(change: StatusChange<Component, Property>) {
-    for(view in _views.keys())
+    for(view in processors.keys())
       view.onChange(change);
   }
 }

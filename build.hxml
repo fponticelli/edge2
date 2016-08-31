@@ -10,6 +10,6 @@ edge.Entity
 edge.Phase
 edge.System
 edge.TimeSpan
-edge.View
+edge.Processor
 
 -cmd node bin/test.js

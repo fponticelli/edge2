@@ -1,5 +1,5 @@
 import edge.*;
-import edge.View;
+import edge.Processor;
 import thx.Unit;
 using thx.ReadonlyArray;
 import thx.color.Hsl;

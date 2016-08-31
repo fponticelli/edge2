@@ -456,7 +456,7 @@ StringTools.replace = function(s,sub,by) {
 var TestAll = function() { };
 TestAll.__name__ = ["TestAll"];
 TestAll.main = function() {
-	utest_UTest.run([new TestComponents(),new TestEngine(),new TestProperty(),new TestEntity(),new TestTimeSpan(),new TestPhase(),new TestView()]);
+	utest_UTest.run([new TestComponents(),new TestEngine(),new TestEntity(),new TestPhase(),new TestProcessor(),new TestProperty(),new TestTimeSpan()]);
 };
 var TestComponents = function() {
 };
@@ -526,7 +526,7 @@ TestEngine.prototype = {
 		var phase = engine.createPhase();
 		var countComps = 0;
 		var countEnv = 0;
-		phase.addView(edge_View.componentsProperties(function(e) {
+		phase.addProcessor(edge_Processor.componentsProperties(function(e) {
 			countComps = countComps + 1;
 			utest_Assert.same(AComponent.CA,e.next(),null,null,null,{ fileName : "TestEngine.hx", lineNumber : 24, className : "TestEngine", methodName : "testPropagationAfterSystem"});
 			return haxe_ds_Option.None;
@@ -549,7 +549,7 @@ TestEngine.prototype = {
 		var countEnv = 0;
 		engine.createEntity([AComponent.CA]);
 		engine.addProperty(AProperty.EA);
-		phase.addView(edge_View.componentsProperties(function(e) {
+		phase.addProcessor(edge_Processor.componentsProperties(function(e) {
 			countComps = countComps + 1;
 			utest_Assert.same(AComponent.CA,e.next(),null,null,null,{ fileName : "TestEngine.hx", lineNumber : 53, className : "TestEngine", methodName : "testPropagationBeforeSystem"});
 			return haxe_ds_Option.None;
@@ -571,7 +571,7 @@ TestEngine.prototype = {
 		var countEnv = 0;
 		engine.createEntity([AComponent.CA]);
 		engine.addProperty(AProperty.EA);
-		engine.createPhase().addView(edge_View.componentsProperties(function(e) {
+		engine.createPhase().addProcessor(edge_Processor.componentsProperties(function(e) {
 			countComps = countComps + 1;
 			utest_Assert.same(AComponent.CA,e.next(),null,null,null,{ fileName : "TestEngine.hx", lineNumber : 82, className : "TestEngine", methodName : "testPropagationAfterPhase"});
 			return haxe_ds_Option.None;
@@ -591,7 +591,7 @@ TestEngine.prototype = {
 		var engine = edge_Engine.withEnumProperty();
 		var phase = engine.createPhase();
 		var comps = null;
-		phase.addView(edge_View.components(function(e) {
+		phase.addProcessor(edge_Processor.components(function(e) {
 			comps = thx_Iterators.toArray(e);
 			return haxe_ds_Option.None;
 		}));
@@ -608,7 +608,7 @@ TestEngine.prototype = {
 		var engine = edge_Engine.withEnumProperty();
 		var phase = engine.createPhase();
 		var envs = null;
-		phase.addView(edge_View.properties(function(e) {
+		phase.addProcessor(edge_Processor.properties(function(e) {
 			envs = thx_Iterators.toArray(e);
 			return haxe_ds_Option.None;
 		}));
@@ -669,8 +669,8 @@ TestPhase.__name__ = ["TestPhase"];
 TestPhase.prototype = {
 	testBasics: function() {
 		var p = new edge_Phase(null);
-		var v = new TPView();
-		utest_Assert.notNull(p.addView(v),null,{ fileName : "TestPhase.hx", lineNumber : 19, className : "TestPhase", methodName : "testBasics"});
+		var v = new TPProcessor();
+		utest_Assert.notNull(p.addProcessor(v),null,{ fileName : "TestPhase.hx", lineNumber : 19, className : "TestPhase", methodName : "testBasics"});
 		utest_Assert.same([],v.collected,null,null,null,{ fileName : "TestPhase.hx", lineNumber : 20, className : "TestPhase", methodName : "testBasics"});
 		var e = new edge_Entity([AComponent.CA],function(_) {
 		});
@@ -685,47 +685,78 @@ TestPhase.prototype = {
 	}
 	,__class__: TestPhase
 };
-var edge_View = function() { };
-edge_View.__name__ = ["edge","View"];
-edge_View.components = function(extractor) {
-	return new edge_ComponentView(extractor);
+var edge_Processor = function() { };
+edge_Processor.__name__ = ["edge","Processor"];
+edge_Processor.components = function(extractor) {
+	return new edge_ComponentProcessor(extractor);
 };
-edge_View.property = function(extractor) {
-	return new edge_PropertyView(extractor);
+edge_Processor.property = function(extractor) {
+	return new edge_PropertyProcessor(extractor);
 };
-edge_View.properties = function(extractor) {
-	return new edge_PropertiesView(extractor);
+edge_Processor.properties = function(extractor) {
+	return new edge_PropertiesProcessor(extractor);
 };
-edge_View.componentsProperty = function(extractorEntity,extractorProperty) {
-	return new edge_ComponentsAndPropertyView(extractorEntity,extractorProperty,function(c,e) {
+edge_Processor.componentsProperty = function(extractorEntity,extractorProperty) {
+	return new edge_ComponentsAndPropertyProcessor(extractorEntity,extractorProperty,function(c,e) {
 		return { items : c, property : e};
 	});
 };
-edge_View.componentsProperties = function(extractorEntity,extractorProperty) {
-	return new edge_ComponentsAndPropertiesView(extractorEntity,extractorProperty,function(c,e) {
+edge_Processor.componentsProperties = function(extractorEntity,extractorProperty) {
+	return new edge_ComponentsAndPropertiesProcessor(extractorEntity,extractorProperty,function(c,e) {
 		return { items : c, property : e};
 	});
 };
-edge_View.prototype = {
+edge_Processor.prototype = {
 	onChange: function(change) {
 	}
 	,payload: function() {
 		return haxe_ds_Option.None;
 	}
-	,__class__: edge_View
+	,__class__: edge_Processor
 };
-var TPView = function() {
+var TPProcessor = function() {
 	this.collected = [];
 };
-TPView.__name__ = ["TPView"];
-TPView.__super__ = edge_View;
-TPView.prototype = $extend(edge_View.prototype,{
+TPProcessor.__name__ = ["TPProcessor"];
+TPProcessor.__super__ = edge_Processor;
+TPProcessor.prototype = $extend(edge_Processor.prototype,{
 	collected: null
 	,onChange: function(change) {
 		this.collected.push(change);
 	}
-	,__class__: TPView
+	,__class__: TPProcessor
 });
+var TestProcessor = function() {
+	var e = new edge_Entity([AComponent.CA],function(_) {
+	});
+	this.events = [edge_StatusChange.PropertyAdded(AProperty.EA),edge_StatusChange.PropertyRemoved(AProperty.EA),edge_StatusChange.EntityCreated(e),edge_StatusChange.EntityUpdated(e),edge_StatusChange.EntityRemoved(e)];
+};
+TestProcessor.__name__ = ["TestProcessor"];
+TestProcessor.prototype = {
+	events: null
+	,testBasics: function() {
+		var p = new edge_Phase(null);
+		var comps = [];
+		var envs = [];
+		p.addProcessor(edge_Processor.componentsProperties(function(e) {
+			comps.push(thx_Iterators.toArray(e));
+			return haxe_ds_Option.Some("comp");
+		},function(e1) {
+			envs.push(thx_Iterators.toArray(e1));
+			return haxe_ds_Option.Some("env");
+		}));
+		var _g = 0;
+		var _g1 = this.events;
+		while(_g < _g1.length) {
+			var e2 = _g1[_g];
+			++_g;
+			p.propagate(e2);
+		}
+		utest_Assert.same([[AComponent.CA],[AComponent.CA]],comps,null,null,null,{ fileName : "TestProcessor.hx", lineNumber : 43, className : "TestProcessor", methodName : "testBasics"});
+		utest_Assert.same([[AProperty.EA],[]],envs,null,null,null,{ fileName : "TestProcessor.hx", lineNumber : 44, className : "TestProcessor", methodName : "testBasics"});
+	}
+	,__class__: TestProcessor
+};
 var TestProperty = function() {
 };
 TestProperty.__name__ = ["TestProperty"];
@@ -796,37 +827,6 @@ TestTimeSpan.prototype = {
 		utest_Assert.equals(2000,2000,null,{ fileName : "TestTimeSpan.hx", lineNumber : 12, className : "TestTimeSpan", methodName : "testConversions"});
 	}
 	,__class__: TestTimeSpan
-};
-var TestView = function() {
-	var e = new edge_Entity([AComponent.CA],function(_) {
-	});
-	this.events = [edge_StatusChange.PropertyAdded(AProperty.EA),edge_StatusChange.PropertyRemoved(AProperty.EA),edge_StatusChange.EntityCreated(e),edge_StatusChange.EntityUpdated(e),edge_StatusChange.EntityRemoved(e)];
-};
-TestView.__name__ = ["TestView"];
-TestView.prototype = {
-	events: null
-	,testBasics: function() {
-		var p = new edge_Phase(null);
-		var comps = [];
-		var envs = [];
-		p.addView(edge_View.componentsProperties(function(e) {
-			comps.push(thx_Iterators.toArray(e));
-			return haxe_ds_Option.Some("comp");
-		},function(e1) {
-			envs.push(thx_Iterators.toArray(e1));
-			return haxe_ds_Option.Some("env");
-		}));
-		var _g = 0;
-		var _g1 = this.events;
-		while(_g < _g1.length) {
-			var e2 = _g1[_g];
-			++_g;
-			p.propagate(e2);
-		}
-		utest_Assert.same([[AComponent.CA],[AComponent.CA]],comps,null,null,null,{ fileName : "TestView.hx", lineNumber : 43, className : "TestView", methodName : "testBasics"});
-		utest_Assert.same([[AProperty.EA],[]],envs,null,null,null,{ fileName : "TestView.hx", lineNumber : 44, className : "TestView", methodName : "testBasics"});
-	}
-	,__class__: TestView
 };
 var ValueType = { __ename__ : ["ValueType"], __constructs__ : ["TNull","TInt","TFloat","TBool","TObject","TFunction","TClass","TEnum","TUnknown"] };
 ValueType.TNull = ["TNull",0];
@@ -1137,18 +1137,18 @@ edge_Entity.prototype = {
 	,__class__: edge_Entity
 };
 var edge_Phase = function(engine) {
-	this._views = new haxe_ds_ObjectMap();
+	this.processors = new haxe_ds_ObjectMap();
 	this.engine = engine;
 };
 edge_Phase.__name__ = ["edge","Phase"];
 edge_Phase.prototype = {
-	_views: null
+	processors: null
 	,engine: null
-	,addView: function(view) {
-		var viewSystem = this._views.h[view.__id__];
+	,addProcessor: function(view) {
+		var viewSystem = this.processors.h[view.__id__];
 		if(null == viewSystem) {
-			viewSystem = new edge_ViewSystem();
-			this._views.set(view,viewSystem);
+			viewSystem = new edge_ProcessorSystem();
+			this.processors.set(view,viewSystem);
 		}
 		if(null != this.engine) {
 			var tmp = this.engine.properties();
@@ -1159,13 +1159,13 @@ edge_Phase.prototype = {
 		return viewSystem;
 	}
 	,update: function() {
-		var tmp = this._views.keys();
+		var tmp = this.processors.keys();
 		while(tmp.hasNext()) {
 			var view = tmp.next();
 			var _g = view.payload();
 			switch(_g[1]) {
 			case 0:
-				this._views.h[view.__id__].update(_g[2]);
+				this.processors.h[view.__id__].update(_g[2]);
 				break;
 			case 1:
 				continue;
@@ -1174,57 +1174,20 @@ edge_Phase.prototype = {
 		}
 	}
 	,propagate: function(change) {
-		var tmp = this._views.keys();
+		var tmp = this.processors.keys();
 		while(tmp.hasNext()) tmp.next().onChange(change);
 	}
 	,__class__: edge_Phase
 };
-var edge_StatusChange = { __ename__ : ["edge","StatusChange"], __constructs__ : ["PropertyAdded","PropertyRemoved","EntityCreated","EntityUpdated","EntityRemoved"] };
-edge_StatusChange.PropertyAdded = function(e) { var $x = ["PropertyAdded",0,e]; $x.__enum__ = edge_StatusChange; return $x; };
-edge_StatusChange.PropertyRemoved = function(e) { var $x = ["PropertyRemoved",1,e]; $x.__enum__ = edge_StatusChange; return $x; };
-edge_StatusChange.EntityCreated = function(e) { var $x = ["EntityCreated",2,e]; $x.__enum__ = edge_StatusChange; return $x; };
-edge_StatusChange.EntityUpdated = function(e) { var $x = ["EntityUpdated",3,e]; $x.__enum__ = edge_StatusChange; return $x; };
-edge_StatusChange.EntityRemoved = function(e) { var $x = ["EntityRemoved",4,e]; $x.__enum__ = edge_StatusChange; return $x; };
-var edge__$TimeSpan_TimeSpan_$Impl_$ = {};
-edge__$TimeSpan_TimeSpan_$Impl_$.__name__ = ["edge","_TimeSpan","TimeSpan_Impl_"];
-edge__$TimeSpan_TimeSpan_$Impl_$.fromMillis = function(ms) {
-	return ms;
-};
-edge__$TimeSpan_TimeSpan_$Impl_$.fromSeconds = function(s) {
-	return s * 1000;
-};
-edge__$TimeSpan_TimeSpan_$Impl_$._new = function(v) {
-	return v;
-};
-edge__$TimeSpan_TimeSpan_$Impl_$.toFramesPerSecond = function(this1) {
-	return 1.0 / (this1 / 1000.0);
-};
-edge__$TimeSpan_TimeSpan_$Impl_$.get_millis = function(this1) {
-	return this1;
-};
-edge__$TimeSpan_TimeSpan_$Impl_$.get_seconds = function(this1) {
-	return this1 / 1000.0;
-};
-edge__$TimeSpan_TimeSpan_$Impl_$.perSecond = function(this1,value) {
-	return value * this1 / 1000;
-};
-edge__$TimeSpan_TimeSpan_$Impl_$.average = function(arr) {
-	return edge__$TimeSpan_TimeSpan_$Impl_$.sum(arr) / arr.length;
-};
-edge__$TimeSpan_TimeSpan_$Impl_$.sum = function(arr) {
-	return thx_Arrays.reduce(arr,function(tot,v) {
-		return tot + v;
-	},0.0);
-};
-var edge_ComponentsAndPropertyView = function(matchEntity,matchProperty,compose) {
+var edge_ComponentsAndPropertyProcessor = function(matchEntity,matchProperty,compose) {
 	this._payload = haxe_ds_Option.None;
-	this.viewComponents = edge_View.components(matchEntity);
-	this.viewProperty = edge_View.property(matchProperty);
+	this.viewComponents = edge_Processor.components(matchEntity);
+	this.viewProperty = edge_Processor.property(matchProperty);
 	this.compose = compose;
 };
-edge_ComponentsAndPropertyView.__name__ = ["edge","ComponentsAndPropertyView"];
-edge_ComponentsAndPropertyView.__super__ = edge_View;
-edge_ComponentsAndPropertyView.prototype = $extend(edge_View.prototype,{
+edge_ComponentsAndPropertyProcessor.__name__ = ["edge","ComponentsAndPropertyProcessor"];
+edge_ComponentsAndPropertyProcessor.__super__ = edge_Processor;
+edge_ComponentsAndPropertyProcessor.prototype = $extend(edge_Processor.prototype,{
 	_payload: null
 	,viewComponents: null
 	,viewProperty: null
@@ -1239,17 +1202,17 @@ edge_ComponentsAndPropertyView.prototype = $extend(edge_View.prototype,{
 	,payload: function() {
 		return this._payload;
 	}
-	,__class__: edge_ComponentsAndPropertyView
+	,__class__: edge_ComponentsAndPropertyProcessor
 });
-var edge_ComponentsAndPropertiesView = function(matchEntity,matchProperty,compose) {
+var edge_ComponentsAndPropertiesProcessor = function(matchEntity,matchProperty,compose) {
 	this._payload = haxe_ds_Option.None;
-	this.viewComponents = edge_View.components(matchEntity);
-	this.viewProperty = edge_View.properties(matchProperty);
+	this.viewComponents = edge_Processor.components(matchEntity);
+	this.viewProperty = edge_Processor.properties(matchProperty);
 	this.compose = compose;
 };
-edge_ComponentsAndPropertiesView.__name__ = ["edge","ComponentsAndPropertiesView"];
-edge_ComponentsAndPropertiesView.__super__ = edge_View;
-edge_ComponentsAndPropertiesView.prototype = $extend(edge_View.prototype,{
+edge_ComponentsAndPropertiesProcessor.__name__ = ["edge","ComponentsAndPropertiesProcessor"];
+edge_ComponentsAndPropertiesProcessor.__super__ = edge_Processor;
+edge_ComponentsAndPropertiesProcessor.prototype = $extend(edge_Processor.prototype,{
 	_payload: null
 	,viewComponents: null
 	,viewProperty: null
@@ -1264,15 +1227,15 @@ edge_ComponentsAndPropertiesView.prototype = $extend(edge_View.prototype,{
 	,payload: function() {
 		return this._payload;
 	}
-	,__class__: edge_ComponentsAndPropertiesView
+	,__class__: edge_ComponentsAndPropertiesProcessor
 });
-var edge_PropertyView = function(matchProperty) {
+var edge_PropertyProcessor = function(matchProperty) {
 	this._payload = haxe_ds_Option.None;
 	this.matchProperty = matchProperty;
 };
-edge_PropertyView.__name__ = ["edge","PropertyView"];
-edge_PropertyView.__super__ = edge_View;
-edge_PropertyView.prototype = $extend(edge_View.prototype,{
+edge_PropertyProcessor.__name__ = ["edge","PropertyProcessor"];
+edge_PropertyProcessor.__super__ = edge_Processor;
+edge_PropertyProcessor.prototype = $extend(edge_Processor.prototype,{
 	_payload: null
 	,matchProperty: null
 	,onChange: function(change) {
@@ -1297,16 +1260,16 @@ edge_PropertyView.prototype = $extend(edge_View.prototype,{
 	,payload: function() {
 		return this._payload;
 	}
-	,__class__: edge_PropertyView
+	,__class__: edge_PropertyProcessor
 });
-var edge_PropertiesView = function(matchProperties) {
+var edge_PropertiesProcessor = function(matchProperties) {
 	this._payload = haxe_ds_Option.None;
 	this.matchProperties = matchProperties;
 	this.properties = [];
 };
-edge_PropertiesView.__name__ = ["edge","PropertiesView"];
-edge_PropertiesView.__super__ = edge_View;
-edge_PropertiesView.prototype = $extend(edge_View.prototype,{
+edge_PropertiesProcessor.__name__ = ["edge","PropertiesProcessor"];
+edge_PropertiesProcessor.__super__ = edge_Processor;
+edge_PropertiesProcessor.prototype = $extend(edge_Processor.prototype,{
 	matchProperties: null
 	,properties: null
 	,_payload: null
@@ -1341,16 +1304,16 @@ edge_PropertiesView.prototype = $extend(edge_View.prototype,{
 	,payload: function() {
 		return this._payload;
 	}
-	,__class__: edge_PropertiesView
+	,__class__: edge_PropertiesProcessor
 });
-var edge_ComponentView = function(matchEntity) {
+var edge_ComponentProcessor = function(matchEntity) {
 	this._payload = haxe_ds_Option.None;
 	this.map = new thx_ObjectOrderedMap();
 	this.matchEntity = matchEntity;
 };
-edge_ComponentView.__name__ = ["edge","ComponentView"];
-edge_ComponentView.__super__ = edge_View;
-edge_ComponentView.prototype = $extend(edge_View.prototype,{
+edge_ComponentProcessor.__name__ = ["edge","ComponentProcessor"];
+edge_ComponentProcessor.__super__ = edge_Processor;
+edge_ComponentProcessor.prototype = $extend(edge_Processor.prototype,{
 	map: null
 	,matchEntity: null
 	,_payload: null
@@ -1392,28 +1355,65 @@ edge_ComponentView.prototype = $extend(edge_View.prototype,{
 	,payload: function() {
 		return this._payload;
 	}
-	,__class__: edge_ComponentView
+	,__class__: edge_ComponentProcessor
 });
-var edge_ViewSystem = function() {
-	this._systems = [];
+var edge_ProcessorSystem = function() {
+	this.systems = [];
 };
-edge_ViewSystem.__name__ = ["edge","ViewSystem"];
-edge_ViewSystem.prototype = {
-	_systems: null
+edge_ProcessorSystem.__name__ = ["edge","ProcessorSystem"];
+edge_ProcessorSystem.prototype = {
+	systems: null
 	,'with': function(system) {
-		this._systems.push(system);
+		this.systems.push(system);
 		return this;
 	}
 	,update: function(payload) {
 		var _g = 0;
-		var _g1 = this._systems;
+		var _g1 = this.systems;
 		while(_g < _g1.length) {
 			var system = _g1[_g];
 			++_g;
 			system(payload);
 		}
 	}
-	,__class__: edge_ViewSystem
+	,__class__: edge_ProcessorSystem
+};
+var edge_StatusChange = { __ename__ : ["edge","StatusChange"], __constructs__ : ["PropertyAdded","PropertyRemoved","EntityCreated","EntityUpdated","EntityRemoved"] };
+edge_StatusChange.PropertyAdded = function(e) { var $x = ["PropertyAdded",0,e]; $x.__enum__ = edge_StatusChange; return $x; };
+edge_StatusChange.PropertyRemoved = function(e) { var $x = ["PropertyRemoved",1,e]; $x.__enum__ = edge_StatusChange; return $x; };
+edge_StatusChange.EntityCreated = function(e) { var $x = ["EntityCreated",2,e]; $x.__enum__ = edge_StatusChange; return $x; };
+edge_StatusChange.EntityUpdated = function(e) { var $x = ["EntityUpdated",3,e]; $x.__enum__ = edge_StatusChange; return $x; };
+edge_StatusChange.EntityRemoved = function(e) { var $x = ["EntityRemoved",4,e]; $x.__enum__ = edge_StatusChange; return $x; };
+var edge__$TimeSpan_TimeSpan_$Impl_$ = {};
+edge__$TimeSpan_TimeSpan_$Impl_$.__name__ = ["edge","_TimeSpan","TimeSpan_Impl_"];
+edge__$TimeSpan_TimeSpan_$Impl_$.fromMillis = function(ms) {
+	return ms;
+};
+edge__$TimeSpan_TimeSpan_$Impl_$.fromSeconds = function(s) {
+	return s * 1000;
+};
+edge__$TimeSpan_TimeSpan_$Impl_$._new = function(v) {
+	return v;
+};
+edge__$TimeSpan_TimeSpan_$Impl_$.toFramesPerSecond = function(this1) {
+	return 1.0 / (this1 / 1000.0);
+};
+edge__$TimeSpan_TimeSpan_$Impl_$.get_millis = function(this1) {
+	return this1;
+};
+edge__$TimeSpan_TimeSpan_$Impl_$.get_seconds = function(this1) {
+	return this1 / 1000.0;
+};
+edge__$TimeSpan_TimeSpan_$Impl_$.perSecond = function(this1,value) {
+	return value * this1 / 1000;
+};
+edge__$TimeSpan_TimeSpan_$Impl_$.average = function(arr) {
+	return edge__$TimeSpan_TimeSpan_$Impl_$.sum(arr) / arr.length;
+};
+edge__$TimeSpan_TimeSpan_$Impl_$.sum = function(arr) {
+	return thx_Arrays.reduce(arr,function(tot,v) {
+		return tot + v;
+	},0.0);
 };
 var haxe_StackItem = { __ename__ : ["haxe","StackItem"], __constructs__ : ["CFunction","Module","FilePos","Method","LocalFunction"] };
 haxe_StackItem.CFunction = ["CFunction",0];

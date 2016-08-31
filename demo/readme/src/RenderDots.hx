@@ -1,4 +1,4 @@
-import edge.View;
+import edge.Processor;
 import minicanvas.MiniCanvas;
 import thx.Unit;
 using thx.ReadonlyArray;

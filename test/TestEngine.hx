@@ -5,8 +5,8 @@ import edge.Engine;
 import edge.Entity;
 import edge.Phase;
 import edge.StatusChange;
-import edge.View;
-import edge.ViewSystem;
+import edge.Processor;
+import edge.ProcessorSystem;
 using thx.Iterators;
 
 class TestEngine {
@@ -17,8 +17,8 @@ class TestEngine {
         phase = engine.createPhase(),
         countComps = 0,
         countEnv = 0;
-    phase.addView(
-      View.componentsProperties(
+    phase.addProcessor(
+      Processor.componentsProperties(
         function(e) {
           countComps++;
           Assert.same(CA, e.next());
@@ -46,8 +46,8 @@ class TestEngine {
         countEnv = 0;
     engine.createEntity([CA]);
     engine.addProperty(EA);
-    phase.addView(
-      View.componentsProperties(
+    phase.addProcessor(
+      Processor.componentsProperties(
         function(e) {
           countComps++;
           Assert.same(CA, e.next());
@@ -75,8 +75,8 @@ class TestEngine {
     engine.createEntity([CA]);
     engine.addProperty(EA);
     var phase = engine.createPhase();
-    phase.addView(
-      View.componentsProperties(
+    phase.addProcessor(
+      Processor.componentsProperties(
         function(e) {
           countComps++;
           Assert.same(CA, e.next());
@@ -101,8 +101,8 @@ class TestEngine {
     var engine = Engine.withEnumProperty(),
         phase = engine.createPhase(),
         comps = null;
-    phase.addView(
-      View.components(
+    phase.addProcessor(
+      Processor.components(
         function(e) {
           comps = e.toArray();
           return None;
@@ -121,8 +121,8 @@ class TestEngine {
     var engine = Engine.withEnumProperty(),
         phase = engine.createPhase(),
         envs = null;
-    phase.addView(
-      View.properties(
+    phase.addProcessor(
+      Processor.properties(
         function(e) {
           envs = e.toArray();
           return None;

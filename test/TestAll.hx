@@ -3,11 +3,11 @@ class TestAll {
     utest.UTest.run([
       new TestComponents(),
       new TestEngine(),
-      new TestProperty(),
       new TestEntity(),
-      new TestTimeSpan(),
       new TestPhase(),
-      new TestView(),
+      new TestProcessor(),
+      new TestProperty(),
+      new TestTimeSpan(),
     ]);
   }
 }

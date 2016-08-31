@@ -676,7 +676,7 @@ edge_Engine.prototype = {
 	}
 	,_entities: null
 	,createEntity: function(components) {
-		var entity = new edge_Entity(this,components,$bind(this,this.statusChange));
+		var entity = new edge_Entity(components,$bind(this,this.statusChange));
 		thx__$Set_Set_$Impl_$.add(this._entities,entity);
 		this.statusChange(edge_StatusChange.EntityCreated(entity));
 		return entity;
@@ -772,8 +772,7 @@ edge_Engine.prototype = {
 	}
 	,__class__: edge_Engine
 };
-var edge_Entity = function(engine,components,change) {
-	this.engine = engine;
+var edge_Entity = function(components,change) {
 	this.destroyed = false;
 	this.list = components;
 	this.change = change;
@@ -781,7 +780,6 @@ var edge_Entity = function(engine,components,change) {
 edge_Entity.__name__ = ["edge","Entity"];
 edge_Entity.prototype = {
 	destroyed: null
-	,engine: null
 	,list: null
 	,change: null
 	,addComponent: function(c) {

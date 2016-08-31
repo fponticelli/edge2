@@ -5,7 +5,7 @@ import AComponent;
 
 class TestComponents {
   var count: Int;
-  var entity: Entity<AComponent, Nil>;
+  var entity: Entity<AComponent>;
   public function new() {}
 
   public function setup() {

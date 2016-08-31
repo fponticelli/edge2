@@ -5,7 +5,7 @@ import thx.OrderedMap;
 import thx.ReadonlyArray;
 
 class View<Payload, Component, Environment> {
-  public static function components<Payload, Component, Environment>(extractor: Iterator<Component> -> Option<Payload>): View<ReadonlyArray<ItemEntity<Payload, Component, Environment>>, Component, Environment>
+  public static function components<Payload, Component, Environment>(extractor: Iterator<Component> -> Option<Payload>): View<ReadonlyArray<ItemEntity<Payload, Component>>, Component, Environment>
     return new ComponentView(extractor);
   public static function environment<Payload, Component, Environment>(extractor: Environment -> Option<Payload>): View<Payload, Component, Environment>
     return new EnvironmentView(extractor);
@@ -15,7 +15,7 @@ class View<Payload, Component, Environment> {
     extractorEntity: Iterator<Component> -> Option<ComponentsPayload>,
     extractorEnvironment: Environment -> Option<EnvironmentPayload>
   ): View<{
-    items: ReadonlyArray<ItemEntity<ComponentsPayload, Component, Environment>>,
+    items: ReadonlyArray<ItemEntity<ComponentsPayload, Component>>,
     environment: EnvironmentPayload
   }, Component, Environment>
     return new ComponentsAndEnvironmentView(extractorEntity, extractorEnvironment, function(c, e) return {
@@ -26,7 +26,7 @@ class View<Payload, Component, Environment> {
     extractorEntity: Iterator<Component> -> Option<ComponentsPayload>,
     extractorEnvironment: Iterator<Environment> -> Option<EnvironmentPayload>
   ): View<{
-    items: ReadonlyArray<ItemEntity<ComponentsPayload, Component, Environment>>,
+    items: ReadonlyArray<ItemEntity<ComponentsPayload, Component>>,
     environment: EnvironmentPayload
   }, Component, Environment>
     return new ComponentsAndEnvironmentsView(extractorEntity, extractorEnvironment, function(c, e) return {
@@ -40,10 +40,10 @@ class View<Payload, Component, Environment> {
 
 class ComponentsAndEnvironmentView<ComponentsPayload, EnvironmentPayload, Payload, Component, Environment> extends View<Payload, Component, Environment> {
   var _payload = None;
-  var viewComponents: View<ReadonlyArray<ItemEntity<ComponentsPayload, Component, Environment>>, Component, Environment>;
+  var viewComponents: View<ReadonlyArray<ItemEntity<ComponentsPayload, Component>>, Component, Environment>;
   var viewEnvironment: View<EnvironmentPayload, Component, Environment>;
-  var compose: ReadonlyArray<ItemEntity<ComponentsPayload, Component, Environment>> -> EnvironmentPayload -> Payload;
-  public function new(matchEntity: Iterator<Component> -> Option<ComponentsPayload>, matchEnvironment: Environment -> Option<EnvironmentPayload>, compose: ReadonlyArray<ItemEntity<ComponentsPayload, Component, Environment>> -> EnvironmentPayload -> Payload) {
+  var compose: ReadonlyArray<ItemEntity<ComponentsPayload, Component>> -> EnvironmentPayload -> Payload;
+  public function new(matchEntity: Iterator<Component> -> Option<ComponentsPayload>, matchEnvironment: Environment -> Option<EnvironmentPayload>, compose: ReadonlyArray<ItemEntity<ComponentsPayload, Component>> -> EnvironmentPayload -> Payload) {
     this.viewComponents = View.components(matchEntity);
     this.viewEnvironment = View.environment(matchEnvironment);
     this.compose = compose;
@@ -63,10 +63,10 @@ class ComponentsAndEnvironmentView<ComponentsPayload, EnvironmentPayload, Payloa
 
 class ComponentsAndEnvironmentsView<ComponentsPayload, EnvironmentPayload, Payload, Component, Environment> extends View<Payload, Component, Environment> {
   var _payload = None;
-  var viewComponents: View<ReadonlyArray<ItemEntity<ComponentsPayload, Component, Environment>>, Component, Environment>;
+  var viewComponents: View<ReadonlyArray<ItemEntity<ComponentsPayload, Component>>, Component, Environment>;
   var viewEnvironment: View<EnvironmentPayload, Component, Environment>;
-  var compose: ReadonlyArray<ItemEntity<ComponentsPayload, Component, Environment>> -> EnvironmentPayload -> Payload;
-  public function new(matchEntity: Iterator<Component> -> Option<ComponentsPayload>, matchEnvironment: Iterator<Environment> -> Option<EnvironmentPayload>, compose: ReadonlyArray<ItemEntity<ComponentsPayload, Component, Environment>> -> EnvironmentPayload -> Payload) {
+  var compose: ReadonlyArray<ItemEntity<ComponentsPayload, Component>> -> EnvironmentPayload -> Payload;
+  public function new(matchEntity: Iterator<Component> -> Option<ComponentsPayload>, matchEnvironment: Iterator<Environment> -> Option<EnvironmentPayload>, compose: ReadonlyArray<ItemEntity<ComponentsPayload, Component>> -> EnvironmentPayload -> Payload) {
     this.viewComponents = View.components(matchEntity);
     this.viewEnvironment = View.environments(matchEnvironment);
     this.compose = compose;
@@ -139,8 +139,8 @@ class EnvironmentsView<Payload, Component, Environment> extends View<Payload, Co
   override function payload(): Option<Payload> return _payload;
 }
 
-class ComponentView<Payload, Component, Environment> extends View<ReadonlyArray<ItemEntity<Payload, Component, Environment>>, Component, Environment> {
-  var map: OrderedMap<Entity<Component, Environment>, ItemEntity<Payload, Component, Environment>>;
+class ComponentView<Payload, Component, Environment> extends View<ReadonlyArray<ItemEntity<Payload, Component>>, Component, Environment> {
+  var map: OrderedMap<Entity<Component>, ItemEntity<Payload, Component>>;
   var matchEntity: Iterator<Component> -> Option<Payload>;
   var _payload = None;
   public function new(matchEntity: Iterator<Component> -> Option<Payload>) {
@@ -174,10 +174,10 @@ class ComponentView<Payload, Component, Environment> extends View<ReadonlyArray<
     };
   }
 
-  override function payload(): Option<ReadonlyArray<ItemEntity<Payload, Component, Environment>>> return _payload;
+  override function payload(): Option<ReadonlyArray<ItemEntity<Payload, Component>>> return _payload;
 }
 
-typedef ItemEntity<ItemPayload, Component, Environment> = {
+typedef ItemEntity<ItemPayload, Component> = {
   data: ItemPayload,
-  entity: Entity<Component, Environment>
+  entity: Entity<Component>
 }

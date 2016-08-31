@@ -23,15 +23,15 @@ class Engine<Component, Environment> {
     return _phases.iterator();
 
   // entities
-  var _entities: Set<Entity<Component, Environment>>;
-  public function createEntity(components: Array<Component>): Entity<Component, Environment> {
-    var entity = new Entity(components, statusChange);
+  var _entities: Set<Entity<Component>>;
+  public function createEntity(components: Array<Component>): Entity<Component> {
+    var entity = new Entity(components, cast statusChange);
     _entities.add(entity);
     statusChange(EntityCreated(entity));
     return entity;
   }
 
-  public function removeEntity(predicate: Entity<Component, Environment> -> Bool): Bool {
+  public function removeEntity(predicate: Entity<Component> -> Bool): Bool {
     for(entity in _entities) {
       if(predicate(entity)) {
         entity.destroy();
@@ -53,7 +53,7 @@ class Engine<Component, Environment> {
     }
   }
 
-  public function removeEntities(predicate: Entity<Component, Environment> -> Bool): Bool {
+  public function removeEntities(predicate: Entity<Component> -> Bool): Bool {
     var removed = false;
     for(entity in _entities) {
       if(predicate(entity)) {
@@ -69,7 +69,7 @@ class Engine<Component, Environment> {
     return this;
   }
 
-  public function entities(): Iterator<Entity<Component, Environment>>
+  public function entities(): Iterator<Entity<Component>>
     return _entities.iterator();
 
   // Environments

@@ -1,7 +1,9 @@
 package edge;
 
+import edge.Processor;
 import haxe.ds.Option;
 import thx.Any;
+import thx.ReadonlyArray;
 
 class Phase<Component, Property> {
   var processors: Map<Processor<Dynamic, Component, Property>, ProcessorSystem<Dynamic>> = new Map(); // Dynamic should be Any
@@ -23,6 +25,35 @@ class Phase<Component, Property> {
     }
     return cast viewSystem;
   }
+
+  public function processComponents<Payload>(extractor: Iterator<Component> -> Option<Payload>): ProcessorSystem<ReadonlyArray<ItemEntity<Payload, Component>>>
+    return addProcessor(new ComponentProcessor(extractor));
+  public function processProperty<Payload>(extractor: Property -> Option<Payload>): ProcessorSystem<Payload>
+    return addProcessor(new PropertyProcessor(extractor));
+  public function processProperties<Payload>(extractor: Iterator<Property> -> Option<Payload>): ProcessorSystem<Payload>
+    return addProcessor(new PropertiesProcessor(extractor));
+  public function processComponentsProperty<ComponentsPayload, PropertyPayload, Payload>(
+    extractorEntity: Iterator<Component> -> Option<ComponentsPayload>,
+    extractorProperty: Property -> Option<PropertyPayload>
+  ): ProcessorSystem<{
+    items: ReadonlyArray<ItemEntity<ComponentsPayload, Component>>,
+    property: PropertyPayload
+  }>
+    return addProcessor(new ComponentsAndPropertyProcessor(this, extractorEntity, extractorProperty, function(c, e) return {
+      items: c,
+      property: e
+    }));
+  public function processComponentsProperties<ComponentsPayload, PropertyPayload, Payload>(
+    extractorEntity: Iterator<Component> -> Option<ComponentsPayload>,
+    extractorProperty: Iterator<Property> -> Option<PropertyPayload>
+  ): ProcessorSystem<{
+    items: ReadonlyArray<ItemEntity<ComponentsPayload, Component>>,
+    property: PropertyPayload
+  }>
+    return addProcessor(new ComponentsAndPropertiesProcessor(this, extractorEntity, extractorProperty, function(c, e) return {
+      items: c,
+      property: e
+    }));
 
   public function update() {
     for(view in processors.keys()) {

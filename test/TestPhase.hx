@@ -8,6 +8,7 @@ import edge.StatusChange;
 import edge.Processor;
 import AComponent;
 import AProperty;
+import haxe.ds.Option;
 
 class TestPhase {
   public function new() {}
@@ -32,10 +33,11 @@ class TestPhase {
   }
 }
 
-class TPProcessor<Payload, Component, Property> extends Processor<Payload, Component, Property> {
+class TPProcessor<Payload, Component, Property> implements Processor<Payload, Component, Property> {
   public var collected: Array<StatusChange<Component, Property>> = [];
   public function new() {}
-  override public function onChange(change: StatusChange<Component, Property>): Void {
+  public function onChange(change: StatusChange<Component, Property>): Void {
     collected.push(change);
   }
+  public function payload() return None;
 }

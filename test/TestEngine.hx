@@ -17,19 +17,17 @@ class TestEngine {
         phase = engine.createPhase(),
         countComps = 0,
         countEnv = 0;
-    phase.addProcessor(
-      Processor.componentsProperties(
-        function(e) {
-          countComps++;
-          Assert.same(CA, e.next());
-          return None;
-        },
-        function(e) {
-          countEnv++;
-          Assert.same(EA, e.next());
-          return None;
-        }
-      )
+    phase.processComponentsProperties(
+      function(e) {
+        countComps++;
+        Assert.same(CA, e.next());
+        return None;
+      },
+      function(e) {
+        countEnv++;
+        Assert.same(EA, e.next());
+        return None;
+      }
     );
     Assert.equals(0, countComps);
     Assert.equals(0, countEnv);
@@ -46,19 +44,17 @@ class TestEngine {
         countEnv = 0;
     engine.createEntity([CA]);
     engine.addProperty(EA);
-    phase.addProcessor(
-      Processor.componentsProperties(
-        function(e) {
-          countComps++;
-          Assert.same(CA, e.next());
-          return None;
-        },
-        function(e) {
-          countEnv++;
-          Assert.same(EA, e.next());
-          return None;
-        }
-      )
+    phase.processComponentsProperties(
+      function(e) {
+        countComps++;
+        Assert.same(CA, e.next());
+        return None;
+      },
+      function(e) {
+        countEnv++;
+        Assert.same(EA, e.next());
+        return None;
+      }
     );
     Assert.equals(1, countComps);
     Assert.equals(1, countEnv);
@@ -74,20 +70,18 @@ class TestEngine {
         countEnv = 0;
     engine.createEntity([CA]);
     engine.addProperty(EA);
-    var phase = engine.createPhase();
-    phase.addProcessor(
-      Processor.componentsProperties(
-        function(e) {
-          countComps++;
-          Assert.same(CA, e.next());
-          return None;
-        },
-        function(e) {
-          countEnv++;
-          Assert.same(EA, e.next());
-          return None;
-        }
-      )
+  var phase = engine.createPhase();
+  phase.processComponentsProperties(
+      function(e) {
+        countComps++;
+        Assert.same(CA, e.next());
+        return None;
+      },
+      function(e) {
+        countEnv++;
+        Assert.same(EA, e.next());
+        return None;
+      }
     );
     Assert.equals(1, countComps);
     Assert.equals(1, countEnv);
@@ -101,13 +95,11 @@ class TestEngine {
     var engine = Engine.withEnumProperty(),
         phase = engine.createPhase(),
         comps = null;
-    phase.addProcessor(
-      Processor.components(
-        function(e) {
-          comps = e.toArray();
-          return None;
-        }
-      )
+    phase.processComponents(
+      function(e) {
+        comps = e.toArray();
+        return None;
+      }
     );
     var e = engine.createEntity([CA]);
     Assert.same([CA], comps);
@@ -121,13 +113,11 @@ class TestEngine {
     var engine = Engine.withEnumProperty(),
         phase = engine.createPhase(),
         envs = null;
-    phase.addProcessor(
-      Processor.properties(
-        function(e) {
-          envs = e.toArray();
-          return None;
-        }
-      )
+    phase.processProperties(
+      function(e) {
+        envs = e.toArray();
+        return None;
+      }
     );
     engine.addProperty(EA);
     Assert.same([EA], envs);

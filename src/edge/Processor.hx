@@ -4,94 +4,65 @@ import haxe.ds.Option;
 import thx.OrderedMap;
 import thx.ReadonlyArray;
 
-class Processor<Payload, Component, Property> {
-  public static function components<Payload, Component, Property>(extractor: Iterator<Component> -> Option<Payload>): Processor<ReadonlyArray<ItemEntity<Payload, Component>>, Component, Property>
-    return new ComponentProcessor(extractor);
-  public static function property<Payload, Component, Property>(extractor: Property -> Option<Payload>): Processor<Payload, Component, Property>
-    return new PropertyProcessor(extractor);
-  public static function properties<Payload, Component, Property>(extractor: Iterator<Property> -> Option<Payload>): Processor<Payload, Component, Property>
-    return new PropertiesProcessor(extractor);
-  public static function componentsProperty<ComponentsPayload, PropertyPayload, Payload, Component, Property>(
-    extractorEntity: Iterator<Component> -> Option<ComponentsPayload>,
-    extractorProperty: Property -> Option<PropertyPayload>
-  ): Processor<{
-    items: ReadonlyArray<ItemEntity<ComponentsPayload, Component>>,
-    property: PropertyPayload
-  }, Component, Property>
-    return new ComponentsAndPropertyProcessor(extractorEntity, extractorProperty, function(c, e) return {
-      items: c,
-      property: e
-    });
-  public static function componentsProperties<ComponentsPayload, PropertyPayload, Payload, Component, Property>(
-    extractorEntity: Iterator<Component> -> Option<ComponentsPayload>,
-    extractorProperty: Iterator<Property> -> Option<PropertyPayload>
-  ): Processor<{
-    items: ReadonlyArray<ItemEntity<ComponentsPayload, Component>>,
-    property: PropertyPayload
-  }, Component, Property>
-    return new ComponentsAndPropertiesProcessor(extractorEntity, extractorProperty, function(c, e) return {
-      items: c,
-      property: e
-    });
-
-  public function onChange(change: StatusChange<Component, Property>): Void {}
-  public function payload(): Option<Payload> return None;
+interface Processor<Payload, Component, Property> {
+  public function onChange(change: StatusChange<Component, Property>): Void;
+  public function payload(): Option<Payload>;
 }
 
-class ComponentsAndPropertyProcessor<ComponentsPayload, PropertyPayload, Payload, Component, Property> extends Processor<Payload, Component, Property> {
+class ComponentsAndPropertyProcessor<ComponentsPayload, PropertyPayload, Payload, Component, Property> implements Processor<Payload, Component, Property> {
   var _payload = None;
-  var viewComponents: Processor<ReadonlyArray<ItemEntity<ComponentsPayload, Component>>, Component, Property>;
-  var viewProperty: Processor<PropertyPayload, Component, Property>;
+  var processorComponents: Processor<ReadonlyArray<ItemEntity<ComponentsPayload, Component>>, Component, Property>;
+  var processorProperty: Processor<PropertyPayload, Component, Property>;
   var compose: ReadonlyArray<ItemEntity<ComponentsPayload, Component>> -> PropertyPayload -> Payload;
-  public function new(matchEntity: Iterator<Component> -> Option<ComponentsPayload>, matchProperty: Property -> Option<PropertyPayload>, compose: ReadonlyArray<ItemEntity<ComponentsPayload, Component>> -> PropertyPayload -> Payload) {
-    this.viewComponents = Processor.components(matchEntity);
-    this.viewProperty = Processor.property(matchProperty);
+  public function new(phase: Phase<Component, Property>, matchEntity: Iterator<Component> -> Option<ComponentsPayload>, matchProperty: Property -> Option<PropertyPayload>, compose: ReadonlyArray<ItemEntity<ComponentsPayload, Component>> -> PropertyPayload -> Payload) {
+    this.processorComponents = new ComponentProcessor(matchEntity);
+    this.processorProperty = new PropertyProcessor(matchProperty);
     this.compose = compose;
   }
 
-  override public function onChange(change: StatusChange<Component, Property>): Void {
-    viewComponents.onChange(change);
-    viewProperty.onChange(change);
-    _payload = switch [viewComponents.payload(), viewProperty.payload()] {
+  public function onChange(change: StatusChange<Component, Property>): Void {
+    processorComponents.onChange(change);
+    processorProperty.onChange(change);
+    _payload = switch [processorComponents.payload(), processorProperty.payload()] {
       case [Some(c), Some(e)]: Some(compose(c, e));
       case _: None;
     }
   }
 
-  override function payload(): Option<Payload> return _payload;
+  public function payload(): Option<Payload> return _payload;
 }
 
-class ComponentsAndPropertiesProcessor<ComponentsPayload, PropertyPayload, Payload, Component, Property> extends Processor<Payload, Component, Property> {
+class ComponentsAndPropertiesProcessor<ComponentsPayload, PropertyPayload, Payload, Component, Property> implements Processor<Payload, Component, Property> {
   var _payload = None;
-  var viewComponents: Processor<ReadonlyArray<ItemEntity<ComponentsPayload, Component>>, Component, Property>;
-  var viewProperty: Processor<PropertyPayload, Component, Property>;
+  var processorComponents: Processor<ReadonlyArray<ItemEntity<ComponentsPayload, Component>>, Component, Property>;
+  var processorProperty: Processor<PropertyPayload, Component, Property>;
   var compose: ReadonlyArray<ItemEntity<ComponentsPayload, Component>> -> PropertyPayload -> Payload;
-  public function new(matchEntity: Iterator<Component> -> Option<ComponentsPayload>, matchProperty: Iterator<Property> -> Option<PropertyPayload>, compose: ReadonlyArray<ItemEntity<ComponentsPayload, Component>> -> PropertyPayload -> Payload) {
-    this.viewComponents = Processor.components(matchEntity);
-    this.viewProperty = Processor.properties(matchProperty);
+  public function new(phase: Phase<Component, Property>, matchEntity: Iterator<Component> -> Option<ComponentsPayload>, matchProperty: Iterator<Property> -> Option<PropertyPayload>, compose: ReadonlyArray<ItemEntity<ComponentsPayload, Component>> -> PropertyPayload -> Payload) {
+    this.processorComponents = new ComponentProcessor(matchEntity);
+    this.processorProperty = new PropertiesProcessor(matchProperty);
     this.compose = compose;
   }
 
-  override public function onChange(change: StatusChange<Component, Property>): Void {
-    viewComponents.onChange(change);
-    viewProperty.onChange(change);
-    _payload = switch [viewComponents.payload(), viewProperty.payload()] {
+  public function onChange(change: StatusChange<Component, Property>): Void {
+    processorComponents.onChange(change);
+    processorProperty.onChange(change);
+    _payload = switch [processorComponents.payload(), processorProperty.payload()] {
       case [Some(c), Some(e)]: Some(compose(c, e));
       case _: None;
     }
   }
 
-  override function payload(): Option<Payload> return _payload;
+  public function payload(): Option<Payload> return _payload;
 }
 
-class PropertyProcessor<Payload, Component, Property> extends Processor<Payload, Component, Property> {
+class PropertyProcessor<Payload, Component, Property> implements Processor<Payload, Component, Property> {
   var _payload = None;
   var matchProperty: Property -> Option<Payload>;
   public function new(matchProperty: Property -> Option<Payload>) {
     this.matchProperty = matchProperty;
   }
 
-  override public function onChange(change: StatusChange<Component, Property>): Void {
+  public function onChange(change: StatusChange<Component, Property>): Void {
     switch change {
       case PropertyAdded(e):
         switch matchProperty(e) {
@@ -105,10 +76,10 @@ class PropertyProcessor<Payload, Component, Property> extends Processor<Payload,
     }
   }
 
-  override function payload(): Option<Payload> return _payload;
+  public function payload(): Option<Payload> return _payload;
 }
 
-class PropertiesProcessor<Payload, Component, Property> extends Processor<Payload, Component, Property> {
+class PropertiesProcessor<Payload, Component, Property> implements Processor<Payload, Component, Property> {
   var matchProperties: Iterator<Property> -> Option<Payload>;
   var properties: Array<Property>;
   var _payload = None;
@@ -117,7 +88,7 @@ class PropertiesProcessor<Payload, Component, Property> extends Processor<Payloa
     properties = [];
   }
 
-  override public function onChange(change: StatusChange<Component, Property>): Void {
+  public function onChange(change: StatusChange<Component, Property>): Void {
     switch change {
       case PropertyAdded(e):
         properties.push(e);
@@ -136,10 +107,10 @@ class PropertiesProcessor<Payload, Component, Property> extends Processor<Payloa
     }
   }
 
-  override function payload(): Option<Payload> return _payload;
+  public function payload(): Option<Payload> return _payload;
 }
 
-class ComponentProcessor<Payload, Component, Property> extends Processor<ReadonlyArray<ItemEntity<Payload, Component>>, Component, Property> {
+class ComponentProcessor<Payload, Component, Property> implements Processor<ReadonlyArray<ItemEntity<Payload, Component>>, Component, Property> {
   var map: OrderedMap<Entity<Component>, ItemEntity<Payload, Component>>;
   var matchEntity: Iterator<Component> -> Option<Payload>;
   var _payload = None;
@@ -148,7 +119,7 @@ class ComponentProcessor<Payload, Component, Property> extends Processor<Readonl
     this.matchEntity = matchEntity;
   }
 
-  override public function onChange(change: StatusChange<Component, Property>): Void {
+  public function onChange(change: StatusChange<Component, Property>): Void {
     switch change {
       case EntityCreated(e):
         switch matchEntity(e.components()) {
@@ -174,7 +145,7 @@ class ComponentProcessor<Payload, Component, Property> extends Processor<Readonl
     };
   }
 
-  override function payload(): Option<ReadonlyArray<ItemEntity<Payload, Component>>> return _payload;
+  public function payload(): Option<ReadonlyArray<ItemEntity<Payload, Component>>> return _payload;
 }
 
 typedef ItemEntity<ItemPayload, Component> = {

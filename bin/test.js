@@ -526,21 +526,21 @@ TestEngine.prototype = {
 		var phase = engine.createPhase();
 		var countComps = 0;
 		var countEnv = 0;
-		phase.addProcessor(edge_Processor.componentsProperties(function(e) {
+		phase.processComponentsProperties(function(e) {
 			countComps = countComps + 1;
-			utest_Assert.same(AComponent.CA,e.next(),null,null,null,{ fileName : "TestEngine.hx", lineNumber : 24, className : "TestEngine", methodName : "testPropagationAfterSystem"});
+			utest_Assert.same(AComponent.CA,e.next(),null,null,null,{ fileName : "TestEngine.hx", lineNumber : 23, className : "TestEngine", methodName : "testPropagationAfterSystem"});
 			return haxe_ds_Option.None;
 		},function(e1) {
 			countEnv = countEnv + 1;
-			utest_Assert.same(AProperty.EA,e1.next(),null,null,null,{ fileName : "TestEngine.hx", lineNumber : 29, className : "TestEngine", methodName : "testPropagationAfterSystem"});
+			utest_Assert.same(AProperty.EA,e1.next(),null,null,null,{ fileName : "TestEngine.hx", lineNumber : 28, className : "TestEngine", methodName : "testPropagationAfterSystem"});
 			return haxe_ds_Option.None;
-		}));
-		utest_Assert.equals(0,countComps,null,{ fileName : "TestEngine.hx", lineNumber : 34, className : "TestEngine", methodName : "testPropagationAfterSystem"});
-		utest_Assert.equals(0,countEnv,null,{ fileName : "TestEngine.hx", lineNumber : 35, className : "TestEngine", methodName : "testPropagationAfterSystem"});
+		});
+		utest_Assert.equals(0,countComps,null,{ fileName : "TestEngine.hx", lineNumber : 32, className : "TestEngine", methodName : "testPropagationAfterSystem"});
+		utest_Assert.equals(0,countEnv,null,{ fileName : "TestEngine.hx", lineNumber : 33, className : "TestEngine", methodName : "testPropagationAfterSystem"});
 		engine.createEntity([AComponent.CA]);
 		engine.addProperty(AProperty.EA);
-		utest_Assert.equals(1,countComps,null,{ fileName : "TestEngine.hx", lineNumber : 38, className : "TestEngine", methodName : "testPropagationAfterSystem"});
-		utest_Assert.equals(1,countEnv,null,{ fileName : "TestEngine.hx", lineNumber : 39, className : "TestEngine", methodName : "testPropagationAfterSystem"});
+		utest_Assert.equals(1,countComps,null,{ fileName : "TestEngine.hx", lineNumber : 36, className : "TestEngine", methodName : "testPropagationAfterSystem"});
+		utest_Assert.equals(1,countEnv,null,{ fileName : "TestEngine.hx", lineNumber : 37, className : "TestEngine", methodName : "testPropagationAfterSystem"});
 	}
 	,testPropagationBeforeSystem: function() {
 		var engine = edge_Engine.withEnumProperty();
@@ -549,21 +549,21 @@ TestEngine.prototype = {
 		var countEnv = 0;
 		engine.createEntity([AComponent.CA]);
 		engine.addProperty(AProperty.EA);
-		phase.addProcessor(edge_Processor.componentsProperties(function(e) {
+		phase.processComponentsProperties(function(e) {
 			countComps = countComps + 1;
-			utest_Assert.same(AComponent.CA,e.next(),null,null,null,{ fileName : "TestEngine.hx", lineNumber : 53, className : "TestEngine", methodName : "testPropagationBeforeSystem"});
+			utest_Assert.same(AComponent.CA,e.next(),null,null,null,{ fileName : "TestEngine.hx", lineNumber : 50, className : "TestEngine", methodName : "testPropagationBeforeSystem"});
 			return haxe_ds_Option.None;
 		},function(e1) {
 			countEnv = countEnv + 1;
-			utest_Assert.same(AProperty.EA,e1.next(),null,null,null,{ fileName : "TestEngine.hx", lineNumber : 58, className : "TestEngine", methodName : "testPropagationBeforeSystem"});
+			utest_Assert.same(AProperty.EA,e1.next(),null,null,null,{ fileName : "TestEngine.hx", lineNumber : 55, className : "TestEngine", methodName : "testPropagationBeforeSystem"});
 			return haxe_ds_Option.None;
-		}));
-		utest_Assert.equals(1,countComps,null,{ fileName : "TestEngine.hx", lineNumber : 63, className : "TestEngine", methodName : "testPropagationBeforeSystem"});
-		utest_Assert.equals(1,countEnv,null,{ fileName : "TestEngine.hx", lineNumber : 64, className : "TestEngine", methodName : "testPropagationBeforeSystem"});
+		});
+		utest_Assert.equals(1,countComps,null,{ fileName : "TestEngine.hx", lineNumber : 59, className : "TestEngine", methodName : "testPropagationBeforeSystem"});
+		utest_Assert.equals(1,countEnv,null,{ fileName : "TestEngine.hx", lineNumber : 60, className : "TestEngine", methodName : "testPropagationBeforeSystem"});
 		engine.createEntity([AComponent.CA]);
 		engine.addProperty(AProperty.EA);
-		utest_Assert.equals(2,countComps,null,{ fileName : "TestEngine.hx", lineNumber : 67, className : "TestEngine", methodName : "testPropagationBeforeSystem"});
-		utest_Assert.equals(2,countEnv,null,{ fileName : "TestEngine.hx", lineNumber : 68, className : "TestEngine", methodName : "testPropagationBeforeSystem"});
+		utest_Assert.equals(2,countComps,null,{ fileName : "TestEngine.hx", lineNumber : 63, className : "TestEngine", methodName : "testPropagationBeforeSystem"});
+		utest_Assert.equals(2,countEnv,null,{ fileName : "TestEngine.hx", lineNumber : 64, className : "TestEngine", methodName : "testPropagationBeforeSystem"});
 	}
 	,testPropagationAfterPhase: function() {
 		var engine = edge_Engine.withEnumProperty();
@@ -571,55 +571,55 @@ TestEngine.prototype = {
 		var countEnv = 0;
 		engine.createEntity([AComponent.CA]);
 		engine.addProperty(AProperty.EA);
-		engine.createPhase().addProcessor(edge_Processor.componentsProperties(function(e) {
+		engine.createPhase().processComponentsProperties(function(e) {
 			countComps = countComps + 1;
-			utest_Assert.same(AComponent.CA,e.next(),null,null,null,{ fileName : "TestEngine.hx", lineNumber : 82, className : "TestEngine", methodName : "testPropagationAfterPhase"});
+			utest_Assert.same(AComponent.CA,e.next(),null,null,null,{ fileName : "TestEngine.hx", lineNumber : 77, className : "TestEngine", methodName : "testPropagationAfterPhase"});
 			return haxe_ds_Option.None;
 		},function(e1) {
 			countEnv = countEnv + 1;
-			utest_Assert.same(AProperty.EA,e1.next(),null,null,null,{ fileName : "TestEngine.hx", lineNumber : 87, className : "TestEngine", methodName : "testPropagationAfterPhase"});
+			utest_Assert.same(AProperty.EA,e1.next(),null,null,null,{ fileName : "TestEngine.hx", lineNumber : 82, className : "TestEngine", methodName : "testPropagationAfterPhase"});
 			return haxe_ds_Option.None;
-		}));
-		utest_Assert.equals(1,countComps,null,{ fileName : "TestEngine.hx", lineNumber : 92, className : "TestEngine", methodName : "testPropagationAfterPhase"});
-		utest_Assert.equals(1,countEnv,null,{ fileName : "TestEngine.hx", lineNumber : 93, className : "TestEngine", methodName : "testPropagationAfterPhase"});
+		});
+		utest_Assert.equals(1,countComps,null,{ fileName : "TestEngine.hx", lineNumber : 86, className : "TestEngine", methodName : "testPropagationAfterPhase"});
+		utest_Assert.equals(1,countEnv,null,{ fileName : "TestEngine.hx", lineNumber : 87, className : "TestEngine", methodName : "testPropagationAfterPhase"});
 		engine.createEntity([AComponent.CA]);
 		engine.addProperty(AProperty.EA);
-		utest_Assert.equals(2,countComps,null,{ fileName : "TestEngine.hx", lineNumber : 96, className : "TestEngine", methodName : "testPropagationAfterPhase"});
-		utest_Assert.equals(2,countEnv,null,{ fileName : "TestEngine.hx", lineNumber : 97, className : "TestEngine", methodName : "testPropagationAfterPhase"});
+		utest_Assert.equals(2,countComps,null,{ fileName : "TestEngine.hx", lineNumber : 90, className : "TestEngine", methodName : "testPropagationAfterPhase"});
+		utest_Assert.equals(2,countEnv,null,{ fileName : "TestEngine.hx", lineNumber : 91, className : "TestEngine", methodName : "testPropagationAfterPhase"});
 	}
 	,testAddRemoveComponent: function() {
 		var engine = edge_Engine.withEnumProperty();
 		var phase = engine.createPhase();
 		var comps = null;
-		phase.addProcessor(edge_Processor.components(function(e) {
+		phase.processComponents(function(e) {
 			comps = thx_Iterators.toArray(e);
 			return haxe_ds_Option.None;
-		}));
+		});
 		var e1 = engine.createEntity([AComponent.CA]);
-		utest_Assert.same([AComponent.CA],comps,null,null,null,{ fileName : "TestEngine.hx", lineNumber : 113, className : "TestEngine", methodName : "testAddRemoveComponent"});
+		utest_Assert.same([AComponent.CA],comps,null,null,null,{ fileName : "TestEngine.hx", lineNumber : 105, className : "TestEngine", methodName : "testAddRemoveComponent"});
 		e1.addComponent(AComponent.CB);
-		utest_Assert.same([AComponent.CA,AComponent.CB],comps,null,null,null,{ fileName : "TestEngine.hx", lineNumber : 115, className : "TestEngine", methodName : "testAddRemoveComponent"});
+		utest_Assert.same([AComponent.CA,AComponent.CB],comps,null,null,null,{ fileName : "TestEngine.hx", lineNumber : 107, className : "TestEngine", methodName : "testAddRemoveComponent"});
 		e1.removeComponent(function(c) {
 			return c == AComponent.CA;
 		});
-		utest_Assert.same([AComponent.CB],comps,null,null,null,{ fileName : "TestEngine.hx", lineNumber : 117, className : "TestEngine", methodName : "testAddRemoveComponent"});
+		utest_Assert.same([AComponent.CB],comps,null,null,null,{ fileName : "TestEngine.hx", lineNumber : 109, className : "TestEngine", methodName : "testAddRemoveComponent"});
 	}
 	,testRemoveProperty: function() {
 		var engine = edge_Engine.withEnumProperty();
 		var phase = engine.createPhase();
 		var envs = null;
-		phase.addProcessor(edge_Processor.properties(function(e) {
+		phase.processProperties(function(e) {
 			envs = thx_Iterators.toArray(e);
 			return haxe_ds_Option.None;
-		}));
+		});
 		engine.addProperty(AProperty.EA);
-		utest_Assert.same([AProperty.EA],envs,null,null,null,{ fileName : "TestEngine.hx", lineNumber : 133, className : "TestEngine", methodName : "testRemoveProperty"});
+		utest_Assert.same([AProperty.EA],envs,null,null,null,{ fileName : "TestEngine.hx", lineNumber : 123, className : "TestEngine", methodName : "testRemoveProperty"});
 		engine.addProperty(AProperty.EB);
-		utest_Assert.same([AProperty.EA,AProperty.EB],envs,null,null,null,{ fileName : "TestEngine.hx", lineNumber : 135, className : "TestEngine", methodName : "testRemoveProperty"});
+		utest_Assert.same([AProperty.EA,AProperty.EB],envs,null,null,null,{ fileName : "TestEngine.hx", lineNumber : 125, className : "TestEngine", methodName : "testRemoveProperty"});
 		engine.removeProperty(function(e1) {
 			return e1 == AProperty.EA;
 		});
-		utest_Assert.same([AProperty.EB],envs,null,null,null,{ fileName : "TestEngine.hx", lineNumber : 137, className : "TestEngine", methodName : "testRemoveProperty"});
+		utest_Assert.same([AProperty.EB],envs,null,null,null,{ fileName : "TestEngine.hx", lineNumber : 127, className : "TestEngine", methodName : "testRemoveProperty"});
 	}
 	,__class__: TestEngine
 };
@@ -670,8 +670,8 @@ TestPhase.prototype = {
 	testBasics: function() {
 		var p = new edge_Phase(null);
 		var v = new TPProcessor();
-		utest_Assert.notNull(p.addProcessor(v),null,{ fileName : "TestPhase.hx", lineNumber : 19, className : "TestPhase", methodName : "testBasics"});
-		utest_Assert.same([],v.collected,null,null,null,{ fileName : "TestPhase.hx", lineNumber : 20, className : "TestPhase", methodName : "testBasics"});
+		utest_Assert.notNull(p.addProcessor(v),null,{ fileName : "TestPhase.hx", lineNumber : 20, className : "TestPhase", methodName : "testBasics"});
+		utest_Assert.same([],v.collected,null,null,null,{ fileName : "TestPhase.hx", lineNumber : 21, className : "TestPhase", methodName : "testBasics"});
 		var e = new edge_Entity([AComponent.CA],function(_) {
 		});
 		var events = [edge_StatusChange.PropertyAdded(AProperty.EA),edge_StatusChange.PropertyRemoved(AProperty.EA),edge_StatusChange.EntityCreated(e),edge_StatusChange.EntityUpdated(e),edge_StatusChange.EntityRemoved(e)];
@@ -681,51 +681,32 @@ TestPhase.prototype = {
 			++_g;
 			p.propagate(e1);
 		}
-		utest_Assert.same(events,v.collected,null,null,null,{ fileName : "TestPhase.hx", lineNumber : 31, className : "TestPhase", methodName : "testBasics"});
+		utest_Assert.same(events,v.collected,null,null,null,{ fileName : "TestPhase.hx", lineNumber : 32, className : "TestPhase", methodName : "testBasics"});
 	}
 	,__class__: TestPhase
 };
 var edge_Processor = function() { };
 edge_Processor.__name__ = ["edge","Processor"];
-edge_Processor.components = function(extractor) {
-	return new edge_ComponentProcessor(extractor);
-};
-edge_Processor.property = function(extractor) {
-	return new edge_PropertyProcessor(extractor);
-};
-edge_Processor.properties = function(extractor) {
-	return new edge_PropertiesProcessor(extractor);
-};
-edge_Processor.componentsProperty = function(extractorEntity,extractorProperty) {
-	return new edge_ComponentsAndPropertyProcessor(extractorEntity,extractorProperty,function(c,e) {
-		return { items : c, property : e};
-	});
-};
-edge_Processor.componentsProperties = function(extractorEntity,extractorProperty) {
-	return new edge_ComponentsAndPropertiesProcessor(extractorEntity,extractorProperty,function(c,e) {
-		return { items : c, property : e};
-	});
-};
 edge_Processor.prototype = {
-	onChange: function(change) {
-	}
-	,payload: function() {
-		return haxe_ds_Option.None;
-	}
+	onChange: null
+	,payload: null
 	,__class__: edge_Processor
 };
 var TPProcessor = function() {
 	this.collected = [];
 };
 TPProcessor.__name__ = ["TPProcessor"];
-TPProcessor.__super__ = edge_Processor;
-TPProcessor.prototype = $extend(edge_Processor.prototype,{
+TPProcessor.__interfaces__ = [edge_Processor];
+TPProcessor.prototype = {
 	collected: null
 	,onChange: function(change) {
 		this.collected.push(change);
 	}
+	,payload: function() {
+		return haxe_ds_Option.None;
+	}
 	,__class__: TPProcessor
-});
+};
 var TestProcessor = function() {
 	var e = new edge_Entity([AComponent.CA],function(_) {
 	});
@@ -738,13 +719,13 @@ TestProcessor.prototype = {
 		var p = new edge_Phase(null);
 		var comps = [];
 		var envs = [];
-		p.addProcessor(edge_Processor.componentsProperties(function(e) {
+		p.processComponentsProperties(function(e) {
 			comps.push(thx_Iterators.toArray(e));
 			return haxe_ds_Option.Some("comp");
 		},function(e1) {
 			envs.push(thx_Iterators.toArray(e1));
 			return haxe_ds_Option.Some("env");
-		}));
+		});
 		var _g = 0;
 		var _g1 = this.events;
 		while(_g < _g1.length) {
@@ -1158,6 +1139,25 @@ edge_Phase.prototype = {
 		}
 		return viewSystem;
 	}
+	,processComponents: function(extractor) {
+		return this.addProcessor(new edge_ComponentProcessor(extractor));
+	}
+	,processProperty: function(extractor) {
+		return this.addProcessor(new edge_PropertyProcessor(extractor));
+	}
+	,processProperties: function(extractor) {
+		return this.addProcessor(new edge_PropertiesProcessor(extractor));
+	}
+	,processComponentsProperty: function(extractorEntity,extractorProperty) {
+		return this.addProcessor(new edge_ComponentsAndPropertyProcessor(this,extractorEntity,extractorProperty,function(c,e) {
+			return { items : c, property : e};
+		}));
+	}
+	,processComponentsProperties: function(extractorEntity,extractorProperty) {
+		return this.addProcessor(new edge_ComponentsAndPropertiesProcessor(this,extractorEntity,extractorProperty,function(c,e) {
+			return { items : c, property : e};
+		}));
+	}
 	,update: function() {
 		var tmp = this.processors.keys();
 		while(tmp.hasNext()) {
@@ -1179,63 +1179,63 @@ edge_Phase.prototype = {
 	}
 	,__class__: edge_Phase
 };
-var edge_ComponentsAndPropertyProcessor = function(matchEntity,matchProperty,compose) {
+var edge_ComponentsAndPropertyProcessor = function(phase,matchEntity,matchProperty,compose) {
 	this._payload = haxe_ds_Option.None;
-	this.viewComponents = edge_Processor.components(matchEntity);
-	this.viewProperty = edge_Processor.property(matchProperty);
+	this.processorComponents = new edge_ComponentProcessor(matchEntity);
+	this.processorProperty = new edge_PropertyProcessor(matchProperty);
 	this.compose = compose;
 };
 edge_ComponentsAndPropertyProcessor.__name__ = ["edge","ComponentsAndPropertyProcessor"];
-edge_ComponentsAndPropertyProcessor.__super__ = edge_Processor;
-edge_ComponentsAndPropertyProcessor.prototype = $extend(edge_Processor.prototype,{
+edge_ComponentsAndPropertyProcessor.__interfaces__ = [edge_Processor];
+edge_ComponentsAndPropertyProcessor.prototype = {
 	_payload: null
-	,viewComponents: null
-	,viewProperty: null
+	,processorComponents: null
+	,processorProperty: null
 	,compose: null
 	,onChange: function(change) {
-		this.viewComponents.onChange(change);
-		this.viewProperty.onChange(change);
-		var _g = this.viewProperty.payload();
-		var _g1 = this.viewComponents.payload();
+		this.processorComponents.onChange(change);
+		this.processorProperty.onChange(change);
+		var _g = this.processorProperty.payload();
+		var _g1 = this.processorComponents.payload();
 		this._payload = _g1[1] == 0?_g[1] == 0?haxe_ds_Option.Some(this.compose(_g1[2],_g[2])):haxe_ds_Option.None:haxe_ds_Option.None;
 	}
 	,payload: function() {
 		return this._payload;
 	}
 	,__class__: edge_ComponentsAndPropertyProcessor
-});
-var edge_ComponentsAndPropertiesProcessor = function(matchEntity,matchProperty,compose) {
+};
+var edge_ComponentsAndPropertiesProcessor = function(phase,matchEntity,matchProperty,compose) {
 	this._payload = haxe_ds_Option.None;
-	this.viewComponents = edge_Processor.components(matchEntity);
-	this.viewProperty = edge_Processor.properties(matchProperty);
+	this.processorComponents = new edge_ComponentProcessor(matchEntity);
+	this.processorProperty = new edge_PropertiesProcessor(matchProperty);
 	this.compose = compose;
 };
 edge_ComponentsAndPropertiesProcessor.__name__ = ["edge","ComponentsAndPropertiesProcessor"];
-edge_ComponentsAndPropertiesProcessor.__super__ = edge_Processor;
-edge_ComponentsAndPropertiesProcessor.prototype = $extend(edge_Processor.prototype,{
+edge_ComponentsAndPropertiesProcessor.__interfaces__ = [edge_Processor];
+edge_ComponentsAndPropertiesProcessor.prototype = {
 	_payload: null
-	,viewComponents: null
-	,viewProperty: null
+	,processorComponents: null
+	,processorProperty: null
 	,compose: null
 	,onChange: function(change) {
-		this.viewComponents.onChange(change);
-		this.viewProperty.onChange(change);
-		var _g = this.viewProperty.payload();
-		var _g1 = this.viewComponents.payload();
+		this.processorComponents.onChange(change);
+		this.processorProperty.onChange(change);
+		var _g = this.processorProperty.payload();
+		var _g1 = this.processorComponents.payload();
 		this._payload = _g1[1] == 0?_g[1] == 0?haxe_ds_Option.Some(this.compose(_g1[2],_g[2])):haxe_ds_Option.None:haxe_ds_Option.None;
 	}
 	,payload: function() {
 		return this._payload;
 	}
 	,__class__: edge_ComponentsAndPropertiesProcessor
-});
+};
 var edge_PropertyProcessor = function(matchProperty) {
 	this._payload = haxe_ds_Option.None;
 	this.matchProperty = matchProperty;
 };
 edge_PropertyProcessor.__name__ = ["edge","PropertyProcessor"];
-edge_PropertyProcessor.__super__ = edge_Processor;
-edge_PropertyProcessor.prototype = $extend(edge_Processor.prototype,{
+edge_PropertyProcessor.__interfaces__ = [edge_Processor];
+edge_PropertyProcessor.prototype = {
 	_payload: null
 	,matchProperty: null
 	,onChange: function(change) {
@@ -1261,15 +1261,15 @@ edge_PropertyProcessor.prototype = $extend(edge_Processor.prototype,{
 		return this._payload;
 	}
 	,__class__: edge_PropertyProcessor
-});
+};
 var edge_PropertiesProcessor = function(matchProperties) {
 	this._payload = haxe_ds_Option.None;
 	this.matchProperties = matchProperties;
 	this.properties = [];
 };
 edge_PropertiesProcessor.__name__ = ["edge","PropertiesProcessor"];
-edge_PropertiesProcessor.__super__ = edge_Processor;
-edge_PropertiesProcessor.prototype = $extend(edge_Processor.prototype,{
+edge_PropertiesProcessor.__interfaces__ = [edge_Processor];
+edge_PropertiesProcessor.prototype = {
 	matchProperties: null
 	,properties: null
 	,_payload: null
@@ -1305,15 +1305,15 @@ edge_PropertiesProcessor.prototype = $extend(edge_Processor.prototype,{
 		return this._payload;
 	}
 	,__class__: edge_PropertiesProcessor
-});
+};
 var edge_ComponentProcessor = function(matchEntity) {
 	this._payload = haxe_ds_Option.None;
 	this.map = new thx_ObjectOrderedMap();
 	this.matchEntity = matchEntity;
 };
 edge_ComponentProcessor.__name__ = ["edge","ComponentProcessor"];
-edge_ComponentProcessor.__super__ = edge_Processor;
-edge_ComponentProcessor.prototype = $extend(edge_Processor.prototype,{
+edge_ComponentProcessor.__interfaces__ = [edge_Processor];
+edge_ComponentProcessor.prototype = {
 	map: null
 	,matchEntity: null
 	,_payload: null
@@ -1356,7 +1356,7 @@ edge_ComponentProcessor.prototype = $extend(edge_Processor.prototype,{
 		return this._payload;
 	}
 	,__class__: edge_ComponentProcessor
-});
+};
 var edge_ProcessorSystem = function() {
 	this.systems = [];
 };

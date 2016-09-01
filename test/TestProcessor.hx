@@ -28,7 +28,7 @@ class TestProcessor {
     var p = new Phase(null),
         comps = [],
         envs = [];
-    p.addProcessor(Processor.componentsProperties(
+    p.processComponentsProperties(
       function(e: Iterator<AComponent>) {
         comps.push(e.toArray());
         return Some("comp");
@@ -37,7 +37,7 @@ class TestProcessor {
         envs.push(e.toArray());
         return Some("env");
       }
-    ));
+    );
     for(e in events)
       p.propagate(e);
     Assert.same([[CA], [CA]], comps);

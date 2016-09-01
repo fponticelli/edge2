@@ -1,5 +1,6 @@
 package edge;
 
+import thx.ReadonlyArray;
 import thx.Set;
 import edge.Entity;
 
@@ -19,7 +20,7 @@ class Engine<Component, Property> {
     _phases.push(phase);
     return phase;
   }
-  public function phases(): Array<Phase<Component, Property>>
+  public function phases(): ReadonlyArray<Phase<Component, Property>>
     return _phases;
 
   // entities
@@ -69,7 +70,7 @@ class Engine<Component, Property> {
     return this;
   }
 
-  public function entities(): Array<Entity<Component>>
+  public function entities(): ReadonlyArray<Entity<Component>>
     return _entities.toArray();
 
   // properties
@@ -108,7 +109,7 @@ class Engine<Component, Property> {
     return this;
   }
 
-  public function properties(): Array<Property> // TODO this is supposed to be a ReadonlyArray
+  public function properties(): ReadonlyArray<Property> // TODO this is supposed to be a ReadonlyArray
     return _properties;
 
   public function clear(): Void {

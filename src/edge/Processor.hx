@@ -113,7 +113,6 @@ class PropertiesProcessor<Payload, Component, Property> implements Processor<Pay
 class ComponentProcessor<Payload, Component, Property> implements Processor<ReadonlyArray<ItemEntity<Payload, Component>>, Component, Property> {
   var map: OrderedMap<Entity<Component>, ItemEntity<Payload, Component>>;
   var matchEntity: ReadonlyArray<Component> -> Option<Payload>;
-  var _payload = None;
   public function new(matchEntity: ReadonlyArray<Component> -> Option<Payload>) {
     map = OrderedMap.createObject();
     this.matchEntity = matchEntity;
@@ -139,13 +138,10 @@ class ComponentProcessor<Payload, Component, Property> implements Processor<Read
       case PropertyAdded(e): // do nothing
       case PropertyRemoved(e): // do nothing
     }
-    _payload = switch _payload {
-      case None if(map.length == 0): None;
-      case _: Some(map.toArray()); // todo inefficient
-    };
   }
 
-  public function payload(): Option<ReadonlyArray<ItemEntity<Payload, Component>>> return _payload;
+  public function payload(): Option<ReadonlyArray<ItemEntity<Payload, Component>>>
+    return if(map.length == 0) None else Some(map.toArray());
 }
 
 typedef ItemEntity<ItemPayload, Component> = {

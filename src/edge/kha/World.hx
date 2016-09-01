@@ -5,6 +5,9 @@ import kha.Scheduler;
 import kha.System;
 import edge.Phase;
 import edge.TimeSpan;
+#if (cpp && hxtelemetry)
+import hxtelemetry.HxTelemetry;
+#end
 
 class World<Component, Property> {
   public var frame(default, null): DeltaPhase<Component, Property>;
@@ -21,6 +24,9 @@ class World<Component, Property> {
   var remainder : Float;
   var last: Float;
   var t: Float;
+#if (cpp && hxtelemetry)
+  var hxt: HxTelemetry;
+#end
   public function new(engine: Engine<Component, Property>, ?delta : Float = 16, ?collisionDelay : Float = 80) {
     this.engine    = engine;
     this.frame     = new DeltaPhase(engine.createPhase());
@@ -32,6 +38,9 @@ class World<Component, Property> {
     this.collisionDelay = collisionDelay;
     last = time();
     t = 0;
+#if (cpp && hxtelemetry)
+    hxt = new HxTelemetry();
+#end
     System.notifyOnRender(_render);
     Scheduler.addTimeTask(_update, 0, delta / 1000);
     Scheduler.addTimeTask(_collision, 0, collisionDelay / 1000);
@@ -59,6 +68,9 @@ class World<Component, Property> {
     }
     remainder = dt;
     last = time();
+#if (cpp && hxtelemetry)
+    hxt.advance_frame();
+#end
   }
 
   inline function time()

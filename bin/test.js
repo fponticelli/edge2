@@ -1286,7 +1286,7 @@ edge_PropertiesProcessor.prototype = {
 	,onChange: function(change) {
 		switch(change[1]) {
 		case 0:
-			this.properties.concat([change[2]]);
+			this.properties.push(change[2]);
 			var _g = this.matchProperties(this.properties);
 			switch(_g[1]) {
 			case 0:
@@ -1297,9 +1297,7 @@ edge_PropertiesProcessor.prototype = {
 			}
 			break;
 		case 1:
-			var this1 = this.properties;
-			var pos = thx__$ReadonlyArray_ReadonlyArray_$Impl_$.indexOf(this1,change[2],null);
-			this1.slice(0,pos).concat(this1.slice(pos + 1));
+			HxOverrides.remove(this.properties,change[2]);
 			var _g1 = this.matchProperties(this.properties);
 			switch(_g1[1]) {
 			case 0:

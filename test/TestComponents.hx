@@ -19,16 +19,16 @@ class TestComponents {
   public function testBasics() {
     Assert.equals(0, count);
     entity.addComponent(CA);
-    Assert.equals(CA, entity.components().next());
+    Assert.equals(CA, entity.components()[0]);
     Assert.equals(1, count);
     entity.addComponents([CB, CC]);
     var it = entity.components();
-    Assert.equals(CA, it.next());
-    Assert.equals(CB, it.next());
-    Assert.equals(CC, it.next());
+    Assert.equals(CA, it[0]);
+    Assert.equals(CB, it[1]);
+    Assert.equals(CC, it[2]);
     Assert.equals(2, count);
     entity.update(function(_) return [CA]);
-    Assert.equals(CA, entity.components().next());
+    Assert.equals(CA, entity.components()[0]);
     Assert.equals(3, count);
   }
 
@@ -39,7 +39,7 @@ class TestComponents {
     Assert.equals(1, count);
     Assert.isTrue(entity.removeComponent(function(v) return v == CA));
     Assert.equals(2, count);
-    Assert.equals(CB, entity.components().next());
+    Assert.equals(CB, entity.components()[0]);
   }
 
   public function testRemoveComponents() {
@@ -47,9 +47,9 @@ class TestComponents {
     Assert.equals(1, count);
     Assert.isFalse(entity.removeComponents(function(_) return false));
     Assert.equals(1, count);
-    Assert.isTrue(entity.components().hasNext());
+    Assert.isTrue(entity.components().length > 0);
     Assert.isTrue(entity.removeComponents(function(_) return true));
     Assert.equals(2, count);
-    Assert.isFalse(entity.components().hasNext());
+    Assert.isFalse(entity.components().length > 0);
   }
 }

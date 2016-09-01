@@ -2,17 +2,17 @@ import edge.TimeSpan;
 
 import utest.Assert;
 import edge.Engine;
-using thx.Iterators;
+using thx.Arrays;
 
 class TestProperty {
   public function new() {}
 
   public function testBasics() {
     var engine = Engine.withEnumProperty();
-    Assert.isFalse(engine.properties().hasNext());
+    Assert.isFalse(engine.properties().length > 0);
     var s = Score({points: 1});
     engine.addProperty(s);
-    Assert.equals(s, engine.properties().next());
+    Assert.equals(s, engine.properties()[0]);
     engine.addProperty(Player({name: "Edgy1"}));
     engine.addProperty(Player({name: "Edgy2"}));
     engine.addProperty(Player({name: "Edgy3"}));

@@ -14,7 +14,7 @@ class ComponentsAndPropertyProcessor<ComponentsPayload, PropertyPayload, Payload
   var processorComponents: Processor<ReadonlyArray<ItemEntity<ComponentsPayload, Component>>, Component, Property>;
   var processorProperty: Processor<PropertyPayload, Component, Property>;
   var compose: ReadonlyArray<ItemEntity<ComponentsPayload, Component>> -> PropertyPayload -> Payload;
-  public function new(phase: Phase<Component, Property>, matchEntity: Iterator<Component> -> Option<ComponentsPayload>, matchProperty: Property -> Option<PropertyPayload>, compose: ReadonlyArray<ItemEntity<ComponentsPayload, Component>> -> PropertyPayload -> Payload) {
+  public function new(phase: Phase<Component, Property>, matchEntity: Array<Component> -> Option<ComponentsPayload>, matchProperty: Property -> Option<PropertyPayload>, compose: ReadonlyArray<ItemEntity<ComponentsPayload, Component>> -> PropertyPayload -> Payload) {
     this.processorComponents = new ComponentProcessor(matchEntity);
     this.processorProperty = new PropertyProcessor(matchProperty);
     this.compose = compose;
@@ -37,7 +37,7 @@ class ComponentsAndPropertiesProcessor<ComponentsPayload, PropertyPayload, Paylo
   var processorComponents: Processor<ReadonlyArray<ItemEntity<ComponentsPayload, Component>>, Component, Property>;
   var processorProperty: Processor<PropertyPayload, Component, Property>;
   var compose: ReadonlyArray<ItemEntity<ComponentsPayload, Component>> -> PropertyPayload -> Payload;
-  public function new(phase: Phase<Component, Property>, matchEntity: Iterator<Component> -> Option<ComponentsPayload>, matchProperty: Iterator<Property> -> Option<PropertyPayload>, compose: ReadonlyArray<ItemEntity<ComponentsPayload, Component>> -> PropertyPayload -> Payload) {
+  public function new(phase: Phase<Component, Property>, matchEntity: Array<Component> -> Option<ComponentsPayload>, matchProperty: Array<Property> -> Option<PropertyPayload>, compose: ReadonlyArray<ItemEntity<ComponentsPayload, Component>> -> PropertyPayload -> Payload) {
     this.processorComponents = new ComponentProcessor(matchEntity);
     this.processorProperty = new PropertiesProcessor(matchProperty);
     this.compose = compose;
@@ -80,10 +80,10 @@ class PropertyProcessor<Payload, Component, Property> implements Processor<Paylo
 }
 
 class PropertiesProcessor<Payload, Component, Property> implements Processor<Payload, Component, Property> {
-  var matchProperties: Iterator<Property> -> Option<Payload>;
+  var matchProperties: Array<Property> -> Option<Payload>;
   var properties: Array<Property>;
   var _payload = None;
-  public function new(matchProperties: Iterator<Property> -> Option<Payload>) {
+  public function new(matchProperties: Array<Property> -> Option<Payload>) {
     this.matchProperties = matchProperties;
     properties = [];
   }
@@ -92,13 +92,13 @@ class PropertiesProcessor<Payload, Component, Property> implements Processor<Pay
     switch change {
       case PropertyAdded(e):
         properties.push(e);
-        switch matchProperties(properties.iterator()) {
+        switch matchProperties(properties) {
           case v = Some(_): _payload = v;
           case None:
         }
       case PropertyRemoved(e):
         properties.remove(e);
-        switch matchProperties(properties.iterator()) {
+        switch matchProperties(properties) {
           case v = Some(_): _payload = v;
           case None:
         }
@@ -112,9 +112,9 @@ class PropertiesProcessor<Payload, Component, Property> implements Processor<Pay
 
 class ComponentProcessor<Payload, Component, Property> implements Processor<ReadonlyArray<ItemEntity<Payload, Component>>, Component, Property> {
   var map: OrderedMap<Entity<Component>, ItemEntity<Payload, Component>>;
-  var matchEntity: Iterator<Component> -> Option<Payload>;
+  var matchEntity: Array<Component> -> Option<Payload>;
   var _payload = None;
-  public function new(matchEntity: Iterator<Component> -> Option<Payload>) {
+  public function new(matchEntity: Array<Component> -> Option<Payload>) {
     map = OrderedMap.createObject();
     this.matchEntity = matchEntity;
   }

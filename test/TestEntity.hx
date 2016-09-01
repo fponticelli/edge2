@@ -6,15 +6,15 @@ class TestEntity {
 
   public function testBasics() {
     var engine = Engine.withEnumProperty();
-    Assert.isFalse(engine.entities().hasNext());
+    Assert.isFalse(engine.entities().length > 0);
     var entity = engine.createEntity([]);
-    Assert.isTrue(engine.entities().hasNext());
+    Assert.isTrue(engine.entities().length > 0);
     Assert.notNull(entity);
-    Assert.isFalse(entity.components().hasNext());
+    Assert.isFalse(entity.components().length > 0);
     Assert.isFalse(entity.destroyed);
 
     entity.destroy();
-    Assert.isFalse(engine.entities().hasNext());
+    Assert.isFalse(engine.entities().length > 0);
     Assert.isTrue(entity.destroyed);
   }
 
@@ -24,7 +24,7 @@ class TestEntity {
     engine.removeEntity(function(_) return false);
     Assert.isFalse(entity.destroyed);
     engine.removeEntity(function(_) return true);
-    Assert.isFalse(engine.entities().hasNext());
+    Assert.isFalse(engine.entities().length > 0);
     Assert.isTrue(entity.destroyed);
   }
 
@@ -33,6 +33,6 @@ class TestEntity {
     var e1 = engine.createEntity([]);
     var e2 = engine.createEntity([]);
     engine.removeEntities(function(e) return e == e1);
-    Assert.equals(e2, engine.entities().next());
+    Assert.equals(e2, engine.entities()[0]);
   }
 }

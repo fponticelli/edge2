@@ -29,12 +29,12 @@ class TestProcessor {
         comps = [],
         envs = [];
     p.processComponentsProperties(
-      function(e: Iterator<AComponent>) {
-        comps.push(e.toArray());
+      function(e: Array<AComponent>) {
+        comps.push(e.copy());
         return Some("comp");
       },
-      function(e: Iterator<AProperty>) {
-        envs.push(e.toArray());
+      function(e: Array<AProperty>) {
+        envs.push(e.copy());
         return Some("env");
       }
     );

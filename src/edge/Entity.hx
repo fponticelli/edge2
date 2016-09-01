@@ -57,6 +57,6 @@ class Entity<Component> {
     change(EntityRemoved(this));
   }
 
-  public function components(): Iterator<Component>
-    return list.iterator();
+  public function components(): Array<Component> // TODO this is supposed to be a ReadonlyArray
+    return list;
 }

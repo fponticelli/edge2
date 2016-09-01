@@ -26,14 +26,14 @@ class Phase<Component, Property> {
     return cast viewSystem;
   }
 
-  public function processComponents<Payload>(extractor: Iterator<Component> -> Option<Payload>): ProcessorSystem<ReadonlyArray<ItemEntity<Payload, Component>>>
+  public function processComponents<Payload>(extractor: Array<Component> -> Option<Payload>): ProcessorSystem<ReadonlyArray<ItemEntity<Payload, Component>>>
     return addProcessor(new ComponentProcessor(extractor));
   public function processProperty<Payload>(extractor: Property -> Option<Payload>): ProcessorSystem<Payload>
     return addProcessor(new PropertyProcessor(extractor));
-  public function processProperties<Payload>(extractor: Iterator<Property> -> Option<Payload>): ProcessorSystem<Payload>
+  public function processProperties<Payload>(extractor: Array<Property> -> Option<Payload>): ProcessorSystem<Payload>
     return addProcessor(new PropertiesProcessor(extractor));
   public function processComponentsProperty<ComponentsPayload, PropertyPayload, Payload>(
-    extractorEntity: Iterator<Component> -> Option<ComponentsPayload>,
+    extractorEntity: Array<Component> -> Option<ComponentsPayload>,
     extractorProperty: Property -> Option<PropertyPayload>
   ): ProcessorSystem<{
     items: ReadonlyArray<ItemEntity<ComponentsPayload, Component>>,
@@ -44,8 +44,8 @@ class Phase<Component, Property> {
       property: e
     }));
   public function processComponentsProperties<ComponentsPayload, PropertyPayload, Payload>(
-    extractorEntity: Iterator<Component> -> Option<ComponentsPayload>,
-    extractorProperty: Iterator<Property> -> Option<PropertyPayload>
+    extractorEntity: Array<Component> -> Option<ComponentsPayload>,
+    extractorProperty: Array<Property> -> Option<PropertyPayload>
   ): ProcessorSystem<{
     items: ReadonlyArray<ItemEntity<ComponentsPayload, Component>>,
     property: PropertyPayload

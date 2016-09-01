@@ -20,12 +20,12 @@ class TestEngine {
     phase.processComponentsProperties(
       function(e) {
         countComps++;
-        Assert.same(CA, e.next());
+        Assert.same(CA, e[0]);
         return None;
       },
       function(e) {
         countEnv++;
-        Assert.same(EA, e.next());
+        Assert.same(EA, e[0]);
         return None;
       }
     );
@@ -47,12 +47,12 @@ class TestEngine {
     phase.processComponentsProperties(
       function(e) {
         countComps++;
-        Assert.same(CA, e.next());
+        Assert.same(CA, e[0]);
         return None;
       },
       function(e) {
         countEnv++;
-        Assert.same(EA, e.next());
+        Assert.same(EA, e[0]);
         return None;
       }
     );
@@ -74,12 +74,12 @@ class TestEngine {
   phase.processComponentsProperties(
       function(e) {
         countComps++;
-        Assert.same(CA, e.next());
+        Assert.same(CA, e[0]);
         return None;
       },
       function(e) {
         countEnv++;
-        Assert.same(EA, e.next());
+        Assert.same(EA, e[0]);
         return None;
       }
     );
@@ -97,7 +97,7 @@ class TestEngine {
         comps = null;
     phase.processComponents(
       function(e) {
-        comps = e.toArray();
+        comps = e;
         return None;
       }
     );
@@ -115,7 +115,7 @@ class TestEngine {
         envs = null;
     phase.processProperties(
       function(e) {
-        envs = e.toArray();
+        envs = e;
         return None;
       }
     );

@@ -22,7 +22,7 @@ class Move {
     }
   }
 
-  public static function extract(comps: Iterator<Components>) {
+  public static function extract(comps: Array<Components>) {
     var out = { position: None, velocity: None };
     for(comp in comps) switch comp {
       case Position(point): out.position = Some(point);

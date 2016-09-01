@@ -17,7 +17,7 @@ class RenderDots {
       mini.dot(item.data.position.x, item.data.position.y, 2, item.data.color);
   }
 
-  public static function extract(comps: Iterator<Components>) {
+  public static function extract(comps: Array<Components>) {
     var out = { position: None, color: Hsl.create(0, 0, 0) };
     for(comp in comps) switch comp {
       case Position(point): out.position = Some(point);

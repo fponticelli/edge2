@@ -19,8 +19,8 @@ class Engine<Component, Property> {
     _phases.push(phase);
     return phase;
   }
-  public function phases(): Iterator<Phase<Component, Property>>
-    return _phases.iterator();
+  public function phases(): Array<Phase<Component, Property>>
+    return _phases;
 
   // entities
   var _entities: Set<Entity<Component>>;
@@ -69,8 +69,8 @@ class Engine<Component, Property> {
     return this;
   }
 
-  public function entities(): Iterator<Entity<Component>>
-    return _entities.iterator();
+  public function entities(): Array<Entity<Component>>
+    return _entities.toArray();
 
   // properties
   var _properties: Set<Property>;
@@ -108,8 +108,8 @@ class Engine<Component, Property> {
     return this;
   }
 
-  public function properties(): Iterator<Property>
-    return _properties.iterator();
+  public function properties(): Array<Property> // TODO this is supposed to be a ReadonlyArray
+    return _properties;
 
   public function clear(): Void {
     clearEntities();

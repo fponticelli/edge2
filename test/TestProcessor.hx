@@ -10,6 +10,7 @@ import edge.StatusChange;
 import edge.Processor;
 import edge.ProcessorSystem;
 using thx.Iterators;
+import thx.ReadonlyArray;
 
 class TestProcessor {
   var events: Array<StatusChange<AComponent, AProperty>>;
@@ -29,11 +30,11 @@ class TestProcessor {
         comps = [],
         envs = [];
     p.processComponentsProperties(
-      function(e: Array<AComponent>) {
+      function(e: ReadonlyArray<AComponent>) {
         comps.push(e.copy());
         return Some("comp");
       },
-      function(e: Array<AProperty>) {
+      function(e: ReadonlyArray<AProperty>) {
         envs.push(e.copy());
         return Some("env");
       }

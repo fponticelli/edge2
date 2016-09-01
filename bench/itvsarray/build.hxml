@@ -2,11 +2,4 @@
 -lib thx.benchmark
 -lib thx.core
 -js bin/benchmark.js
-# -cmd node bin/benchmark.js
-
-# --next
-# -main Test
-# -lib thx.benchmark
-# -lib thx.core
-# -cpp bin/benchmark
-# -cmd bin/benchmark/Test
+-cmd node bin/benchmark.js

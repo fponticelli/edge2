@@ -1,0 +1,5 @@
+-main Test
+-lib thx.benchmark
+-lib thx.core
+-cpp bin/benchmark
+-cmd bin/benchmark/Test

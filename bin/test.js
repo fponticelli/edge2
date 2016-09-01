@@ -733,8 +733,8 @@ TestProcessor.prototype = {
 			++_g;
 			p.propagate(e2);
 		}
-		utest_Assert.same([[AComponent.CA],[AComponent.CA]],comps,null,null,null,{ fileName : "TestProcessor.hx", lineNumber : 43, className : "TestProcessor", methodName : "testBasics"});
-		utest_Assert.same([[AProperty.EA],[]],envs,null,null,null,{ fileName : "TestProcessor.hx", lineNumber : 44, className : "TestProcessor", methodName : "testBasics"});
+		utest_Assert.same([[AComponent.CA],[AComponent.CA]],comps,null,null,null,{ fileName : "TestProcessor.hx", lineNumber : 44, className : "TestProcessor", methodName : "testBasics"});
+		utest_Assert.same([[AProperty.EA],[]],envs,null,null,null,{ fileName : "TestProcessor.hx", lineNumber : 45, className : "TestProcessor", methodName : "testBasics"});
 	}
 	,__class__: TestProcessor
 };
@@ -1286,7 +1286,7 @@ edge_PropertiesProcessor.prototype = {
 	,onChange: function(change) {
 		switch(change[1]) {
 		case 0:
-			this.properties.push(change[2]);
+			this.properties.concat([change[2]]);
 			var _g = this.matchProperties(this.properties);
 			switch(_g[1]) {
 			case 0:
@@ -1297,7 +1297,9 @@ edge_PropertiesProcessor.prototype = {
 			}
 			break;
 		case 1:
-			HxOverrides.remove(this.properties,change[2]);
+			var this1 = this.properties;
+			var pos = thx__$ReadonlyArray_ReadonlyArray_$Impl_$.indexOf(this1,change[2],null);
+			this1.slice(0,pos).concat(this1.slice(pos + 1));
 			var _g1 = this.matchProperties(this.properties);
 			switch(_g1[1]) {
 			case 0:
@@ -2649,11 +2651,16 @@ thx_Arrays.fromItem = function(t) {
 };
 thx_Arrays.cross = function(a,b) {
 	var r = [];
-	var tmp = HxOverrides.iter(a);
-	while(tmp.hasNext()) {
-		var va = tmp.next();
-		var tmp1 = HxOverrides.iter(b);
-		while(tmp1.hasNext()) r.push([va,tmp1.next()]);
+	var _g = 0;
+	while(_g < a.length) {
+		var va = a[_g];
+		++_g;
+		var _g1 = 0;
+		while(_g1 < b.length) {
+			var vb = b[_g1];
+			++_g1;
+			r.push([va,vb]);
+		}
 	}
 	return r;
 };
@@ -2666,13 +2673,14 @@ thx_Arrays.crossMulti = function(array) {
 		var array1 = acopy.shift();
 		var tresult = result;
 		result = [];
-		var tmp = HxOverrides.iter(array1);
-		while(tmp.hasNext()) {
-			var v1 = tmp.next();
-			var _g = 0;
-			while(_g < tresult.length) {
-				var ar = tresult[_g];
-				++_g;
+		var _g = 0;
+		while(_g < array1.length) {
+			var v1 = array1[_g];
+			++_g;
+			var _g1 = 0;
+			while(_g1 < tresult.length) {
+				var ar = tresult[_g1];
+				++_g1;
 				var t = ar.slice();
 				t.push(v1);
 				result.push(t);
@@ -2689,9 +2697,10 @@ thx_Arrays.distinct = function(array,predicate) {
 	if(null == predicate) {
 		predicate = thx_Functions.equality;
 	}
-	var tmp = HxOverrides.iter(array);
-	while(tmp.hasNext()) {
-		var v = [tmp.next()];
+	var _g = 0;
+	while(_g < array.length) {
+		var v = [array[_g]];
+		++_g;
 		if(!thx_Arrays.any(result,(function(v1) {
 			return function(r) {
 				return predicate(r,v1[0]);
@@ -2744,9 +2753,10 @@ thx_Arrays.extract = function(a,predicate) {
 };
 thx_Arrays.filterNull = function(a) {
 	var arr = [];
-	var tmp = HxOverrides.iter(a);
-	while(tmp.hasNext()) {
-		var v = tmp.next();
+	var _g = 0;
+	while(_g < a.length) {
+		var v = a[_g];
+		++_g;
 		if(null != v) {
 			arr.push(v);
 		}
@@ -2766,9 +2776,10 @@ thx_Arrays.filterOption = function(a) {
 	},[]);
 };
 thx_Arrays.find = function(array,predicate) {
-	var tmp = HxOverrides.iter(array);
-	while(tmp.hasNext()) {
-		var element = tmp.next();
+	var _g = 0;
+	while(_g < array.length) {
+		var element = array[_g];
+		++_g;
 		if(predicate(element)) {
 			return element;
 		}
@@ -2798,9 +2809,10 @@ thx_Arrays.findiOption = function(array,predicate) {
 	return haxe_ds_Option.None;
 };
 thx_Arrays.findOption = function(array,predicate) {
-	var tmp = HxOverrides.iter(array);
-	while(tmp.hasNext()) {
-		var element = tmp.next();
+	var _g = 0;
+	while(_g < array.length) {
+		var element = array[_g];
+		++_g;
 		if(predicate(element)) {
 			return haxe_ds_Option.Some(element);
 		}
@@ -2985,8 +2997,12 @@ thx_Arrays.order = function(array,sort) {
 	return n;
 };
 thx_Arrays.pull = function(array,toRemove,equality) {
-	var tmp = HxOverrides.iter(toRemove);
-	while(tmp.hasNext()) thx_Arrays.removeAll(array,tmp.next(),equality);
+	var _g = 0;
+	while(_g < toRemove.length) {
+		var element = toRemove[_g];
+		++_g;
+		thx_Arrays.removeAll(array,element,equality);
+	}
 };
 thx_Arrays.pushIf = function(array,condition,value) {
 	if(condition) {
@@ -3026,8 +3042,12 @@ thx_Arrays.rank = function(array,compare,incrementDuplicates) {
 	}
 };
 thx_Arrays.reduce = function(array,f,initial) {
-	var tmp = HxOverrides.iter(array);
-	while(tmp.hasNext()) initial = f(initial,tmp.next());
+	var _g = 0;
+	while(_g < array.length) {
+		var v = array[_g];
+		++_g;
+		initial = f(initial,v);
+	}
 	return initial;
 };
 thx_Arrays.foldLeft = function(array,init,f) {
@@ -3044,9 +3064,10 @@ thx_Arrays.foldLeft1 = function(array,f) {
 };
 thx_Arrays.foldLeftEither = function(array,init,f) {
 	var acc = thx_Either.Right(init);
-	var tmp = HxOverrides.iter(array);
-	while(tmp.hasNext()) {
-		var a = tmp.next();
+	var _g = 0;
+	while(_g < array.length) {
+		var a = array[_g];
+		++_g;
 		switch(acc[1]) {
 		case 0:
 			return acc;
@@ -3472,11 +3493,15 @@ thx_Arrays.dropRight = function(a,n) {
 };
 thx_Arrays.dropWhile = function(a,p) {
 	var r = [].concat(a);
-	var tmp = HxOverrides.iter(a);
-	while(tmp.hasNext()) if(p(tmp.next())) {
-		r.shift();
-	} else {
-		break;
+	var _g = 0;
+	while(_g < a.length) {
+		var e = a[_g];
+		++_g;
+		if(p(e)) {
+			r.shift();
+		} else {
+			break;
+		}
 	}
 	return r;
 };
@@ -7193,8 +7218,11 @@ thx__$ReadonlyArray_ReadonlyArray_$Impl_$.lastIndexOf = function(this1,el,eq) {
 	}
 	return -1;
 };
-thx__$ReadonlyArray_ReadonlyArray_$Impl_$.get = function(this1,index) {
-	return this1[index];
+thx__$ReadonlyArray_ReadonlyArray_$Impl_$.get_length = function(this1) {
+	return this1.length;
+};
+thx__$ReadonlyArray_ReadonlyArray_$Impl_$.get = function(this1,i) {
+	return this1[i];
 };
 thx__$ReadonlyArray_ReadonlyArray_$Impl_$.head = function(this1) {
 	return this1[0];
@@ -7252,7 +7280,7 @@ thx__$ReadonlyArray_ReadonlyArray_$Impl_$.insertBefore = function(this1,ref,el,e
 thx__$ReadonlyArray_ReadonlyArray_$Impl_$.replace = function(this1,ref,el,eq) {
 	var pos = thx__$ReadonlyArray_ReadonlyArray_$Impl_$.indexOf(this1,ref,eq);
 	if(pos < 0) {
-		throw new thx_Error("unable to find reference element",null,{ fileName : "ReadonlyArray.hx", lineNumber : 91, className : "thx._ReadonlyArray.ReadonlyArray_Impl_", methodName : "replace"});
+		throw new thx_Error("unable to find reference element",null,{ fileName : "ReadonlyArray.hx", lineNumber : 94, className : "thx._ReadonlyArray.ReadonlyArray_Impl_", methodName : "replace"});
 	}
 	return this1.slice(0,pos).concat([el]).concat(this1.slice(pos + 1));
 };

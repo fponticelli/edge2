@@ -27,8 +27,8 @@ class Test {
     s.add("readonly array", function() {
       var sum: Int = 0;
       @:measure {
-        var len = values.length;
-        for(v in (values : ReadonlyArray<Int>))
+        var arr : ReadonlyArray<Int> = values;
+        for(v in arr)
           sum += v;
       }
       if(sum == 0)

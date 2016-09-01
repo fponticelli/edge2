@@ -21,7 +21,7 @@ class World<Component, Property> {
   var remainder : Float;
   var last: Float;
   var t: Float;
-  public function new(engine: Engine<Component, Property>, ?delta : Float = 16, ?collisionDelay : Float = 50) {
+  public function new(engine: Engine<Component, Property>, ?delta : Float = 16, ?collisionDelay : Float = 80) {
     this.engine    = engine;
     this.frame     = new DeltaPhase(engine.createPhase());
     this.physics   = new DeltaPhase(engine.createPhase());

@@ -12,18 +12,18 @@ class Phase<Component, Property> {
     this.engine = engine;
   }
 
-  public function addProcessor<Payload>(view: Processor<Payload, Component, Property>): ProcessorSystem<Payload> {
-    var viewSystem = processors.get(view);
-    if(null == viewSystem) {
-      processors.set(view, viewSystem = new ProcessorSystem());
+  public function addProcessor<Payload>(processor: Processor<Payload, Component, Property>): ProcessorSystem<Payload> {
+    var processorSystem = processors.get(processor);
+    if(null == processorSystem) {
+      processors.set(processor, processorSystem = new ProcessorSystem());
     }
     if(null != engine) {
       for(e in engine.properties())
-        view.onChange(PropertyAdded(e));
+        processor.onChange(PropertyAdded(e));
       for(e in engine.entities())
-        view.onChange(EntityCreated(e));
+        processor.onChange(EntityCreated(e));
     }
-    return cast viewSystem;
+    return cast processorSystem;
   }
 
   public function processComponents<Payload>(extractor: ReadonlyArray<Component> -> Option<Payload>): ProcessorSystem<ReadonlyArray<ItemEntity<Payload, Component>>>
@@ -56,18 +56,18 @@ class Phase<Component, Property> {
     }));
 
   public function update() {
-    for(view in processors.keys()) {
-      switch view.payload() {
+    for(processor in processors.keys()) {
+      switch processor.payload() {
         case None: continue;
         case Some(pl):
-          var viewSystem = processors.get(view);
-          viewSystem.update(pl);
+          var processorSystem = processors.get(processor);
+          processorSystem.update(pl);
       }
     }
   }
 
   public function propagate(change: StatusChange<Component, Property>) {
-    for(view in processors.keys())
-      view.onChange(change);
+    for(processor in processors.keys())
+      processor.onChange(change);
   }
 }

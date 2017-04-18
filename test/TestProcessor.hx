@@ -1,15 +1,9 @@
-import edge.TimeSpan;
-
 import AComponent;
 import AProperty;
 import utest.Assert;
-import edge.Engine;
 import edge.Entity;
 import edge.Phase;
 import edge.StatusChange;
-import edge.Processor;
-import edge.ProcessorSystem;
-using thx.Iterators;
 import thx.ReadonlyArray;
 
 class TestProcessor {

@@ -2,7 +2,6 @@ package edge;
 
 import edge.Processor;
 import haxe.ds.Option;
-import thx.Any;
 import thx.ReadonlyArray;
 
 class Phase<Component, Property> {
@@ -18,9 +17,9 @@ class Phase<Component, Property> {
       processors.set(view, viewSystem = new ProcessorSystem());
     }
     if(null != engine) {
-      for(e in engine.properties())
+      for(e in engine.properties)
         view.onChange(PropertyAdded(e));
-      for(e in engine.entities())
+      for(e in engine.entities)
         view.onChange(EntityCreated(e));
     }
     return cast viewSystem;

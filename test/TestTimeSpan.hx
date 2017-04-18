@@ -1,5 +1,4 @@
 import edge.TimeSpan;
-
 import utest.Assert;
 
 class TestTimeSpan {

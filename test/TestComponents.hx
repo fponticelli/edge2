@@ -1,6 +1,5 @@
 import utest.Assert;
 import edge.Entity;
-import thx.Nil;
 import AComponent;
 
 class TestComponents {

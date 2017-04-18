@@ -5,12 +5,12 @@ import thx.Set;
 import edge.Entity;
 
 class Engine<Component, Property> {
-  public static function withEnumProperty<Component, Property : EnumValue>(): Engine<Component, Property>
-    return new Engine(function(): Set<Property> return cast Set.createEnum());
+  public static function withEnumProperty<C, P: EnumValue>(): Engine<C, P>
+    return new Engine(Set.createEnum());
 
-  public function new(createPropertySet : Void -> Set<Property>) {
-    _entities = Set.createObject();
-    _properties = createPropertySet();
+  public function new(properties: Set<Property>) {
+    entitySet = Set.createObject();
+    propertySet = properties;
   }
 
   // phases
@@ -20,20 +20,21 @@ class Engine<Component, Property> {
     _phases.push(phase);
     return phase;
   }
-  public function phases(): ReadonlyArray<Phase<Component, Property>>
+  public var phases(get, never): ReadonlyArray<Phase<Component, Property>>;
+  function get_phases()
     return _phases;
 
   // entities
-  var _entities: Set<Entity<Component>>;
+  var entitySet: Set<Entity<Component>>;
   public function createEntity(components: Array<Component>): Entity<Component> {
     var entity = new Entity(components, cast statusChange);
-    _entities.add(entity);
+    entitySet.add(entity);
     statusChange(EntityCreated(entity));
     return entity;
   }
 
   public function removeEntity(predicate: Entity<Component> -> Bool): Bool {
-    for(entity in _entities) {
+    for(entity in entitySet) {
       if(predicate(entity)) {
         entity.destroy();
         return true;
@@ -45,7 +46,7 @@ class Engine<Component, Property> {
   function statusChange(change: StatusChange<Component, Property>) {
     switch change {
       case EntityRemoved(e):
-        _entities.remove(e);
+        entitySet.remove(e);
       case _:
         // do nothing
     }
@@ -56,7 +57,7 @@ class Engine<Component, Property> {
 
   public function removeEntities(predicate: Entity<Component> -> Bool): Bool {
     var removed = false;
-    for(entity in _entities) {
+    for(entity in entitySet) {
       if(predicate(entity)) {
         entity.destroy();
         removed = true;
@@ -70,25 +71,26 @@ class Engine<Component, Property> {
     return this;
   }
 
-  public function entities(): ReadonlyArray<Entity<Component>>
-    return _entities.toArray();
+  public var entities(get, never): ReadonlyArray<Entity<Component>>;
+  function get_entities()
+    return entitySet.toArray();
 
   // properties
-  var _properties: Set<Property>;
+  var propertySet: Set<Property>;
   public function addProperty(property: Property): Void {
-    _properties.add(property);
+    propertySet.add(property);
     statusChange(PropertyAdded(property));
   }
 
-  function _removeProperty(property) {
-    _properties.remove(property);
+  function removePropertyImpl(property) {
+    propertySet.remove(property);
     statusChange(PropertyRemoved(property));
   }
 
   public function removeProperty(predicate: Property -> Bool): Bool {
-    for(property in _properties) {
+    for(property in propertySet) {
       if(predicate(property)) {
-        _removeProperty(property);
+        removePropertyImpl(property);
         return true;
       }
     }
@@ -96,9 +98,9 @@ class Engine<Component, Property> {
   }
   public function removeProperties(predicate: Property -> Bool): Bool {
     var removed = false;
-    for(property in _properties) {
+    for(property in propertySet) {
       if(predicate(property)) {
-        _removeProperty(property);
+        removePropertyImpl(property);
         removed = true;
       }
     }
@@ -109,8 +111,9 @@ class Engine<Component, Property> {
     return this;
   }
 
-  public function properties(): ReadonlyArray<Property> // TODO this is supposed to be a ReadonlyArray
-    return _properties;
+  public var properties(get, never): ReadonlyArray<Property>;
+  function get_properties()
+    return propertySet.toArray();
 
   public function clear(): Void {
     clearEntities();

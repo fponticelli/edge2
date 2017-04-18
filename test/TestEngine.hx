@@ -8,7 +8,7 @@ class TestEngine {
 
   public function testPropagationAfterSystem() {
     var engine = Engine.withEnumProperty(),
-        phase = engine.createPhase(),
+        phase = engine.phases.create(),
         countComps = 0,
         countEnv = 0;
     phase.processComponentsProperties(
@@ -25,7 +25,7 @@ class TestEngine {
     );
     Assert.equals(0, countComps);
     Assert.equals(0, countEnv);
-    engine.createEntity([CA]);
+    engine.entities.create([CA]);
     engine.addProperty(EA);
     Assert.equals(1, countComps);
     Assert.equals(1, countEnv);
@@ -33,10 +33,10 @@ class TestEngine {
 
   public function testPropagationBeforeSystem() {
     var engine = Engine.withEnumProperty(),
-        phase = engine.createPhase(),
+        phase = engine.phases.create(),
         countComps = 0,
         countEnv = 0;
-    engine.createEntity([CA]);
+    engine.entities.create([CA]);
     engine.addProperty(EA);
     phase.processComponentsProperties(
       function(e) {
@@ -52,7 +52,7 @@ class TestEngine {
     );
     Assert.equals(1, countComps);
     Assert.equals(1, countEnv);
-    engine.createEntity([CA]);
+    engine.entities.create([CA]);
     engine.addProperty(EA);
     Assert.equals(2, countComps);
     Assert.equals(2, countEnv);
@@ -62,9 +62,9 @@ class TestEngine {
     var engine = Engine.withEnumProperty(),
         countComps = 0,
         countEnv = 0;
-    engine.createEntity([CA]);
+    engine.entities.create([CA]);
     engine.addProperty(EA);
-  var phase = engine.createPhase();
+  var phase = engine.phases.create();
   phase.processComponentsProperties(
       function(e) {
         countComps++;
@@ -79,7 +79,7 @@ class TestEngine {
     );
     Assert.equals(1, countComps);
     Assert.equals(1, countEnv);
-    engine.createEntity([CA]);
+    engine.entities.create([CA]);
     engine.addProperty(EA);
     Assert.equals(2, countComps);
     Assert.equals(2, countEnv);
@@ -87,7 +87,7 @@ class TestEngine {
 
   public function testAddRemoveComponent() {
     var engine = Engine.withEnumProperty(),
-        phase = engine.createPhase(),
+        phase = engine.phases.create(),
         comps = null;
     phase.processComponents(
       function(e) {
@@ -95,7 +95,7 @@ class TestEngine {
         return None;
       }
     );
-    var e = engine.createEntity([CA]);
+    var e = engine.entities.create([CA]);
     Assert.same([CA], comps);
     e.addComponent(CB);
     Assert.same([CA, CB], comps);
@@ -105,7 +105,7 @@ class TestEngine {
 
   public function testRemoveProperty() {
     var engine = Engine.withEnumProperty(),
-        phase = engine.createPhase(),
+        phase = engine.phases.create(),
         envs = null;
     phase.processProperties(
       function(e) {

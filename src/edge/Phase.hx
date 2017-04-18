@@ -19,7 +19,7 @@ class Phase<Component, Property> {
     if(null != engine) {
       for(e in engine.properties)
         view.onChange(PropertyAdded(e));
-      for(e in engine.entities)
+      for(e in engine.entities.get())
         view.onChange(EntityCreated(e));
     }
     return cast viewSystem;

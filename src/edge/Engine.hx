@@ -2,78 +2,31 @@ package edge;
 
 import thx.ReadonlyArray;
 import thx.Set;
-import edge.Entity;
 
 class Engine<Component, Property> {
   public static function withEnumProperty<C, P: EnumValue>(): Engine<C, P>
     return new Engine(Set.createEnum());
 
+  public var phases(default, null): Phases<Component, Property>;
+  public var entities(default, null): Entities<Component, Property>;
   public function new(properties: Set<Property>) {
-    entitySet = Set.createObject();
+    phases = new Phases(this);
+    entities = new Entities(this);
     propertySet = properties;
   }
 
-  // phases
-  var _phases: Array<Phase<Component, Property>> = [];
-  public function createPhase(): Phase<Component, Property> {
-    var phase = new Phase(this);
-    _phases.push(phase);
-    return phase;
-  }
-  public var phases(get, never): ReadonlyArray<Phase<Component, Property>>;
-  function get_phases()
-    return _phases;
-
-  // entities
-  var entitySet: Set<Entity<Component>>;
-  public function createEntity(components: Array<Component>): Entity<Component> {
-    var entity = new Entity(components, cast statusChange);
-    entitySet.add(entity);
-    statusChange(EntityCreated(entity));
-    return entity;
-  }
-
-  public function removeEntity(predicate: Entity<Component> -> Bool): Bool {
-    for(entity in entitySet) {
-      if(predicate(entity)) {
-        entity.destroy();
-        return true;
-      }
-    }
-    return false;
-  }
-
+  @:access(edge.Entities.removeOne)
   function statusChange(change: StatusChange<Component, Property>) {
     switch change {
       case EntityRemoved(e):
-        entitySet.remove(e);
+        entities.removeOne(e);
       case _:
         // do nothing
     }
-    for(phase in _phases) {
+    for(phase in phases.get()) {
       phase.propagate(change);
     }
   }
-
-  public function removeEntities(predicate: Entity<Component> -> Bool): Bool {
-    var removed = false;
-    for(entity in entitySet) {
-      if(predicate(entity)) {
-        entity.destroy();
-        removed = true;
-      }
-    }
-    return removed;
-  }
-
-  public function clearEntities(): Engine<Component, Property> {
-    removeEntities(function(_) return true);
-    return this;
-  }
-
-  public var entities(get, never): ReadonlyArray<Entity<Component>>;
-  function get_entities()
-    return entitySet.toArray();
 
   // properties
   var propertySet: Set<Property>;
@@ -116,7 +69,7 @@ class Engine<Component, Property> {
     return propertySet.toArray();
 
   public function clear(): Void {
-    clearEntities();
+    entities.clear();
     clearProperties();
   }
 }

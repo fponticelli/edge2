@@ -5,7 +5,7 @@ class TestEntity {
   public function new() {}
 
   public function testBasics() {
-    var engine = Engine.withEnumProperty();
+    var engine = new Engine();
     Assert.isFalse(engine.entities.length > 0);
     var entity = engine.entities.create([]);
     Assert.isTrue(engine.entities.length > 0);
@@ -19,7 +19,7 @@ class TestEntity {
   }
 
   public function testRemove() {
-    var engine = Engine.withEnumProperty();
+    var engine = new Engine();
     var entity = engine.entities.create([]);
     engine.entities.remove(function(_) return false);
     Assert.isFalse(entity.destroyed);
@@ -29,7 +29,7 @@ class TestEntity {
   }
 
   public function testRemoveMany() {
-    var engine = Engine.withEnumProperty();
+    var engine = new Engine();
     var e1 = engine.entities.create([]);
     var e2 = engine.entities.create([]);
     engine.entities.remove(function(e) return e == e1);

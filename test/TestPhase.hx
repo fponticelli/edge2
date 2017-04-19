@@ -5,7 +5,7 @@ import edge.StatusChange;
 import edge.Processor;
 import AComponent;
 import AProperty;
-import haxe.ds.Option;
+import thx.Maybe;
 
 class TestPhase {
   public function new() {}
@@ -25,7 +25,7 @@ class TestPhase {
       EntityRemoved(e)
     ];
     for(e in events)
-      p.propagate(e);
+      p.dispatch(e);
     Assert.same(events, v.collected);
   }
 }
@@ -36,5 +36,5 @@ class TPProcessor<Payload, Component, Property> implements Processor<Payload, Co
   public function onChange(change: StatusChange<Component, Property>): Void {
     collected.push(change);
   }
-  public function payload() return None;
+  public function payload() return Maybe.none();
 }

@@ -1,20 +1,20 @@
 package edge;
 
-import haxe.ds.Option;
+import thx.Maybe;
 import thx.OrderedMap;
 import thx.ReadonlyArray;
 
 interface Processor<Payload, Component, Property> {
   public function onChange(change: StatusChange<Component, Property>): Void;
-  public function payload(): Option<Payload>;
+  public function payload(): Maybe<Payload>;
 }
 
 class ComponentsAndPropertyProcessor<ComponentsPayload, PropertyPayload, Payload, Component, Property> implements Processor<Payload, Component, Property> {
-  var _payload = None;
+  var _payload: Maybe<Payload> = null;
   var processorComponents: Processor<ReadonlyArray<ItemEntity<ComponentsPayload, Component>>, Component, Property>;
   var processorProperty: Processor<PropertyPayload, Component, Property>;
   var compose: ReadonlyArray<ItemEntity<ComponentsPayload, Component>> -> PropertyPayload -> Payload;
-  public function new(phase: Phase<Component, Property>, matchEntity: ReadonlyArray<Component> -> Option<ComponentsPayload>, matchProperty: Property -> Option<PropertyPayload>, compose: ReadonlyArray<ItemEntity<ComponentsPayload, Component>> -> PropertyPayload -> Payload) {
+  public function new(phase: Phase<Component, Property>, matchEntity: ReadonlyArray<Component> -> Maybe<ComponentsPayload>, matchProperty: Property -> Maybe<PropertyPayload>, compose: ReadonlyArray<ItemEntity<ComponentsPayload, Component>> -> PropertyPayload -> Payload) {
     this.processorComponents = new ComponentProcessor(matchEntity);
     this.processorProperty = new PropertyProcessor(matchProperty);
     this.compose = compose;
@@ -24,20 +24,20 @@ class ComponentsAndPropertyProcessor<ComponentsPayload, PropertyPayload, Payload
     processorComponents.onChange(change);
     processorProperty.onChange(change);
     _payload = switch [processorComponents.payload(), processorProperty.payload()] {
-      case [Some(c), Some(e)]: Some(compose(c, e));
-      case _: None;
-    }
+      case [null, null] | [_, null] | [null, _]: Maybe.none();
+      case [c, e]: Maybe.of(compose(c.get(), e.get()));
+    };
   }
 
-  public function payload(): Option<Payload> return _payload;
+  public function payload(): Maybe<Payload> return _payload;
 }
 
 class ComponentsAndPropertiesProcessor<ComponentsPayload, PropertyPayload, Payload, Component, Property> implements Processor<Payload, Component, Property> {
-  var _payload = None;
+  var _payload: Maybe<Payload> = null;
   var processorComponents: Processor<ReadonlyArray<ItemEntity<ComponentsPayload, Component>>, Component, Property>;
   var processorProperty: Processor<PropertyPayload, Component, Property>;
   var compose: ReadonlyArray<ItemEntity<ComponentsPayload, Component>> -> PropertyPayload -> Payload;
-  public function new(phase: Phase<Component, Property>, matchEntity: ReadonlyArray<Component> -> Option<ComponentsPayload>, matchProperty: ReadonlyArray<Property> -> Option<PropertyPayload>, compose: ReadonlyArray<ItemEntity<ComponentsPayload, Component>> -> PropertyPayload -> Payload) {
+  public function new(phase: Phase<Component, Property>, matchEntity: ReadonlyArray<Component> -> Maybe<ComponentsPayload>, matchProperty: ReadonlyArray<Property> -> Maybe<PropertyPayload>, compose: ReadonlyArray<ItemEntity<ComponentsPayload, Component>> -> PropertyPayload -> Payload) {
     this.processorComponents = new ComponentProcessor(matchEntity);
     this.processorProperty = new PropertiesProcessor(matchProperty);
     this.compose = compose;
@@ -47,43 +47,40 @@ class ComponentsAndPropertiesProcessor<ComponentsPayload, PropertyPayload, Paylo
     processorComponents.onChange(change);
     processorProperty.onChange(change);
     _payload = switch [processorComponents.payload(), processorProperty.payload()] {
-      case [Some(c), Some(e)]: Some(compose(c, e));
-      case _: None;
+      case [null, null] | [_, null] | [null, _]: null;
+      case [c, e]: Maybe.of(compose(c.get(), e.get()));
     }
   }
 
-  public function payload(): Option<Payload> return _payload;
+  public function payload(): Maybe<Payload> return _payload;
 }
 
 class PropertyProcessor<Payload, Component, Property> implements Processor<Payload, Component, Property> {
-  var _payload = None;
-  var matchProperty: Property -> Option<Payload>;
-  public function new(matchProperty: Property -> Option<Payload>) {
+  var _payload: Maybe<Payload> = null;
+  var matchProperty: Property -> Maybe<Payload>;
+  public function new(matchProperty: Property -> Maybe<Payload>) {
     this.matchProperty = matchProperty;
   }
 
   public function onChange(change: StatusChange<Component, Property>): Void {
     switch change {
       case PropertyAdded(e):
-        switch matchProperty(e) {
-          case v = Some(_): _payload = v;
-          case None:
-        }
+        _payload = matchProperty(e);
       case PropertyRemoved(e):
-        _payload = None;
+        _payload = Maybe.none();
       case EntityCreated(_), EntityUpdated(_), EntityRemoved(_):
         // do nothing
     }
   }
 
-  public function payload(): Option<Payload> return _payload;
+  public function payload(): Maybe<Payload> return _payload;
 }
 
 class PropertiesProcessor<Payload, Component, Property> implements Processor<Payload, Component, Property> {
-  var matchProperties: ReadonlyArray<Property> -> Option<Payload>;
+  var matchProperties: ReadonlyArray<Property> -> Maybe<Payload>;
   var properties: Array<Property>;
-  var _payload = None;
-  public function new(matchProperties: ReadonlyArray<Property> -> Option<Payload>) {
+  var _payload: Maybe<Payload> = null;
+  public function new(matchProperties: ReadonlyArray<Property> -> Maybe<Payload>) {
     this.matchProperties = matchProperties;
     properties = [];
   }
@@ -93,27 +90,27 @@ class PropertiesProcessor<Payload, Component, Property> implements Processor<Pay
       case PropertyAdded(e):
         properties.push(e);
         switch matchProperties(properties) {
-          case v = Some(_): _payload = v;
-          case None:
+          case null:
+          case v: _payload = v;
         }
       case PropertyRemoved(e):
         properties.remove(e);
         switch matchProperties(properties) {
-          case v = Some(_): _payload = v;
-          case None:
+          case null:
+          case v: _payload = v;
         }
       case EntityCreated(_), EntityUpdated(_), EntityRemoved(_):
         // do nothing
     }
   }
 
-  public function payload(): Option<Payload> return _payload;
+  public function payload(): Maybe<Payload> return _payload;
 }
 
 class ComponentProcessor<Payload, Component, Property> implements Processor<ReadonlyArray<ItemEntity<Payload, Component>>, Component, Property> {
   var map: OrderedMap<Entity<Component>, ItemEntity<Payload, Component>>;
-  var matchEntity: ReadonlyArray<Component> -> Option<Payload>;
-  public function new(matchEntity: ReadonlyArray<Component> -> Option<Payload>) {
+  var matchEntity: ReadonlyArray<Component> -> Maybe<Payload>;
+  public function new(matchEntity: ReadonlyArray<Component> -> Maybe<Payload>) {
     map = OrderedMap.createObject();
     this.matchEntity = matchEntity;
   }
@@ -121,17 +118,16 @@ class ComponentProcessor<Payload, Component, Property> implements Processor<Read
   public function onChange(change: StatusChange<Component, Property>): Void {
     switch change {
       case EntityCreated(e):
-        switch matchEntity(e.components()) {
-          case Some(p):
-            map.set(e, { data: p, entity: e });
-          case None: // do nothing
+        var p = matchEntity(e.components());
+        if(p.hasValue()) {
+          map.set(e, { data: p.get(), entity: e });
         }
       case EntityUpdated(e):
-        switch matchEntity(e.components()) {
-          case Some(p):
-            map.set(e, { data: p, entity: e });
-          case None:
-            map.remove(e);
+        var p = matchEntity(e.components());
+        if(p.hasValue()) {
+          map.set(e, { data: p.get(), entity: e });
+        } else {
+          map.remove(e);
         }
       case EntityRemoved(e):
         map.remove(e);
@@ -140,8 +136,8 @@ class ComponentProcessor<Payload, Component, Property> implements Processor<Read
     }
   }
 
-  public function payload(): Option<ReadonlyArray<ItemEntity<Payload, Component>>>
-    return if(map.length == 0) None else Some(map.toArray());
+  public function payload(): Maybe<ReadonlyArray<ItemEntity<Payload, Component>>>
+    return if(map.length == 0) Maybe.none() else Maybe.of(map.toArray());
 }
 
 typedef ItemEntity<ItemPayload, Component> = {

@@ -1,7 +1,7 @@
 package edge;
 
 import edge.Processor;
-import haxe.ds.Option;
+import thx.Maybe;
 import thx.ReadonlyArray;
 
 class Phase<Component, Property> {
@@ -11,29 +11,32 @@ class Phase<Component, Property> {
     this.engine = engine;
   }
 
-  public function addProcessor<Payload>(view: Processor<Payload, Component, Property>): ProcessorSystem<Payload> {
-    var viewSystem = processors.get(view);
-    if(null == viewSystem) {
-      processors.set(view, viewSystem = new ProcessorSystem());
+  public function addProcessor<Payload>(processor: Processor<Payload, Component, Property>): ProcessorSystem<Payload> {
+    var processorSystem = processors.get(processor);
+    if(null == processorSystem) {
+      processors.set(processor, processorSystem = new ProcessorSystem());
     }
     if(null != engine) {
-      for(e in engine.properties)
-        view.onChange(PropertyAdded(e));
+      for(e in engine.properties.get())
+        processor.onChange(PropertyAdded(e));
       for(e in engine.entities.get())
-        view.onChange(EntityCreated(e));
+        processor.onChange(EntityCreated(e));
     }
-    return cast viewSystem;
+    return cast processorSystem; // TODO cast?
   }
 
-  public function processComponents<Payload>(extractor: ReadonlyArray<Component> -> Option<Payload>): ProcessorSystem<ReadonlyArray<ItemEntity<Payload, Component>>>
+  public function processComponents<Payload>(extractor: ReadonlyArray<Component> -> Maybe<Payload>): ProcessorSystem<ReadonlyArray<ItemEntity<Payload, Component>>>
     return addProcessor(new ComponentProcessor(extractor));
-  public function processProperty<Payload>(extractor: Property -> Option<Payload>): ProcessorSystem<Payload>
+
+  public function processProperty<Payload>(extractor: Property -> Maybe<Payload>): ProcessorSystem<Payload>
     return addProcessor(new PropertyProcessor(extractor));
-  public function processProperties<Payload>(extractor: ReadonlyArray<Property> -> Option<Payload>): ProcessorSystem<Payload>
+
+  public function processProperties<Payload>(extractor: ReadonlyArray<Property> -> Maybe<Payload>): ProcessorSystem<Payload>
     return addProcessor(new PropertiesProcessor(extractor));
+
   public function processComponentsProperty<ComponentsPayload, PropertyPayload, Payload>(
-    extractorEntity: ReadonlyArray<Component> -> Option<ComponentsPayload>,
-    extractorProperty: Property -> Option<PropertyPayload>
+    extractorEntity: ReadonlyArray<Component> -> Maybe<ComponentsPayload>,
+    extractorProperty: Property -> Maybe<PropertyPayload>
   ): ProcessorSystem<{
     items: ReadonlyArray<ItemEntity<ComponentsPayload, Component>>,
     property: PropertyPayload
@@ -42,9 +45,10 @@ class Phase<Component, Property> {
       items: c,
       property: e
     }));
+
   public function processComponentsProperties<ComponentsPayload, PropertyPayload, Payload>(
-    extractorEntity: ReadonlyArray<Component> -> Option<ComponentsPayload>,
-    extractorProperty: ReadonlyArray<Property> -> Option<PropertyPayload>
+    extractorEntity: ReadonlyArray<Component> -> Maybe<ComponentsPayload>,
+    extractorProperty: ReadonlyArray<Property> -> Maybe<PropertyPayload>
   ): ProcessorSystem<{
     items: ReadonlyArray<ItemEntity<ComponentsPayload, Component>>,
     property: PropertyPayload
@@ -55,18 +59,18 @@ class Phase<Component, Property> {
     }));
 
   public function update() {
-    for(view in processors.keys()) {
-      switch view.payload() {
-        case None: continue;
-        case Some(pl):
-          var viewSystem = processors.get(view);
-          viewSystem.update(pl);
+    for(processor in processors.keys()) {
+      switch processor.payload() {
+        case null: continue;
+        case pl:
+          var processorSystem = processors.get(processor);
+          processorSystem.update(pl);
       }
     }
   }
 
-  public function propagate(change: StatusChange<Component, Property>) {
-    for(view in processors.keys())
-      view.onChange(change);
+  public function dispatch(change: StatusChange<Component, Property>) {
+    for(processor in processors.keys())
+      processor.onChange(change);
   }
 }

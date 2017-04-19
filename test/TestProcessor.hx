@@ -4,6 +4,7 @@ import utest.Assert;
 import edge.Entity;
 import edge.Phase;
 import edge.StatusChange;
+import thx.Maybe;
 import thx.ReadonlyArray;
 
 class TestProcessor {
@@ -26,15 +27,15 @@ class TestProcessor {
     p.processComponentsProperties(
       function(e: ReadonlyArray<AComponent>) {
         comps.push(e.copy());
-        return Some("comp");
+        return Maybe.of("comp");
       },
       function(e: ReadonlyArray<AProperty>) {
         envs.push(e.copy());
-        return Some("env");
+        return Maybe.of("env");
       }
     );
     for(e in events)
-      p.propagate(e);
+      p.dispatch(e);
     Assert.same([[CA], [CA]], comps);
     Assert.same([[EA], []], envs);
   }

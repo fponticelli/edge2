@@ -10,6 +10,6 @@ edge.Entity
 edge.Phase
 edge.System
 edge.TimeSpan
-edge.Processor
+edge.Reducer
 
 -cmd node bin/test.js

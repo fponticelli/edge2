@@ -4,26 +4,26 @@ import thx.Maybe;
 import thx.OrderedMap;
 import thx.ReadonlyArray;
 
-interface Processor<Payload, Component, Property> {
+interface Reducer<Payload, Component, Property> {
   public function onChange(change: StatusChange<Component, Property>): Void;
   public function payload(): Maybe<Payload>;
 }
 
-class ComponentsAndPropertyProcessor<ComponentsPayload, PropertyPayload, Payload, Component, Property> implements Processor<Payload, Component, Property> {
+class ComponentsAndPropertyReducer<ComponentsPayload, PropertyPayload, Payload, Component, Property> implements Reducer<Payload, Component, Property> {
   var _payload: Maybe<Payload> = null;
-  var processorComponents: Processor<ReadonlyArray<ItemEntity<ComponentsPayload, Component>>, Component, Property>;
-  var processorProperty: Processor<PropertyPayload, Component, Property>;
+  var reducerComponents: Reducer<ReadonlyArray<ItemEntity<ComponentsPayload, Component>>, Component, Property>;
+  var reducerProperty: Reducer<PropertyPayload, Component, Property>;
   var compose: ReadonlyArray<ItemEntity<ComponentsPayload, Component>> -> PropertyPayload -> Payload;
   public function new(phase: Phase<Component, Property>, matchEntity: ReadonlyArray<Component> -> Maybe<ComponentsPayload>, matchProperty: Property -> Maybe<PropertyPayload>, compose: ReadonlyArray<ItemEntity<ComponentsPayload, Component>> -> PropertyPayload -> Payload) {
-    this.processorComponents = new ComponentProcessor(matchEntity);
-    this.processorProperty = new PropertyProcessor(matchProperty);
+    this.reducerComponents = new ComponentReducer(matchEntity);
+    this.reducerProperty = new PropertyReducer(matchProperty);
     this.compose = compose;
   }
 
   public function onChange(change: StatusChange<Component, Property>): Void {
-    processorComponents.onChange(change);
-    processorProperty.onChange(change);
-    _payload = switch [processorComponents.payload(), processorProperty.payload()] {
+    reducerComponents.onChange(change);
+    reducerProperty.onChange(change);
+    _payload = switch [reducerComponents.payload(), reducerProperty.payload()] {
       case [null, null] | [_, null] | [null, _]: Maybe.none();
       case [c, e]: Maybe.of(compose(c.get(), e.get()));
     };
@@ -32,21 +32,21 @@ class ComponentsAndPropertyProcessor<ComponentsPayload, PropertyPayload, Payload
   public function payload(): Maybe<Payload> return _payload;
 }
 
-class ComponentsAndPropertiesProcessor<ComponentsPayload, PropertyPayload, Payload, Component, Property> implements Processor<Payload, Component, Property> {
+class ComponentsAndPropertiesReducer<ComponentsPayload, PropertyPayload, Payload, Component, Property> implements Reducer<Payload, Component, Property> {
   var _payload: Maybe<Payload> = null;
-  var processorComponents: Processor<ReadonlyArray<ItemEntity<ComponentsPayload, Component>>, Component, Property>;
-  var processorProperty: Processor<PropertyPayload, Component, Property>;
+  var reducerComponents: Reducer<ReadonlyArray<ItemEntity<ComponentsPayload, Component>>, Component, Property>;
+  var reducerProperty: Reducer<PropertyPayload, Component, Property>;
   var compose: ReadonlyArray<ItemEntity<ComponentsPayload, Component>> -> PropertyPayload -> Payload;
   public function new(phase: Phase<Component, Property>, matchEntity: ReadonlyArray<Component> -> Maybe<ComponentsPayload>, matchProperty: ReadonlyArray<Property> -> Maybe<PropertyPayload>, compose: ReadonlyArray<ItemEntity<ComponentsPayload, Component>> -> PropertyPayload -> Payload) {
-    this.processorComponents = new ComponentProcessor(matchEntity);
-    this.processorProperty = new PropertiesProcessor(matchProperty);
+    this.reducerComponents = new ComponentReducer(matchEntity);
+    this.reducerProperty = new PropertiesReducer(matchProperty);
     this.compose = compose;
   }
 
   public function onChange(change: StatusChange<Component, Property>): Void {
-    processorComponents.onChange(change);
-    processorProperty.onChange(change);
-    _payload = switch [processorComponents.payload(), processorProperty.payload()] {
+    reducerComponents.onChange(change);
+    reducerProperty.onChange(change);
+    _payload = switch [reducerComponents.payload(), reducerProperty.payload()] {
       case [null, null] | [_, null] | [null, _]: null;
       case [c, e]: Maybe.of(compose(c.get(), e.get()));
     }
@@ -55,7 +55,7 @@ class ComponentsAndPropertiesProcessor<ComponentsPayload, PropertyPayload, Paylo
   public function payload(): Maybe<Payload> return _payload;
 }
 
-class PropertyProcessor<Payload, Component, Property> implements Processor<Payload, Component, Property> {
+class PropertyReducer<Payload, Component, Property> implements Reducer<Payload, Component, Property> {
   var _payload: Maybe<Payload> = null;
   var matchProperty: Property -> Maybe<Payload>;
   public function new(matchProperty: Property -> Maybe<Payload>) {
@@ -76,7 +76,7 @@ class PropertyProcessor<Payload, Component, Property> implements Processor<Paylo
   public function payload(): Maybe<Payload> return _payload;
 }
 
-class PropertiesProcessor<Payload, Component, Property> implements Processor<Payload, Component, Property> {
+class PropertiesReducer<Payload, Component, Property> implements Reducer<Payload, Component, Property> {
   var matchProperties: ReadonlyArray<Property> -> Maybe<Payload>;
   var properties: Array<Property>;
   var _payload: Maybe<Payload> = null;
@@ -107,7 +107,7 @@ class PropertiesProcessor<Payload, Component, Property> implements Processor<Pay
   public function payload(): Maybe<Payload> return _payload;
 }
 
-class ComponentProcessor<Payload, Component, Property> implements Processor<ReadonlyArray<ItemEntity<Payload, Component>>, Component, Property> {
+class ComponentReducer<Payload, Component, Property> implements Reducer<ReadonlyArray<ItemEntity<Payload, Component>>, Component, Property> {
   var map: OrderedMap<Entity<Component>, ItemEntity<Payload, Component>>;
   var matchEntity: ReadonlyArray<Component> -> Maybe<Payload>;
   public function new(matchEntity: ReadonlyArray<Component> -> Maybe<Payload>) {
@@ -138,9 +138,4 @@ class ComponentProcessor<Payload, Component, Property> implements Processor<Read
 
   public function payload(): Maybe<ReadonlyArray<ItemEntity<Payload, Component>>>
     return if(map.length == 0) Maybe.none() else Maybe.of(map.toArray());
-}
-
-typedef ItemEntity<ItemPayload, Component> = {
-  data: ItemPayload,
-  entity: Entity<Component>
 }

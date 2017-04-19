@@ -465,7 +465,7 @@ StringTools.replace = function(s,sub,by) {
 var TestAll = function() { };
 TestAll.__name__ = ["TestAll"];
 TestAll.main = function() {
-	utest_UTest.run([new TestComponents(),new TestEngine(),new TestEntity(),new TestPhase(),new TestProcessor(),new TestProperty(),new TestTimeSpan()]);
+	utest_UTest.run([new TestComponents(),new TestEngine(),new TestEntity(),new TestPhase(),new TestReducer(),new TestProperty(),new TestTimeSpan()]);
 };
 var TestComponents = function() {
 };
@@ -535,7 +535,7 @@ TestEngine.prototype = {
 		var phase = engine.phases.create();
 		var countComps = 0;
 		var countEnv = 0;
-		phase.processComponentsProperties(function(e) {
+		phase.reduceComponentsProperties(function(e) {
 			countComps += 1;
 			utest_Assert.same(AComponent.CA,e[0],null,null,null,{ fileName : "TestEngine.hx", lineNumber : 18, className : "TestEngine", methodName : "testPropagationAfterSystem"});
 			return null;
@@ -558,7 +558,7 @@ TestEngine.prototype = {
 		var countEnv = 0;
 		engine.entities.create([AComponent.CA]);
 		engine.properties.add(AProperty.EA);
-		phase.processComponentsProperties(function(e) {
+		phase.reduceComponentsProperties(function(e) {
 			countComps += 1;
 			utest_Assert.same(AComponent.CA,e[0],null,null,null,{ fileName : "TestEngine.hx", lineNumber : 45, className : "TestEngine", methodName : "testPropagationBeforeSystem"});
 			return null;
@@ -581,7 +581,7 @@ TestEngine.prototype = {
 		engine.entities.create([AComponent.CA]);
 		engine.properties.add(AProperty.EA);
 		var phase = engine.phases.create();
-		phase.processComponentsProperties(function(e) {
+		phase.reduceComponentsProperties(function(e) {
 			countComps += 1;
 			utest_Assert.same(AComponent.CA,e[0],null,null,null,{ fileName : "TestEngine.hx", lineNumber : 72, className : "TestEngine", methodName : "testPropagationAfterPhase"});
 			return null;
@@ -601,7 +601,7 @@ TestEngine.prototype = {
 		var engine = new edge_Engine();
 		var phase = engine.phases.create();
 		var comps = null;
-		phase.processComponents(function(e) {
+		phase.reduceComponents(function(e) {
 			comps = e;
 			return null;
 		});
@@ -618,7 +618,7 @@ TestEngine.prototype = {
 		var engine = new edge_Engine();
 		var phase = engine.phases.create();
 		var envs = null;
-		phase.processProperties(function(e) {
+		phase.reduceProperties(function(e) {
 			envs = e;
 			return null;
 		});
@@ -679,8 +679,8 @@ TestPhase.__name__ = ["TestPhase"];
 TestPhase.prototype = {
 	testBasics: function() {
 		var p = new edge_Phase(null);
-		var v = new TPProcessor();
-		var vs = p.addProcessor(v);
+		var v = new TPReducer();
+		var vs = p.addReducer(v);
 		utest_Assert.notNull(vs,null,{ fileName : "TestPhase.hx", lineNumber : 17, className : "TestPhase", methodName : "testBasics"});
 		utest_Assert.same([],v.collected,null,null,null,{ fileName : "TestPhase.hx", lineNumber : 18, className : "TestPhase", methodName : "testBasics"});
 		var e = new edge_Entity([AComponent.CA],function(_) {
@@ -696,19 +696,19 @@ TestPhase.prototype = {
 	}
 	,__class__: TestPhase
 };
-var edge_Processor = function() { };
-edge_Processor.__name__ = ["edge","Processor"];
-edge_Processor.prototype = {
+var edge_Reducer = function() { };
+edge_Reducer.__name__ = ["edge","Reducer"];
+edge_Reducer.prototype = {
 	onChange: null
 	,payload: null
-	,__class__: edge_Processor
+	,__class__: edge_Reducer
 };
-var TPProcessor = function() {
+var TPReducer = function() {
 	this.collected = [];
 };
-TPProcessor.__name__ = ["TPProcessor"];
-TPProcessor.__interfaces__ = [edge_Processor];
-TPProcessor.prototype = {
+TPReducer.__name__ = ["TPReducer"];
+TPReducer.__interfaces__ = [edge_Reducer];
+TPReducer.prototype = {
 	collected: null
 	,onChange: function(change) {
 		this.collected.push(change);
@@ -716,40 +716,7 @@ TPProcessor.prototype = {
 	,payload: function() {
 		return null;
 	}
-	,__class__: TPProcessor
-};
-var TestProcessor = function() {
-	var e = new edge_Entity([AComponent.CA],function(_) {
-	});
-	this.events = [edge_StatusChange.PropertyAdded(AProperty.EA),edge_StatusChange.PropertyRemoved(AProperty.EA),edge_StatusChange.EntityCreated(e),edge_StatusChange.EntityUpdated(e),edge_StatusChange.EntityRemoved(e)];
-};
-TestProcessor.__name__ = ["TestProcessor"];
-TestProcessor.prototype = {
-	events: null
-	,testBasics: function() {
-		var p = new edge_Phase(null);
-		var comps = [];
-		var envs = [];
-		p.processComponentsProperties(function(e) {
-			var tmp = e.slice();
-			comps.push(tmp);
-			return "comp";
-		},function(e1) {
-			var tmp1 = e1.slice();
-			envs.push(tmp1);
-			return "env";
-		});
-		var _g = 0;
-		var _g1 = this.events;
-		while(_g < _g1.length) {
-			var e2 = _g1[_g];
-			++_g;
-			p.dispatch(e2);
-		}
-		utest_Assert.same([[AComponent.CA],[AComponent.CA]],comps,null,null,null,{ fileName : "TestProcessor.hx", lineNumber : 39, className : "TestProcessor", methodName : "testBasics"});
-		utest_Assert.same([[AProperty.EA],[]],envs,null,null,null,{ fileName : "TestProcessor.hx", lineNumber : 40, className : "TestProcessor", methodName : "testBasics"});
-	}
-	,__class__: TestProcessor
+	,__class__: TPReducer
 };
 var TestProperty = function() {
 };
@@ -810,6 +777,39 @@ TestProperty.prototype = {
 var SampleProperty = { __ename__ : ["SampleProperty"], __constructs__ : ["Score","Player"] };
 SampleProperty.Score = function(score) { var $x = ["Score",0,score]; $x.__enum__ = SampleProperty; return $x; };
 SampleProperty.Player = function(info) { var $x = ["Player",1,info]; $x.__enum__ = SampleProperty; return $x; };
+var TestReducer = function() {
+	var e = new edge_Entity([AComponent.CA],function(_) {
+	});
+	this.events = [edge_StatusChange.PropertyAdded(AProperty.EA),edge_StatusChange.PropertyRemoved(AProperty.EA),edge_StatusChange.EntityCreated(e),edge_StatusChange.EntityUpdated(e),edge_StatusChange.EntityRemoved(e)];
+};
+TestReducer.__name__ = ["TestReducer"];
+TestReducer.prototype = {
+	events: null
+	,testBasics: function() {
+		var p = new edge_Phase(null);
+		var comps = [];
+		var envs = [];
+		p.reduceComponentsProperties(function(e) {
+			var tmp = e.slice();
+			comps.push(tmp);
+			return "comp";
+		},function(e1) {
+			var tmp1 = e1.slice();
+			envs.push(tmp1);
+			return "env";
+		});
+		var _g = 0;
+		var _g1 = this.events;
+		while(_g < _g1.length) {
+			var e2 = _g1[_g];
+			++_g;
+			p.dispatch(e2);
+		}
+		utest_Assert.same([[AComponent.CA],[AComponent.CA]],comps,null,null,null,{ fileName : "TestReducer.hx", lineNumber : 39, className : "TestReducer", methodName : "testBasics"});
+		utest_Assert.same([[AProperty.EA],[]],envs,null,null,null,{ fileName : "TestReducer.hx", lineNumber : 40, className : "TestReducer", methodName : "testBasics"});
+	}
+	,__class__: TestReducer
+};
 var TestTimeSpan = function() {
 };
 TestTimeSpan.__name__ = ["TestTimeSpan"];
@@ -1103,19 +1103,19 @@ edge_Entity.prototype = {
 	,__class__: edge_Entity
 };
 var edge_Phase = function(engine) {
-	this.processors = new haxe_ds_ObjectMap();
+	this.reducers = new haxe_ds_ObjectMap();
 	this.engine = engine;
 };
 edge_Phase.__name__ = ["edge","Phase"];
 edge_Phase.prototype = {
-	processors: null
+	reducers: null
 	,engine: null
-	,addProcessor: function(processor) {
-		var processorSystem = this.processors.h[processor.__id__];
-		if(null == processorSystem) {
-			var this1 = this.processors;
-			processorSystem = new edge_ProcessorSystem();
-			this1.set(processor,processorSystem);
+	,addReducer: function(reducer) {
+		var reducerSystem = this.reducers.h[reducer.__id__];
+		if(null == reducerSystem) {
+			var this1 = this.reducers;
+			reducerSystem = new edge_ReducerSystem();
+			this1.set(reducer,reducerSystem);
 		}
 		if(null != this.engine) {
 			var _g = 0;
@@ -1123,56 +1123,56 @@ edge_Phase.prototype = {
 			while(_g < _g1.length) {
 				var e = _g1[_g];
 				++_g;
-				processor.onChange(edge_StatusChange.PropertyAdded(e));
+				reducer.onChange(edge_StatusChange.PropertyAdded(e));
 			}
 			var _g2 = 0;
 			var _g11 = this.engine.entities.entities;
 			while(_g2 < _g11.length) {
 				var e1 = _g11[_g2];
 				++_g2;
-				processor.onChange(edge_StatusChange.EntityCreated(e1));
+				reducer.onChange(edge_StatusChange.EntityCreated(e1));
 			}
 		}
-		return processorSystem;
+		return reducerSystem;
 	}
-	,processComponents: function(extractor) {
-		return this.addProcessor(new edge_ComponentProcessor(extractor));
+	,reduceComponents: function(extractor) {
+		return this.addReducer(new edge_ComponentReducer(extractor));
 	}
-	,processProperty: function(extractor) {
-		return this.addProcessor(new edge_PropertyProcessor(extractor));
+	,reduceProperty: function(extractor) {
+		return this.addReducer(new edge_PropertyReducer(extractor));
 	}
-	,processProperties: function(extractor) {
-		return this.addProcessor(new edge_PropertiesProcessor(extractor));
+	,reduceProperties: function(extractor) {
+		return this.addReducer(new edge_PropertiesReducer(extractor));
 	}
-	,processComponentsProperty: function(extractorEntity,extractorProperty) {
-		return this.addProcessor(new edge_ComponentsAndPropertyProcessor(this,extractorEntity,extractorProperty,function(c,e) {
+	,reduceComponentsProperty: function(extractorEntity,extractorProperty) {
+		return this.addReducer(new edge_ComponentsAndPropertyReducer(this,extractorEntity,extractorProperty,function(c,e) {
 			return { items : c, property : e};
 		}));
 	}
-	,processComponentsProperties: function(extractorEntity,extractorProperty) {
-		return this.addProcessor(new edge_ComponentsAndPropertiesProcessor(this,extractorEntity,extractorProperty,function(c,e) {
+	,reduceComponentsProperties: function(extractorEntity,extractorProperty) {
+		return this.addReducer(new edge_ComponentsAndPropertiesReducer(this,extractorEntity,extractorProperty,function(c,e) {
 			return { items : c, property : e};
 		}));
 	}
 	,update: function() {
-		var processor = this.processors.keys();
-		while(processor.hasNext()) {
-			var processor1 = processor.next();
-			var _g = processor1.payload();
+		var reducer = this.reducers.keys();
+		while(reducer.hasNext()) {
+			var reducer1 = reducer.next();
+			var _g = reducer1.payload();
 			if(_g == null) {
 				continue;
 			} else {
 				var pl = _g;
-				var processorSystem = this.processors.get(processor1);
-				processorSystem.update(pl);
+				var reducerSystem = this.reducers.get(reducer1);
+				reducerSystem.update(pl);
 			}
 		}
 	}
 	,dispatch: function(change) {
-		var processor = this.processors.keys();
-		while(processor.hasNext()) {
-			var processor1 = processor.next();
-			processor1.onChange(change);
+		var reducer = this.reducers.keys();
+		while(reducer.hasNext()) {
+			var reducer1 = reducer.next();
+			reducer1.onChange(change);
 		}
 	}
 	,__class__: edge_Phase
@@ -1194,222 +1194,6 @@ edge_Phases.prototype = {
 		return this.phases;
 	}
 	,__class__: edge_Phases
-};
-var edge_ComponentsAndPropertyProcessor = function(phase,matchEntity,matchProperty,compose) {
-	this._payload = null;
-	this.processorComponents = new edge_ComponentProcessor(matchEntity);
-	this.processorProperty = new edge_PropertyProcessor(matchProperty);
-	this.compose = compose;
-};
-edge_ComponentsAndPropertyProcessor.__name__ = ["edge","ComponentsAndPropertyProcessor"];
-edge_ComponentsAndPropertyProcessor.__interfaces__ = [edge_Processor];
-edge_ComponentsAndPropertyProcessor.prototype = {
-	_payload: null
-	,processorComponents: null
-	,processorProperty: null
-	,compose: null
-	,onChange: function(change) {
-		this.processorComponents.onChange(change);
-		this.processorProperty.onChange(change);
-		var _g = this.processorProperty.payload();
-		var _g1 = this.processorComponents.payload();
-		var tmp;
-		if(_g1 == null) {
-			if(_g == null) {
-				tmp = null;
-			} else {
-				tmp = null;
-			}
-		} else if(_g == null) {
-			tmp = null;
-		} else {
-			var c = _g1;
-			var e = _g;
-			tmp = this.compose(c,e);
-		}
-		this._payload = tmp;
-	}
-	,payload: function() {
-		return this._payload;
-	}
-	,__class__: edge_ComponentsAndPropertyProcessor
-};
-var edge_ComponentsAndPropertiesProcessor = function(phase,matchEntity,matchProperty,compose) {
-	this._payload = null;
-	this.processorComponents = new edge_ComponentProcessor(matchEntity);
-	this.processorProperty = new edge_PropertiesProcessor(matchProperty);
-	this.compose = compose;
-};
-edge_ComponentsAndPropertiesProcessor.__name__ = ["edge","ComponentsAndPropertiesProcessor"];
-edge_ComponentsAndPropertiesProcessor.__interfaces__ = [edge_Processor];
-edge_ComponentsAndPropertiesProcessor.prototype = {
-	_payload: null
-	,processorComponents: null
-	,processorProperty: null
-	,compose: null
-	,onChange: function(change) {
-		this.processorComponents.onChange(change);
-		this.processorProperty.onChange(change);
-		var _g = this.processorProperty.payload();
-		var _g1 = this.processorComponents.payload();
-		var tmp;
-		if(_g1 == null) {
-			if(_g == null) {
-				tmp = null;
-			} else {
-				tmp = null;
-			}
-		} else if(_g == null) {
-			tmp = null;
-		} else {
-			var c = _g1;
-			var e = _g;
-			tmp = this.compose(c,e);
-		}
-		this._payload = tmp;
-	}
-	,payload: function() {
-		return this._payload;
-	}
-	,__class__: edge_ComponentsAndPropertiesProcessor
-};
-var edge_PropertyProcessor = function(matchProperty) {
-	this._payload = null;
-	this.matchProperty = matchProperty;
-};
-edge_PropertyProcessor.__name__ = ["edge","PropertyProcessor"];
-edge_PropertyProcessor.__interfaces__ = [edge_Processor];
-edge_PropertyProcessor.prototype = {
-	_payload: null
-	,matchProperty: null
-	,onChange: function(change) {
-		switch(change[1]) {
-		case 0:
-			var e = change[2];
-			this._payload = this.matchProperty(e);
-			break;
-		case 1:
-			var e1 = change[2];
-			this._payload = null;
-			break;
-		case 2:case 3:case 4:
-			break;
-		}
-	}
-	,payload: function() {
-		return this._payload;
-	}
-	,__class__: edge_PropertyProcessor
-};
-var edge_PropertiesProcessor = function(matchProperties) {
-	this._payload = null;
-	this.matchProperties = matchProperties;
-	this.properties = [];
-};
-edge_PropertiesProcessor.__name__ = ["edge","PropertiesProcessor"];
-edge_PropertiesProcessor.__interfaces__ = [edge_Processor];
-edge_PropertiesProcessor.prototype = {
-	matchProperties: null
-	,properties: null
-	,_payload: null
-	,onChange: function(change) {
-		switch(change[1]) {
-		case 0:
-			var e = change[2];
-			this.properties.push(e);
-			var _g = this.matchProperties(this.properties);
-			if(_g != null) {
-				var v = _g;
-				this._payload = v;
-			}
-			break;
-		case 1:
-			var e1 = change[2];
-			HxOverrides.remove(this.properties,e1);
-			var _g1 = this.matchProperties(this.properties);
-			if(_g1 != null) {
-				var v1 = _g1;
-				this._payload = v1;
-			}
-			break;
-		case 2:case 3:case 4:
-			break;
-		}
-	}
-	,payload: function() {
-		return this._payload;
-	}
-	,__class__: edge_PropertiesProcessor
-};
-var edge_ComponentProcessor = function(matchEntity) {
-	var this1 = new thx_ObjectOrderedMap();
-	this.map = this1;
-	this.matchEntity = matchEntity;
-};
-edge_ComponentProcessor.__name__ = ["edge","ComponentProcessor"];
-edge_ComponentProcessor.__interfaces__ = [edge_Processor];
-edge_ComponentProcessor.prototype = {
-	map: null
-	,matchEntity: null
-	,onChange: function(change) {
-		switch(change[1]) {
-		case 0:
-			var e = change[2];
-			break;
-		case 1:
-			var e1 = change[2];
-			break;
-		case 2:
-			var e2 = change[2];
-			var p = this.matchEntity(e2.components());
-			if(null != p) {
-				this.map.set(e2,{ data : p, entity : e2});
-			}
-			break;
-		case 3:
-			var e3 = change[2];
-			var p1 = this.matchEntity(e3.components());
-			if(null != p1) {
-				this.map.set(e3,{ data : p1, entity : e3});
-			} else {
-				this.map.remove(e3);
-			}
-			break;
-		case 4:
-			var e4 = change[2];
-			this.map.remove(e4);
-			break;
-		}
-	}
-	,payload: function() {
-		if(this.map.length == 0) {
-			return null;
-		} else {
-			return this.map.toArray();
-		}
-	}
-	,__class__: edge_ComponentProcessor
-};
-var edge_ProcessorSystem = function() {
-	this.systems = [];
-};
-edge_ProcessorSystem.__name__ = ["edge","ProcessorSystem"];
-edge_ProcessorSystem.prototype = {
-	systems: null
-	,feed: function(system) {
-		this.systems.push(system);
-		return this;
-	}
-	,update: function(payload) {
-		var _g = 0;
-		var _g1 = this.systems;
-		while(_g < _g1.length) {
-			var system = _g1[_g];
-			++_g;
-			system(payload);
-		}
-	}
-	,__class__: edge_ProcessorSystem
 };
 var edge_Properties = function(engine) {
 	this.properties = [];
@@ -1467,6 +1251,222 @@ edge_Properties.prototype = {
 		return this.properties.length;
 	}
 	,__class__: edge_Properties
+};
+var edge_ComponentsAndPropertyReducer = function(phase,matchEntity,matchProperty,compose) {
+	this._payload = null;
+	this.reducerComponents = new edge_ComponentReducer(matchEntity);
+	this.reducerProperty = new edge_PropertyReducer(matchProperty);
+	this.compose = compose;
+};
+edge_ComponentsAndPropertyReducer.__name__ = ["edge","ComponentsAndPropertyReducer"];
+edge_ComponentsAndPropertyReducer.__interfaces__ = [edge_Reducer];
+edge_ComponentsAndPropertyReducer.prototype = {
+	_payload: null
+	,reducerComponents: null
+	,reducerProperty: null
+	,compose: null
+	,onChange: function(change) {
+		this.reducerComponents.onChange(change);
+		this.reducerProperty.onChange(change);
+		var _g = this.reducerProperty.payload();
+		var _g1 = this.reducerComponents.payload();
+		var tmp;
+		if(_g1 == null) {
+			if(_g == null) {
+				tmp = null;
+			} else {
+				tmp = null;
+			}
+		} else if(_g == null) {
+			tmp = null;
+		} else {
+			var c = _g1;
+			var e = _g;
+			tmp = this.compose(c,e);
+		}
+		this._payload = tmp;
+	}
+	,payload: function() {
+		return this._payload;
+	}
+	,__class__: edge_ComponentsAndPropertyReducer
+};
+var edge_ComponentsAndPropertiesReducer = function(phase,matchEntity,matchProperty,compose) {
+	this._payload = null;
+	this.reducerComponents = new edge_ComponentReducer(matchEntity);
+	this.reducerProperty = new edge_PropertiesReducer(matchProperty);
+	this.compose = compose;
+};
+edge_ComponentsAndPropertiesReducer.__name__ = ["edge","ComponentsAndPropertiesReducer"];
+edge_ComponentsAndPropertiesReducer.__interfaces__ = [edge_Reducer];
+edge_ComponentsAndPropertiesReducer.prototype = {
+	_payload: null
+	,reducerComponents: null
+	,reducerProperty: null
+	,compose: null
+	,onChange: function(change) {
+		this.reducerComponents.onChange(change);
+		this.reducerProperty.onChange(change);
+		var _g = this.reducerProperty.payload();
+		var _g1 = this.reducerComponents.payload();
+		var tmp;
+		if(_g1 == null) {
+			if(_g == null) {
+				tmp = null;
+			} else {
+				tmp = null;
+			}
+		} else if(_g == null) {
+			tmp = null;
+		} else {
+			var c = _g1;
+			var e = _g;
+			tmp = this.compose(c,e);
+		}
+		this._payload = tmp;
+	}
+	,payload: function() {
+		return this._payload;
+	}
+	,__class__: edge_ComponentsAndPropertiesReducer
+};
+var edge_PropertyReducer = function(matchProperty) {
+	this._payload = null;
+	this.matchProperty = matchProperty;
+};
+edge_PropertyReducer.__name__ = ["edge","PropertyReducer"];
+edge_PropertyReducer.__interfaces__ = [edge_Reducer];
+edge_PropertyReducer.prototype = {
+	_payload: null
+	,matchProperty: null
+	,onChange: function(change) {
+		switch(change[1]) {
+		case 0:
+			var e = change[2];
+			this._payload = this.matchProperty(e);
+			break;
+		case 1:
+			var e1 = change[2];
+			this._payload = null;
+			break;
+		case 2:case 3:case 4:
+			break;
+		}
+	}
+	,payload: function() {
+		return this._payload;
+	}
+	,__class__: edge_PropertyReducer
+};
+var edge_PropertiesReducer = function(matchProperties) {
+	this._payload = null;
+	this.matchProperties = matchProperties;
+	this.properties = [];
+};
+edge_PropertiesReducer.__name__ = ["edge","PropertiesReducer"];
+edge_PropertiesReducer.__interfaces__ = [edge_Reducer];
+edge_PropertiesReducer.prototype = {
+	matchProperties: null
+	,properties: null
+	,_payload: null
+	,onChange: function(change) {
+		switch(change[1]) {
+		case 0:
+			var e = change[2];
+			this.properties.push(e);
+			var _g = this.matchProperties(this.properties);
+			if(_g != null) {
+				var v = _g;
+				this._payload = v;
+			}
+			break;
+		case 1:
+			var e1 = change[2];
+			HxOverrides.remove(this.properties,e1);
+			var _g1 = this.matchProperties(this.properties);
+			if(_g1 != null) {
+				var v1 = _g1;
+				this._payload = v1;
+			}
+			break;
+		case 2:case 3:case 4:
+			break;
+		}
+	}
+	,payload: function() {
+		return this._payload;
+	}
+	,__class__: edge_PropertiesReducer
+};
+var edge_ComponentReducer = function(matchEntity) {
+	var this1 = new thx_ObjectOrderedMap();
+	this.map = this1;
+	this.matchEntity = matchEntity;
+};
+edge_ComponentReducer.__name__ = ["edge","ComponentReducer"];
+edge_ComponentReducer.__interfaces__ = [edge_Reducer];
+edge_ComponentReducer.prototype = {
+	map: null
+	,matchEntity: null
+	,onChange: function(change) {
+		switch(change[1]) {
+		case 0:
+			var e = change[2];
+			break;
+		case 1:
+			var e1 = change[2];
+			break;
+		case 2:
+			var e2 = change[2];
+			var p = this.matchEntity(e2.components());
+			if(null != p) {
+				this.map.set(e2,{ data : p, entity : e2});
+			}
+			break;
+		case 3:
+			var e3 = change[2];
+			var p1 = this.matchEntity(e3.components());
+			if(null != p1) {
+				this.map.set(e3,{ data : p1, entity : e3});
+			} else {
+				this.map.remove(e3);
+			}
+			break;
+		case 4:
+			var e4 = change[2];
+			this.map.remove(e4);
+			break;
+		}
+	}
+	,payload: function() {
+		if(this.map.length == 0) {
+			return null;
+		} else {
+			return this.map.toArray();
+		}
+	}
+	,__class__: edge_ComponentReducer
+};
+var edge_ReducerSystem = function() {
+	this.systems = [];
+};
+edge_ReducerSystem.__name__ = ["edge","ReducerSystem"];
+edge_ReducerSystem.prototype = {
+	systems: null
+	,feed: function(system) {
+		this.systems.push(system);
+		return this;
+	}
+	,update: function(payload) {
+		var _g = 0;
+		var _g1 = this.systems;
+		while(_g < _g1.length) {
+			var system = _g1[_g];
+			++_g;
+			system(payload);
+		}
+	}
+	,__class__: edge_ReducerSystem
 };
 var edge_StatusChange = { __ename__ : ["edge","StatusChange"], __constructs__ : ["PropertyAdded","PropertyRemoved","EntityCreated","EntityUpdated","EntityRemoved"] };
 edge_StatusChange.PropertyAdded = function(e) { var $x = ["PropertyAdded",0,e]; $x.__enum__ = edge_StatusChange; return $x; };

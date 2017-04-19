@@ -5,7 +5,7 @@ class TestAll {
       new TestEngine(),
       new TestEntity(),
       new TestPhase(),
-      new TestProcessor(),
+      new TestReducer(),
       new TestProperty(),
       new TestTimeSpan(),
     ]);

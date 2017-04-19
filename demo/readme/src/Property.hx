@@ -1,6 +1,6 @@
 import minicanvas.MiniCanvas;
 
-enum Properties {
+enum Property {
   Canvas(canvas: MiniCanvas);
   MouseCoords(coords: Point);
 }

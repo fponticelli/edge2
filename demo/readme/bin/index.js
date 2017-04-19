@@ -6,10 +6,10 @@ function $extend(from, fields) {
 	if( fields.toString !== Object.prototype.toString ) proto.toString = fields.toString;
 	return proto;
 }
-var Components = { __ename__ : ["Components"], __constructs__ : ["Position","Velocity","Color"] };
-Components.Position = function(coords) { var $x = ["Position",0,coords]; $x.__enum__ = Components; return $x; };
-Components.Velocity = function(vector) { var $x = ["Velocity",1,vector]; $x.__enum__ = Components; return $x; };
-Components.Color = function(hsl) { var $x = ["Color",2,hsl]; $x.__enum__ = Components; return $x; };
+var Component = { __ename__ : ["Component"], __constructs__ : ["Position","Velocity","Color"] };
+Component.Position = function(coords) { var $x = ["Position",0,coords]; $x.__enum__ = Component; return $x; };
+Component.Velocity = function(vector) { var $x = ["Velocity",1,vector]; $x.__enum__ = Component; return $x; };
+Component.Color = function(hsl) { var $x = ["Color",2,hsl]; $x.__enum__ = Component; return $x; };
 var DateTools = function() { };
 DateTools.__name__ = ["DateTools"];
 DateTools.getMonthDays = function(d) {
@@ -109,27 +109,95 @@ EReg.prototype = {
 	}
 	,__class__: EReg
 };
+var Extract = function() { };
+Extract.__name__ = ["Extract"];
+Extract.canvas = function(p) {
+	if(p[1] == 0) {
+		var mini = p[2];
+		return mini;
+	} else {
+		return null;
+	}
+};
+Extract.positionVelocity = function(comps) {
+	var out_velocity;
+	var out_position = null;
+	out_velocity = null;
+	var _g = 0;
+	while(_g < comps.length) {
+		var comp = comps[_g];
+		++_g;
+		switch(comp[1]) {
+		case 0:
+			var point = comp[2];
+			out_position = point;
+			break;
+		case 1:
+			var point1 = comp[2];
+			out_velocity = point1;
+			break;
+		default:
+		}
+	}
+	var vel = out_velocity;
+	var pos = out_position;
+	if(null != pos && null != vel) {
+		return { position : pos, velocity : vel};
+	} else {
+		return null;
+	}
+};
+Extract.positionColor = function(comps) {
+	var out_position;
+	var out_color;
+	out_position = null;
+	var this1 = [0,0,0];
+	out_color = this1;
+	var _g = 0;
+	while(_g < comps.length) {
+		var comp = comps[_g];
+		++_g;
+		switch(comp[1]) {
+		case 0:
+			var point = comp[2];
+			out_position = point;
+			break;
+		case 2:
+			var color = comp[2];
+			out_color = color;
+			break;
+		default:
+		}
+	}
+	var pos = out_position;
+	if(null != pos) {
+		return { position : pos, color : out_color};
+	} else {
+		return null;
+	}
+};
 var Game = function() { };
 Game.__name__ = ["Game"];
 Game.main = function() {
 	var mini = minicanvas_MiniCanvas.create(Game.width,Game.height).display("basic example");
 	var engine = new edge_Engine();
 	var phase = engine.phases.create();
-	phase.processComponents(Move.extract).feed(Move.system);
-	phase.processComponents(RenderDots.extract).feed(($_=new RenderDots(mini),$bind($_,$_.update)));
+	engine.properties.add(Property.Canvas(mini));
+	phase.reduceComponents(Extract.positionVelocity).feed(system_Physics.system);
+	phase.reduceComponentsProperty(Extract.positionColor,Extract.canvas).feed(system_RenderDots.system);
 	var _g = 0;
 	while(_g < 300) {
 		var i = _g++;
 		var engine1 = engine.entities;
-		var tmp = Components.Position(new Point(Game.size(Game.width),Game.size(Game.height)));
-		var tmp1 = Components.Velocity(new Point(Game.center(5),Game.center(5)));
+		var tmp = Component.Position(new Point(Game.size(Game.width),Game.size(Game.height)));
+		var tmp1 = Component.Velocity(new Point(Game.center(5),Game.center(5)));
 		var this1 = [Math.random() * 360,0.8,0.8];
-		engine1.create([tmp,tmp1,Components.Color(this1)]);
+		engine1.create([tmp,tmp1,Component.Color(this1)]);
 	}
 	var _g1 = 0;
 	while(_g1 < 30) {
 		var i1 = _g1++;
-		engine.entities.create([Components.Position(new Point(Game.size(Game.width),Game.size(Game.height)))]);
+		engine.entities.create([Component.Position(new Point(Game.size(Game.width),Game.size(Game.height)))]);
 	}
 	Game.createLoop($bind(phase,phase.update));
 };
@@ -228,57 +296,6 @@ Lambda.has = function(it,elt) {
 	return false;
 };
 Math.__name__ = ["Math"];
-var Move = function() { };
-Move.__name__ = ["Move"];
-Move.system = function(list) {
-	var _g = 0;
-	while(_g < list.length) {
-		var item = list[_g];
-		++_g;
-		var pos = item.data.position;
-		var vel = item.data.velocity;
-		var dx = pos.x + vel.x;
-		var dy = pos.y + vel.y;
-		if(dx <= 0 && vel.x < 0 || dx >= Game.width && vel.x > 0) {
-			vel.x = -vel.x;
-		} else {
-			pos.x = dx;
-		}
-		if(dy <= 0 && vel.y < 0 || dy >= Game.height && vel.y > 0) {
-			vel.y = -vel.y;
-		} else {
-			pos.y = dy;
-		}
-	}
-};
-Move.extract = function(comps) {
-	var out_velocity;
-	var out_position = null;
-	out_velocity = null;
-	var _g = 0;
-	while(_g < comps.length) {
-		var comp = comps[_g];
-		++_g;
-		switch(comp[1]) {
-		case 0:
-			var point = comp[2];
-			out_position = point;
-			break;
-		case 1:
-			var point1 = comp[2];
-			out_velocity = point1;
-			break;
-		default:
-		}
-	}
-	var vel = out_velocity;
-	var pos = out_position;
-	if(null != pos && null != vel) {
-		return { position : pos, velocity : vel};
-	} else {
-		return null;
-	}
-};
 var Point = function(x,y) {
 	this.x = x;
 	this.y = y;
@@ -316,6 +333,9 @@ Point.prototype = {
 	}
 	,__class__: Point
 };
+var Property = { __ename__ : ["Property"], __constructs__ : ["Canvas","MouseCoords"] };
+Property.Canvas = function(canvas) { var $x = ["Canvas",0,canvas]; $x.__enum__ = Property; return $x; };
+Property.MouseCoords = function(coords) { var $x = ["MouseCoords",1,coords]; $x.__enum__ = Property; return $x; };
 var Reflect = function() { };
 Reflect.__name__ = ["Reflect"];
 Reflect.field = function(o,field) {
@@ -395,52 +415,6 @@ Reflect.deleteField = function(o,field) {
 	}
 	delete(o[field]);
 	return true;
-};
-var RenderDots = function(mini) {
-	this.mini = mini;
-};
-RenderDots.__name__ = ["RenderDots"];
-RenderDots.extract = function(comps) {
-	var out_position;
-	var out_color;
-	out_position = null;
-	var this1 = [0,0,0];
-	out_color = this1;
-	var _g = 0;
-	while(_g < comps.length) {
-		var comp = comps[_g];
-		++_g;
-		switch(comp[1]) {
-		case 0:
-			var point = comp[2];
-			out_position = point;
-			break;
-		case 2:
-			var color = comp[2];
-			out_color = color;
-			break;
-		default:
-		}
-	}
-	var pos = out_position;
-	if(null != pos) {
-		return { position : pos, color : out_color};
-	} else {
-		return null;
-	}
-};
-RenderDots.prototype = {
-	mini: null
-	,update: function(list) {
-		this.mini.clear();
-		var _g = 0;
-		while(_g < list.length) {
-			var item = list[_g];
-			++_g;
-			this.mini.dot(item.data.position.x,item.data.position.y,2,thx_color__$Hsl_Hsl_$Impl_$.toRgbxa(item.data.color));
-		}
-	}
-	,__class__: RenderDots
 };
 var Std = function() { };
 Std.__name__ = ["Std"];
@@ -830,19 +804,19 @@ edge_Entity.prototype = {
 	,__class__: edge_Entity
 };
 var edge_Phase = function(engine) {
-	this.processors = new haxe_ds_ObjectMap();
+	this.reducers = new haxe_ds_ObjectMap();
 	this.engine = engine;
 };
 edge_Phase.__name__ = ["edge","Phase"];
 edge_Phase.prototype = {
-	processors: null
+	reducers: null
 	,engine: null
-	,addProcessor: function(processor) {
-		var processorSystem = this.processors.h[processor.__id__];
-		if(null == processorSystem) {
-			var this1 = this.processors;
-			processorSystem = new edge_ProcessorSystem();
-			this1.set(processor,processorSystem);
+	,addReducer: function(reducer) {
+		var reducerSystem = this.reducers.h[reducer.__id__];
+		if(null == reducerSystem) {
+			var this1 = this.reducers;
+			reducerSystem = new edge_ReducerSystem();
+			this1.set(reducer,reducerSystem);
 		}
 		if(null != this.engine) {
 			var _g = 0;
@@ -850,56 +824,56 @@ edge_Phase.prototype = {
 			while(_g < _g1.length) {
 				var e = _g1[_g];
 				++_g;
-				processor.onChange(edge_StatusChange.PropertyAdded(e));
+				reducer.onChange(edge_StatusChange.PropertyAdded(e));
 			}
 			var _g2 = 0;
 			var _g11 = this.engine.entities.entities;
 			while(_g2 < _g11.length) {
 				var e1 = _g11[_g2];
 				++_g2;
-				processor.onChange(edge_StatusChange.EntityCreated(e1));
+				reducer.onChange(edge_StatusChange.EntityCreated(e1));
 			}
 		}
-		return processorSystem;
+		return reducerSystem;
 	}
-	,processComponents: function(extractor) {
-		return this.addProcessor(new edge_ComponentProcessor(extractor));
+	,reduceComponents: function(extractor) {
+		return this.addReducer(new edge_ComponentReducer(extractor));
 	}
-	,processProperty: function(extractor) {
-		return this.addProcessor(new edge_PropertyProcessor(extractor));
+	,reduceProperty: function(extractor) {
+		return this.addReducer(new edge_PropertyReducer(extractor));
 	}
-	,processProperties: function(extractor) {
-		return this.addProcessor(new edge_PropertiesProcessor(extractor));
+	,reduceProperties: function(extractor) {
+		return this.addReducer(new edge_PropertiesReducer(extractor));
 	}
-	,processComponentsProperty: function(extractorEntity,extractorProperty) {
-		return this.addProcessor(new edge_ComponentsAndPropertyProcessor(this,extractorEntity,extractorProperty,function(c,e) {
+	,reduceComponentsProperty: function(extractorEntity,extractorProperty) {
+		return this.addReducer(new edge_ComponentsAndPropertyReducer(this,extractorEntity,extractorProperty,function(c,e) {
 			return { items : c, property : e};
 		}));
 	}
-	,processComponentsProperties: function(extractorEntity,extractorProperty) {
-		return this.addProcessor(new edge_ComponentsAndPropertiesProcessor(this,extractorEntity,extractorProperty,function(c,e) {
+	,reduceComponentsProperties: function(extractorEntity,extractorProperty) {
+		return this.addReducer(new edge_ComponentsAndPropertiesReducer(this,extractorEntity,extractorProperty,function(c,e) {
 			return { items : c, property : e};
 		}));
 	}
 	,update: function() {
-		var processor = this.processors.keys();
-		while(processor.hasNext()) {
-			var processor1 = processor.next();
-			var _g = processor1.payload();
+		var reducer = this.reducers.keys();
+		while(reducer.hasNext()) {
+			var reducer1 = reducer.next();
+			var _g = reducer1.payload();
 			if(_g == null) {
 				continue;
 			} else {
 				var pl = _g;
-				var processorSystem = this.processors.get(processor1);
-				processorSystem.update(pl);
+				var reducerSystem = this.reducers.get(reducer1);
+				reducerSystem.update(pl);
 			}
 		}
 	}
 	,dispatch: function(change) {
-		var processor = this.processors.keys();
-		while(processor.hasNext()) {
-			var processor1 = processor.next();
-			processor1.onChange(change);
+		var reducer = this.reducers.keys();
+		while(reducer.hasNext()) {
+			var reducer1 = reducer.next();
+			reducer1.onChange(change);
 		}
 	}
 	,__class__: edge_Phase
@@ -921,229 +895,6 @@ edge_Phases.prototype = {
 		return this.phases;
 	}
 	,__class__: edge_Phases
-};
-var edge_Processor = function() { };
-edge_Processor.__name__ = ["edge","Processor"];
-edge_Processor.prototype = {
-	onChange: null
-	,payload: null
-	,__class__: edge_Processor
-};
-var edge_ComponentsAndPropertyProcessor = function(phase,matchEntity,matchProperty,compose) {
-	this._payload = null;
-	this.processorComponents = new edge_ComponentProcessor(matchEntity);
-	this.processorProperty = new edge_PropertyProcessor(matchProperty);
-	this.compose = compose;
-};
-edge_ComponentsAndPropertyProcessor.__name__ = ["edge","ComponentsAndPropertyProcessor"];
-edge_ComponentsAndPropertyProcessor.__interfaces__ = [edge_Processor];
-edge_ComponentsAndPropertyProcessor.prototype = {
-	_payload: null
-	,processorComponents: null
-	,processorProperty: null
-	,compose: null
-	,onChange: function(change) {
-		this.processorComponents.onChange(change);
-		this.processorProperty.onChange(change);
-		var _g = this.processorProperty.payload();
-		var _g1 = this.processorComponents.payload();
-		var tmp;
-		if(_g1 == null) {
-			if(_g == null) {
-				tmp = null;
-			} else {
-				tmp = null;
-			}
-		} else if(_g == null) {
-			tmp = null;
-		} else {
-			var c = _g1;
-			var e = _g;
-			tmp = this.compose(c,e);
-		}
-		this._payload = tmp;
-	}
-	,payload: function() {
-		return this._payload;
-	}
-	,__class__: edge_ComponentsAndPropertyProcessor
-};
-var edge_ComponentsAndPropertiesProcessor = function(phase,matchEntity,matchProperty,compose) {
-	this._payload = null;
-	this.processorComponents = new edge_ComponentProcessor(matchEntity);
-	this.processorProperty = new edge_PropertiesProcessor(matchProperty);
-	this.compose = compose;
-};
-edge_ComponentsAndPropertiesProcessor.__name__ = ["edge","ComponentsAndPropertiesProcessor"];
-edge_ComponentsAndPropertiesProcessor.__interfaces__ = [edge_Processor];
-edge_ComponentsAndPropertiesProcessor.prototype = {
-	_payload: null
-	,processorComponents: null
-	,processorProperty: null
-	,compose: null
-	,onChange: function(change) {
-		this.processorComponents.onChange(change);
-		this.processorProperty.onChange(change);
-		var _g = this.processorProperty.payload();
-		var _g1 = this.processorComponents.payload();
-		var tmp;
-		if(_g1 == null) {
-			if(_g == null) {
-				tmp = null;
-			} else {
-				tmp = null;
-			}
-		} else if(_g == null) {
-			tmp = null;
-		} else {
-			var c = _g1;
-			var e = _g;
-			tmp = this.compose(c,e);
-		}
-		this._payload = tmp;
-	}
-	,payload: function() {
-		return this._payload;
-	}
-	,__class__: edge_ComponentsAndPropertiesProcessor
-};
-var edge_PropertyProcessor = function(matchProperty) {
-	this._payload = null;
-	this.matchProperty = matchProperty;
-};
-edge_PropertyProcessor.__name__ = ["edge","PropertyProcessor"];
-edge_PropertyProcessor.__interfaces__ = [edge_Processor];
-edge_PropertyProcessor.prototype = {
-	_payload: null
-	,matchProperty: null
-	,onChange: function(change) {
-		switch(change[1]) {
-		case 0:
-			var e = change[2];
-			this._payload = this.matchProperty(e);
-			break;
-		case 1:
-			var e1 = change[2];
-			this._payload = null;
-			break;
-		case 2:case 3:case 4:
-			break;
-		}
-	}
-	,payload: function() {
-		return this._payload;
-	}
-	,__class__: edge_PropertyProcessor
-};
-var edge_PropertiesProcessor = function(matchProperties) {
-	this._payload = null;
-	this.matchProperties = matchProperties;
-	this.properties = [];
-};
-edge_PropertiesProcessor.__name__ = ["edge","PropertiesProcessor"];
-edge_PropertiesProcessor.__interfaces__ = [edge_Processor];
-edge_PropertiesProcessor.prototype = {
-	matchProperties: null
-	,properties: null
-	,_payload: null
-	,onChange: function(change) {
-		switch(change[1]) {
-		case 0:
-			var e = change[2];
-			this.properties.push(e);
-			var _g = this.matchProperties(this.properties);
-			if(_g != null) {
-				var v = _g;
-				this._payload = v;
-			}
-			break;
-		case 1:
-			var e1 = change[2];
-			HxOverrides.remove(this.properties,e1);
-			var _g1 = this.matchProperties(this.properties);
-			if(_g1 != null) {
-				var v1 = _g1;
-				this._payload = v1;
-			}
-			break;
-		case 2:case 3:case 4:
-			break;
-		}
-	}
-	,payload: function() {
-		return this._payload;
-	}
-	,__class__: edge_PropertiesProcessor
-};
-var edge_ComponentProcessor = function(matchEntity) {
-	var this1 = new thx_ObjectOrderedMap();
-	this.map = this1;
-	this.matchEntity = matchEntity;
-};
-edge_ComponentProcessor.__name__ = ["edge","ComponentProcessor"];
-edge_ComponentProcessor.__interfaces__ = [edge_Processor];
-edge_ComponentProcessor.prototype = {
-	map: null
-	,matchEntity: null
-	,onChange: function(change) {
-		switch(change[1]) {
-		case 0:
-			var e = change[2];
-			break;
-		case 1:
-			var e1 = change[2];
-			break;
-		case 2:
-			var e2 = change[2];
-			var p = this.matchEntity(e2.components());
-			if(null != p) {
-				this.map.set(e2,{ data : p, entity : e2});
-			}
-			break;
-		case 3:
-			var e3 = change[2];
-			var p1 = this.matchEntity(e3.components());
-			if(null != p1) {
-				this.map.set(e3,{ data : p1, entity : e3});
-			} else {
-				this.map.remove(e3);
-			}
-			break;
-		case 4:
-			var e4 = change[2];
-			this.map.remove(e4);
-			break;
-		}
-	}
-	,payload: function() {
-		if(this.map.length == 0) {
-			return null;
-		} else {
-			return this.map.toArray();
-		}
-	}
-	,__class__: edge_ComponentProcessor
-};
-var edge_ProcessorSystem = function() {
-	this.systems = [];
-};
-edge_ProcessorSystem.__name__ = ["edge","ProcessorSystem"];
-edge_ProcessorSystem.prototype = {
-	systems: null
-	,feed: function(system) {
-		this.systems.push(system);
-		return this;
-	}
-	,update: function(payload) {
-		var _g = 0;
-		var _g1 = this.systems;
-		while(_g < _g1.length) {
-			var system = _g1[_g];
-			++_g;
-			system(payload);
-		}
-	}
-	,__class__: edge_ProcessorSystem
 };
 var edge_Properties = function(engine) {
 	this.properties = [];
@@ -1201,6 +952,229 @@ edge_Properties.prototype = {
 		return this.properties.length;
 	}
 	,__class__: edge_Properties
+};
+var edge_Reducer = function() { };
+edge_Reducer.__name__ = ["edge","Reducer"];
+edge_Reducer.prototype = {
+	onChange: null
+	,payload: null
+	,__class__: edge_Reducer
+};
+var edge_ComponentsAndPropertyReducer = function(phase,matchEntity,matchProperty,compose) {
+	this._payload = null;
+	this.reducerComponents = new edge_ComponentReducer(matchEntity);
+	this.reducerProperty = new edge_PropertyReducer(matchProperty);
+	this.compose = compose;
+};
+edge_ComponentsAndPropertyReducer.__name__ = ["edge","ComponentsAndPropertyReducer"];
+edge_ComponentsAndPropertyReducer.__interfaces__ = [edge_Reducer];
+edge_ComponentsAndPropertyReducer.prototype = {
+	_payload: null
+	,reducerComponents: null
+	,reducerProperty: null
+	,compose: null
+	,onChange: function(change) {
+		this.reducerComponents.onChange(change);
+		this.reducerProperty.onChange(change);
+		var _g = this.reducerProperty.payload();
+		var _g1 = this.reducerComponents.payload();
+		var tmp;
+		if(_g1 == null) {
+			if(_g == null) {
+				tmp = null;
+			} else {
+				tmp = null;
+			}
+		} else if(_g == null) {
+			tmp = null;
+		} else {
+			var c = _g1;
+			var e = _g;
+			tmp = this.compose(c,e);
+		}
+		this._payload = tmp;
+	}
+	,payload: function() {
+		return this._payload;
+	}
+	,__class__: edge_ComponentsAndPropertyReducer
+};
+var edge_ComponentsAndPropertiesReducer = function(phase,matchEntity,matchProperty,compose) {
+	this._payload = null;
+	this.reducerComponents = new edge_ComponentReducer(matchEntity);
+	this.reducerProperty = new edge_PropertiesReducer(matchProperty);
+	this.compose = compose;
+};
+edge_ComponentsAndPropertiesReducer.__name__ = ["edge","ComponentsAndPropertiesReducer"];
+edge_ComponentsAndPropertiesReducer.__interfaces__ = [edge_Reducer];
+edge_ComponentsAndPropertiesReducer.prototype = {
+	_payload: null
+	,reducerComponents: null
+	,reducerProperty: null
+	,compose: null
+	,onChange: function(change) {
+		this.reducerComponents.onChange(change);
+		this.reducerProperty.onChange(change);
+		var _g = this.reducerProperty.payload();
+		var _g1 = this.reducerComponents.payload();
+		var tmp;
+		if(_g1 == null) {
+			if(_g == null) {
+				tmp = null;
+			} else {
+				tmp = null;
+			}
+		} else if(_g == null) {
+			tmp = null;
+		} else {
+			var c = _g1;
+			var e = _g;
+			tmp = this.compose(c,e);
+		}
+		this._payload = tmp;
+	}
+	,payload: function() {
+		return this._payload;
+	}
+	,__class__: edge_ComponentsAndPropertiesReducer
+};
+var edge_PropertyReducer = function(matchProperty) {
+	this._payload = null;
+	this.matchProperty = matchProperty;
+};
+edge_PropertyReducer.__name__ = ["edge","PropertyReducer"];
+edge_PropertyReducer.__interfaces__ = [edge_Reducer];
+edge_PropertyReducer.prototype = {
+	_payload: null
+	,matchProperty: null
+	,onChange: function(change) {
+		switch(change[1]) {
+		case 0:
+			var e = change[2];
+			this._payload = this.matchProperty(e);
+			break;
+		case 1:
+			var e1 = change[2];
+			this._payload = null;
+			break;
+		case 2:case 3:case 4:
+			break;
+		}
+	}
+	,payload: function() {
+		return this._payload;
+	}
+	,__class__: edge_PropertyReducer
+};
+var edge_PropertiesReducer = function(matchProperties) {
+	this._payload = null;
+	this.matchProperties = matchProperties;
+	this.properties = [];
+};
+edge_PropertiesReducer.__name__ = ["edge","PropertiesReducer"];
+edge_PropertiesReducer.__interfaces__ = [edge_Reducer];
+edge_PropertiesReducer.prototype = {
+	matchProperties: null
+	,properties: null
+	,_payload: null
+	,onChange: function(change) {
+		switch(change[1]) {
+		case 0:
+			var e = change[2];
+			this.properties.push(e);
+			var _g = this.matchProperties(this.properties);
+			if(_g != null) {
+				var v = _g;
+				this._payload = v;
+			}
+			break;
+		case 1:
+			var e1 = change[2];
+			HxOverrides.remove(this.properties,e1);
+			var _g1 = this.matchProperties(this.properties);
+			if(_g1 != null) {
+				var v1 = _g1;
+				this._payload = v1;
+			}
+			break;
+		case 2:case 3:case 4:
+			break;
+		}
+	}
+	,payload: function() {
+		return this._payload;
+	}
+	,__class__: edge_PropertiesReducer
+};
+var edge_ComponentReducer = function(matchEntity) {
+	var this1 = new thx_ObjectOrderedMap();
+	this.map = this1;
+	this.matchEntity = matchEntity;
+};
+edge_ComponentReducer.__name__ = ["edge","ComponentReducer"];
+edge_ComponentReducer.__interfaces__ = [edge_Reducer];
+edge_ComponentReducer.prototype = {
+	map: null
+	,matchEntity: null
+	,onChange: function(change) {
+		switch(change[1]) {
+		case 0:
+			var e = change[2];
+			break;
+		case 1:
+			var e1 = change[2];
+			break;
+		case 2:
+			var e2 = change[2];
+			var p = this.matchEntity(e2.components());
+			if(null != p) {
+				this.map.set(e2,{ data : p, entity : e2});
+			}
+			break;
+		case 3:
+			var e3 = change[2];
+			var p1 = this.matchEntity(e3.components());
+			if(null != p1) {
+				this.map.set(e3,{ data : p1, entity : e3});
+			} else {
+				this.map.remove(e3);
+			}
+			break;
+		case 4:
+			var e4 = change[2];
+			this.map.remove(e4);
+			break;
+		}
+	}
+	,payload: function() {
+		if(this.map.length == 0) {
+			return null;
+		} else {
+			return this.map.toArray();
+		}
+	}
+	,__class__: edge_ComponentReducer
+};
+var edge_ReducerSystem = function() {
+	this.systems = [];
+};
+edge_ReducerSystem.__name__ = ["edge","ReducerSystem"];
+edge_ReducerSystem.prototype = {
+	systems: null
+	,feed: function(system) {
+		this.systems.push(system);
+		return this;
+	}
+	,update: function(payload) {
+		var _g = 0;
+		var _g1 = this.systems;
+		while(_g < _g1.length) {
+			var system = _g1[_g];
+			++_g;
+			system(payload);
+		}
+	}
+	,__class__: edge_ReducerSystem
 };
 var edge_StatusChange = { __ename__ : ["edge","StatusChange"], __constructs__ : ["PropertyAdded","PropertyRemoved","EntityCreated","EntityUpdated","EntityRemoved"] };
 edge_StatusChange.PropertyAdded = function(e) { var $x = ["PropertyAdded",0,e]; $x.__enum__ = edge_StatusChange; return $x; };
@@ -3091,6 +3065,42 @@ minicanvas_node_PNGEncoder.prototype = {
 		});
 	}
 	,__class__: minicanvas_node_PNGEncoder
+};
+var system_Physics = function() { };
+system_Physics.__name__ = ["system","Physics"];
+system_Physics.system = function(list) {
+	var _g = 0;
+	while(_g < list.length) {
+		var item = list[_g];
+		++_g;
+		var pos = item.data.position;
+		var vel = item.data.velocity;
+		var dx = pos.x + vel.x;
+		var dy = pos.y + vel.y;
+		if(dx <= 0 && vel.x < 0 || dx >= Game.width && vel.x > 0) {
+			vel.x = -vel.x;
+		} else {
+			pos.x = dx;
+		}
+		if(dy <= 0 && vel.y < 0 || dy >= Game.height && vel.y > 0) {
+			vel.y = -vel.y;
+		} else {
+			pos.y = dy;
+		}
+	}
+};
+var system_RenderDots = function() { };
+system_RenderDots.__name__ = ["system","RenderDots"];
+system_RenderDots.system = function(x) {
+	var mini = x.property;
+	mini.clear();
+	var _g = 0;
+	var _g1 = x.items;
+	while(_g < _g1.length) {
+		var item = _g1[_g];
+		++_g;
+		mini.dot(item.data.position.x,item.data.position.y,2,thx_color__$Hsl_Hsl_$Impl_$.toRgbxa(item.data.color));
+	}
 };
 var thx_Arrays = function() { };
 thx_Arrays.__name__ = ["thx","Arrays"];
@@ -10228,9 +10238,6 @@ thx_Types.anyValueToString = function(value) {
 	}
 	return thx_Types.toString(Type["typeof"](value));
 };
-var thx_Unit = { __ename__ : ["thx","Unit"], __constructs__ : ["unit"] };
-thx_Unit.unit = ["unit",0];
-thx_Unit.unit.__enum__ = thx_Unit;
 var thx_Uuid = function() { };
 thx_Uuid.__name__ = ["thx","Uuid"];
 thx_Uuid.random = function(max) {

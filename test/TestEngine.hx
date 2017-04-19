@@ -12,7 +12,7 @@ class TestEngine {
         phase = engine.phases.create(),
         countComps = 0,
         countEnv = 0;
-    phase.processComponentsProperties(
+    phase.reduceComponentsProperties(
       function(e) {
         countComps++;
         Assert.same(CA, e[0]);
@@ -39,7 +39,7 @@ class TestEngine {
         countEnv = 0;
     engine.entities.create([CA]);
     engine.properties.add(EA);
-    phase.processComponentsProperties(
+    phase.reduceComponentsProperties(
       function(e) {
         countComps++;
         Assert.same(CA, e[0]);
@@ -66,7 +66,7 @@ class TestEngine {
     engine.entities.create([CA]);
     engine.properties.add(EA);
   var phase = engine.phases.create();
-  phase.processComponentsProperties(
+  phase.reduceComponentsProperties(
       function(e) {
         countComps++;
         Assert.same(CA, e[0]);
@@ -90,7 +90,7 @@ class TestEngine {
     var engine = new Engine(),
         phase = engine.phases.create(),
         comps = null;
-    phase.processComponents(
+    phase.reduceComponents(
       function(e) {
         comps = e;
         return Maybe.none();
@@ -108,7 +108,7 @@ class TestEngine {
     var engine = new Engine(),
         phase = engine.phases.create(),
         envs = null;
-    phase.processProperties(
+    phase.reduceProperties(
       function(e) {
         envs = e;
         return Maybe.none();

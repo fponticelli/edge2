@@ -7,7 +7,7 @@ import edge.StatusChange;
 import thx.Maybe;
 import thx.ReadonlyArray;
 
-class TestProcessor {
+class TestReducer {
   var events: Array<StatusChange<AComponent, AProperty>>;
   public function new() {
     var e = new Entity([CA], function(_) {});
@@ -24,7 +24,7 @@ class TestProcessor {
     var p = new Phase(null),
         comps = [],
         envs = [];
-    p.processComponentsProperties(
+    p.reduceComponentsProperties(
       function(e: ReadonlyArray<AComponent>) {
         comps.push(e.copy());
         return Maybe.of("comp");

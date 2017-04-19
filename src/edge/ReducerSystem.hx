@@ -1,11 +1,11 @@
 package edge;
 
-class ProcessorSystem<Payload> {
+class ReducerSystem<Payload> {
   var systems: Array<System<Payload>> = [];
 
   public function new() {}
 
-  public function feed(system: System<Payload>): ProcessorSystem<Payload> {
+  public function feed(system: System<Payload>): ReducerSystem<Payload> {
     systems.push(system);
     return this;
   }

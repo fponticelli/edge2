@@ -1,76 +1,76 @@
 package edge;
 
-import edge.Processor;
+import edge.Reducer;
 import thx.Maybe;
 import thx.ReadonlyArray;
 
 class Phase<Component, Property> {
-  var processors: Map<Processor<Dynamic, Component, Property>, ProcessorSystem<Dynamic>> = new Map(); // Dynamic should be Any
+  var reducers: Map<Reducer<Dynamic, Component, Property>, ReducerSystem<Dynamic>> = new Map(); // Dynamic should be Any
   public var engine(default, null): Engine<Component, Property>;
   public function new(engine: Engine<Component, Property>) {
     this.engine = engine;
   }
 
-  public function addProcessor<Payload>(processor: Processor<Payload, Component, Property>): ProcessorSystem<Payload> {
-    var processorSystem = processors.get(processor);
-    if(null == processorSystem) {
-      processors.set(processor, processorSystem = new ProcessorSystem());
+  public function addReducer<Payload>(reducer: Reducer<Payload, Component, Property>): ReducerSystem<Payload> {
+    var reducerSystem = reducers.get(reducer);
+    if(null == reducerSystem) {
+      reducers.set(reducer, reducerSystem = new ReducerSystem());
     }
     if(null != engine) {
       for(e in engine.properties.get())
-        processor.onChange(PropertyAdded(e));
+        reducer.onChange(PropertyAdded(e));
       for(e in engine.entities.get())
-        processor.onChange(EntityCreated(e));
+        reducer.onChange(EntityCreated(e));
     }
-    return cast processorSystem; // TODO cast?
+    return cast reducerSystem; // TODO cast?
   }
 
-  public function processComponents<Payload>(extractor: ReadonlyArray<Component> -> Maybe<Payload>): ProcessorSystem<ReadonlyArray<ItemEntity<Payload, Component>>>
-    return addProcessor(new ComponentProcessor(extractor));
+  public function reduceComponents<Payload>(extractor: ReadonlyArray<Component> -> Maybe<Payload>): ReducerSystem<ReadonlyArray<ItemEntity<Payload, Component>>>
+    return addReducer(new ComponentReducer(extractor));
 
-  public function processProperty<Payload>(extractor: Property -> Maybe<Payload>): ProcessorSystem<Payload>
-    return addProcessor(new PropertyProcessor(extractor));
+  public function reduceProperty<Payload>(extractor: Property -> Maybe<Payload>): ReducerSystem<Payload>
+    return addReducer(new PropertyReducer(extractor));
 
-  public function processProperties<Payload>(extractor: ReadonlyArray<Property> -> Maybe<Payload>): ProcessorSystem<Payload>
-    return addProcessor(new PropertiesProcessor(extractor));
+  public function reduceProperties<Payload>(extractor: ReadonlyArray<Property> -> Maybe<Payload>): ReducerSystem<Payload>
+    return addReducer(new PropertiesReducer(extractor));
 
-  public function processComponentsProperty<ComponentsPayload, PropertyPayload, Payload>(
+  public function reduceComponentsProperty<ComponentsPayload, PropertyPayload, Payload>(
     extractorEntity: ReadonlyArray<Component> -> Maybe<ComponentsPayload>,
     extractorProperty: Property -> Maybe<PropertyPayload>
-  ): ProcessorSystem<{
+  ): ReducerSystem<{
     items: ReadonlyArray<ItemEntity<ComponentsPayload, Component>>,
     property: PropertyPayload
   }>
-    return addProcessor(new ComponentsAndPropertyProcessor(this, extractorEntity, extractorProperty, function(c, e) return {
+    return addReducer(new ComponentsAndPropertyReducer(this, extractorEntity, extractorProperty, function(c, e) return {
       items: c,
       property: e
     }));
 
-  public function processComponentsProperties<ComponentsPayload, PropertyPayload, Payload>(
+  public function reduceComponentsProperties<ComponentsPayload, PropertyPayload, Payload>(
     extractorEntity: ReadonlyArray<Component> -> Maybe<ComponentsPayload>,
     extractorProperty: ReadonlyArray<Property> -> Maybe<PropertyPayload>
-  ): ProcessorSystem<{
+  ): ReducerSystem<{
     items: ReadonlyArray<ItemEntity<ComponentsPayload, Component>>,
     property: PropertyPayload
   }>
-    return addProcessor(new ComponentsAndPropertiesProcessor(this, extractorEntity, extractorProperty, function(c, e) return {
+    return addReducer(new ComponentsAndPropertiesReducer(this, extractorEntity, extractorProperty, function(c, e) return {
       items: c,
       property: e
     }));
 
   public function update() {
-    for(processor in processors.keys()) {
-      switch processor.payload() {
+    for(reducer in reducers.keys()) {
+      switch reducer.payload() {
         case null: continue;
         case pl:
-          var processorSystem = processors.get(processor);
-          processorSystem.update(pl);
+          var reducerSystem = reducers.get(reducer);
+          reducerSystem.update(pl);
       }
     }
   }
 
   public function dispatch(change: StatusChange<Component, Property>) {
-    for(processor in processors.keys())
-      processor.onChange(change);
+    for(reducer in reducers.keys())
+      reducer.onChange(change);
   }
 }

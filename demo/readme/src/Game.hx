@@ -1,10 +1,7 @@
 import edge.*;
-import edge.Processor;
-import thx.Unit;
-using thx.ReadonlyArray;
 import thx.color.Hsl;
-import Components;
-import haxe.ds.Option;
+import Property;
+import system.*;
 
 class Game {
   public static var width(default, null) = 400;
@@ -15,13 +12,15 @@ class Game {
         engine = new Engine(),
         phase = engine.phases.create();
 
-    phase
-      .processComponents(Move.extract)
-      .feed(Move.system);
+    engine.properties.add(Canvas(mini));
 
     phase
-      .processComponents(RenderDots.extract)
-      .feed(new RenderDots(mini).update);
+      .reduceComponents(Extract.positionVelocity)
+      .feed(Physics.system);
+
+    phase
+      .reduceComponentsProperty(Extract.positionColor, Extract.canvas)
+      .feed(RenderDots.system);
 
     for(i in 0...300)
       engine.entities.create([

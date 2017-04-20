@@ -25,7 +25,7 @@ class ComponentsAndPropertyReducer<ComponentsPayload, PropertyPayload, Payload, 
     reducerProperty.onChange(change);
     _payload = switch [reducerComponents.payload(), reducerProperty.payload()] {
       case [null, null] | [_, null] | [null, _]: Maybe.none();
-      case [c, e]: Maybe.of(compose(c.get(), e.get()));
+      case [c, e]: Maybe.of(compose(c.getUnsafe(), e.getUnsafe()));
     };
   }
 
@@ -47,8 +47,8 @@ class ComponentsAndPropertiesReducer<ComponentsPayload, PropertyPayload, Payload
     reducerComponents.onChange(change);
     reducerProperty.onChange(change);
     _payload = switch [reducerComponents.payload(), reducerProperty.payload()] {
-      case [null, null] | [_, null] | [null, _]: null;
-      case [c, e]: Maybe.of(compose(c.get(), e.get()));
+      case [null, null] | [_, null] | [null, _]: Maybe.none();
+      case [c, e]: Maybe.of(compose(c.getUnsafe(), e.getUnsafe()));
     }
   }
 
@@ -65,10 +65,12 @@ class PropertyReducer<Payload, Component, Property> implements Reducer<Payload, 
   public function onChange(change: StatusChange<Component, Property>): Void {
     switch change {
       case PropertyAdded(e):
-        _payload = matchProperty(e);
-      case PropertyRemoved(e):
+        var maybe = matchProperty(e);
+        if(maybe.hasValue())
+          _payload = maybe;
+      case PropertyRemoved(e) if(matchProperty(e).hasValue()):
         _payload = Maybe.none();
-      case EntityCreated(_), EntityUpdated(_), EntityRemoved(_):
+      case PropertyRemoved(_), EntityCreated(_), EntityUpdated(_), EntityRemoved(_):
         // do nothing
     }
   }
@@ -89,16 +91,12 @@ class PropertiesReducer<Payload, Component, Property> implements Reducer<Payload
     switch change {
       case PropertyAdded(e):
         properties.push(e);
-        switch matchProperties(properties) {
-          case null:
-          case v: _payload = v;
-        }
+        var maybe = matchProperties(properties);
+        if(maybe.hasValue())
+          _payload = maybe;
       case PropertyRemoved(e):
         properties.remove(e);
-        switch matchProperties(properties) {
-          case null:
-          case v: _payload = v;
-        }
+        _payload = matchProperties(properties);
       case EntityCreated(_), EntityUpdated(_), EntityRemoved(_):
         // do nothing
     }
@@ -120,12 +118,12 @@ class ComponentReducer<Payload, Component, Property> implements Reducer<Readonly
       case EntityCreated(e):
         var p = matchEntity(e.components());
         if(p.hasValue()) {
-          map.set(e, { data: p.get(), entity: e });
+          map.set(e, { data: p.getUnsafe(), entity: e });
         }
       case EntityUpdated(e):
         var p = matchEntity(e.components());
         if(p.hasValue()) {
-          map.set(e, { data: p.get(), entity: e });
+          map.set(e, { data: p.getUnsafe(), entity: e });
         } else {
           map.remove(e);
         }

@@ -4,8 +4,8 @@ import edge.ItemEntity;
 using thx.ReadonlyArray;
 
 class Physics {
-  public static function system(list: ReadonlyArray<ItemEntity<{ position: Point, velocity: Point }, Component>>) {
-    for(item in list) {
+  public static function system(x: { property: Point, items: ReadonlyArray<ItemEntity<{ position: Point, velocity: Point }, Component>> }) {
+    for(item in x.items) {
       var pos = item.data.position,
           vel = item.data.velocity,
           dx = pos.x + vel.x,
@@ -18,6 +18,7 @@ class Physics {
         vel.y = -vel.y;
       else
         pos.y = dy;
+      vel.steerToward(pos, x.property, 0.05);
     }
   }
 }

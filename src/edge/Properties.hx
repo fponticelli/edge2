@@ -21,6 +21,22 @@ class Properties<Component, Property> {
     engine.statusChange(PropertyRemoved(property));
   }
 
+  public function update(handler: Property -> PropertyAction<Property>) {
+    var i = properties.length;
+    while(--i >= 0) {
+      var property = properties[i];
+      switch handler(property) {
+        case Ignore: // do nothing
+        case Remove:
+          removeImpl(property);
+        case Update(newproperty):
+          removeImpl(property);
+          add(newproperty);
+      }
+    }
+    return this;
+  }
+
   public function removeOne(predicate: Property -> Bool): Bool {
     for(property in properties) {
       if(predicate(property)) {
@@ -52,4 +68,10 @@ class Properties<Component, Property> {
 
   inline function get_length(): Int
     return properties.length;
+}
+
+enum PropertyAction<Property> {
+  Ignore;
+  Remove;
+  Update(property: Property);
 }

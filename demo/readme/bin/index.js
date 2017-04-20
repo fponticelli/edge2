@@ -119,6 +119,38 @@ Extract.canvas = function(p) {
 		return null;
 	}
 };
+Extract.mouseCoords = function(p) {
+	if(p[1] == 1) {
+		var coords = p[2];
+		return coords;
+	} else {
+		return null;
+	}
+};
+Extract.canvasMouseCoords = function(ps) {
+	var canvas = null;
+	var coords = null;
+	var _g = 0;
+	while(_g < ps.length) {
+		var p = ps[_g];
+		++_g;
+		switch(p[1]) {
+		case 0:
+			var mini = p[2];
+			canvas = mini;
+			break;
+		case 1:
+			var c = p[2];
+			coords = c;
+			break;
+		}
+	}
+	if(null != canvas && null != coords) {
+		return { canvas : canvas, coords : coords};
+	} else {
+		return null;
+	}
+};
 Extract.positionVelocity = function(comps) {
 	var out_velocity;
 	var out_position = null;
@@ -182,22 +214,25 @@ Game.main = function() {
 	var mini = minicanvas_MiniCanvas.create(Game.width,Game.height).display("basic example");
 	var engine = new edge_Engine();
 	var phase = engine.phases.create();
+	var coords = new Point(-100,-100);
+	engine.properties.add(Property.MouseCoords(coords));
 	engine.properties.add(Property.Canvas(mini));
-	phase.reduceComponents(Extract.positionVelocity).feed(system_Physics.system);
+	phase.reduceComponentsProperty(Extract.positionVelocity,Extract.mouseCoords).feed(system_Physics.system);
+	phase.reduceProperty(Extract.canvas).feed(system_RenderClear.system);
+	phase.reduceProperties(Extract.canvasMouseCoords).feed(system_RenderMouse.system);
 	phase.reduceComponentsProperty(Extract.positionColor,Extract.canvas).feed(system_RenderDots.system);
+	mini.onMove(function(e) {
+		coords.x = e.x;
+		coords.y = e.y;
+	});
 	var _g = 0;
-	while(_g < 300) {
+	while(_g < 2000) {
 		var i = _g++;
 		var engine1 = engine.entities;
 		var tmp = Component.Position(new Point(Game.size(Game.width),Game.size(Game.height)));
 		var tmp1 = Component.Velocity(new Point(Game.center(5),Game.center(5)));
-		var this1 = [Math.random() * 360,0.8,0.8];
+		var this1 = [Math.random() * 120 + 120,0.9,0.4];
 		engine1.create([tmp,tmp1,Component.Color(this1)]);
-	}
-	var _g1 = 0;
-	while(_g1 < 30) {
-		var i1 = _g1++;
-		engine.entities.create([Component.Position(new Point(Game.size(Game.width),Game.size(Game.height)))]);
 	}
 	Game.createLoop($bind(phase,phase.update));
 };
@@ -205,7 +240,7 @@ Game.size = function(s) {
 	return s * Math.random();
 };
 Game.center = function(s) {
-	return s * Math.random() - s / 2.0;
+	return 2 * s * Math.random() - s;
 };
 Game.createLoop = function(update) {
 	var loop = null;
@@ -316,6 +351,11 @@ Point.prototype = {
 	,steerToward: function(from,to,maxSteer) {
 		var vb = new Point(to.x - from.x,to.y - from.y);
 		var d = Point.normalizeDirection(vb.angle() - this.angle());
+		this.rotate(Math.min(Math.abs(d),maxSteer) * (d < 0 ? -1 : 1));
+	}
+	,steerAway: function(from,to,maxSteer) {
+		var vb = new Point(to.x - from.x,to.y - from.y);
+		var d = -Point.normalizeDirection(vb.angle() - this.angle());
 		this.rotate(Math.min(Math.abs(d),maxSteer) * (d < 0 ? -1 : 1));
 	}
 	,angle: function() {
@@ -912,6 +952,26 @@ edge_Properties.prototype = {
 		HxOverrides.remove(this.properties,property);
 		this.engine.statusChange(edge_StatusChange.PropertyRemoved(property));
 	}
+	,update: function(handler) {
+		var i = this.properties.length;
+		while(--i >= 0) {
+			var property = this.properties[i];
+			var _g = handler(property);
+			switch(_g[1]) {
+			case 0:
+				break;
+			case 1:
+				this.removeImpl(property);
+				break;
+			case 2:
+				var newproperty = _g[2];
+				this.removeImpl(property);
+				this.add(newproperty);
+				break;
+			}
+		}
+		return this;
+	}
 	,removeOne: function(predicate) {
 		var _g = 0;
 		var _g1 = this.properties;
@@ -953,6 +1013,12 @@ edge_Properties.prototype = {
 	}
 	,__class__: edge_Properties
 };
+var edge_PropertyAction = { __ename__ : ["edge","PropertyAction"], __constructs__ : ["Ignore","Remove","Update"] };
+edge_PropertyAction.Ignore = ["Ignore",0];
+edge_PropertyAction.Ignore.__enum__ = edge_PropertyAction;
+edge_PropertyAction.Remove = ["Remove",1];
+edge_PropertyAction.Remove.__enum__ = edge_PropertyAction;
+edge_PropertyAction.Update = function(property) { var $x = ["Update",2,property]; $x.__enum__ = edge_PropertyAction; return $x; };
 var edge_Reducer = function() { };
 edge_Reducer.__name__ = ["edge","Reducer"];
 edge_Reducer.prototype = {
@@ -1051,11 +1117,16 @@ edge_PropertyReducer.prototype = {
 		switch(change[1]) {
 		case 0:
 			var e = change[2];
-			this._payload = this.matchProperty(e);
+			var maybe = this.matchProperty(e);
+			if(null != maybe) {
+				this._payload = maybe;
+			}
 			break;
 		case 1:
 			var e1 = change[2];
-			this._payload = null;
+			if(null != this.matchProperty(e1)) {
+				this._payload = null;
+			}
 			break;
 		case 2:case 3:case 4:
 			break;
@@ -1082,20 +1153,15 @@ edge_PropertiesReducer.prototype = {
 		case 0:
 			var e = change[2];
 			this.properties.push(e);
-			var _g = this.matchProperties(this.properties);
-			if(_g != null) {
-				var v = _g;
-				this._payload = v;
+			var maybe = this.matchProperties(this.properties);
+			if(null != maybe) {
+				this._payload = maybe;
 			}
 			break;
 		case 1:
 			var e1 = change[2];
 			HxOverrides.remove(this.properties,e1);
-			var _g1 = this.matchProperties(this.properties);
-			if(_g1 != null) {
-				var v1 = _g1;
-				this._payload = v1;
-			}
+			this._payload = this.matchProperties(this.properties);
 			break;
 		case 2:case 3:case 4:
 			break;
@@ -3068,10 +3134,11 @@ minicanvas_node_PNGEncoder.prototype = {
 };
 var system_Physics = function() { };
 system_Physics.__name__ = ["system","Physics"];
-system_Physics.system = function(list) {
+system_Physics.system = function(x) {
 	var _g = 0;
-	while(_g < list.length) {
-		var item = list[_g];
+	var _g1 = x.items;
+	while(_g < _g1.length) {
+		var item = _g1[_g];
 		++_g;
 		var pos = item.data.position;
 		var vel = item.data.velocity;
@@ -3087,13 +3154,18 @@ system_Physics.system = function(list) {
 		} else {
 			pos.y = dy;
 		}
+		vel.steerToward(pos,x.property,0.05);
 	}
+};
+var system_RenderClear = function() { };
+system_RenderClear.__name__ = ["system","RenderClear"];
+system_RenderClear.system = function(canvas) {
+	canvas.clear();
 };
 var system_RenderDots = function() { };
 system_RenderDots.__name__ = ["system","RenderDots"];
 system_RenderDots.system = function(x) {
 	var mini = x.property;
-	mini.clear();
 	var _g = 0;
 	var _g1 = x.items;
 	while(_g < _g1.length) {
@@ -3101,6 +3173,11 @@ system_RenderDots.system = function(x) {
 		++_g;
 		mini.dot(item.data.position.x,item.data.position.y,2,thx_color__$Hsl_Hsl_$Impl_$.toRgbxa(item.data.color));
 	}
+};
+var system_RenderMouse = function() { };
+system_RenderMouse.__name__ = ["system","RenderMouse"];
+system_RenderMouse.system = function(x) {
+	x.canvas.circle(x.coords.x,x.coords.y,10,2,thx_color__$Hsl_Hsl_$Impl_$.toRgbxa(system_RenderMouse.color));
 };
 var thx_Arrays = function() { };
 thx_Arrays.__name__ = ["thx","Arrays"];
@@ -7078,6 +7155,9 @@ thx__$Maybe_Maybe_$Impl_$._new = function(value) {
 	var this1 = value;
 	return this1;
 };
+thx__$Maybe_Maybe_$Impl_$.getUnsafe = function(this1) {
+	return this1;
+};
 thx__$Maybe_Maybe_$Impl_$.get = function(this1) {
 	return this1;
 };
@@ -7225,7 +7305,7 @@ thx__$Maybe_Maybe_$Impl_$.getOrThrow = function(this1,err,posInfo) {
 	}
 };
 thx__$Maybe_Maybe_$Impl_$.getOrFail = function(this1,msg,posInfo) {
-	return thx__$Maybe_Maybe_$Impl_$.getOrThrow(this1,new thx_Error(msg,null,posInfo),{ fileName : "Maybe.hx", lineNumber : 157, className : "thx._Maybe.Maybe_Impl_", methodName : "getOrFail"});
+	return thx__$Maybe_Maybe_$Impl_$.getOrThrow(this1,new thx_Error(msg,null,posInfo),{ fileName : "Maybe.hx", lineNumber : 160, className : "thx._Maybe.Maybe_Impl_", methodName : "getOrFail"});
 };
 thx__$Maybe_Maybe_$Impl_$.orElse = function(this1,alt) {
 	if(null == this1) {
@@ -15900,6 +15980,12 @@ minicanvas_BrowserCanvas.defaultScaleMode = minicanvas_ScaleMode.Auto;
 minicanvas_BrowserCanvas.parentNode = typeof document != 'undefined' && document.body;
 minicanvas_NodeCanvas.defaultScaleMode = minicanvas_ScaleMode.NoScale;
 minicanvas_NodeCanvas.imagePath = "images";
+system_RenderMouse.color = (function($this) {
+	var $r;
+	var this1 = [0.0,0.25,0.75];
+	$r = this1;
+	return $r;
+}(this));
 thx_Dates.order = thx__$Ord_Ord_$Impl_$.fromIntComparison(thx_Dates.compare);
 thx_Floats.TOLERANCE = 10e-5;
 thx_Floats.EPSILON = 1e-9;

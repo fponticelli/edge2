@@ -1,6 +1,7 @@
 import AComponent;
 import AProperty;
 import utest.Assert;
+import edge.Engine;
 import edge.Entity;
 import edge.Phase;
 import edge.StatusChange;
@@ -38,5 +39,50 @@ class TestReducer {
       p.dispatch(e);
     Assert.same([[CA], [CA]], comps);
     Assert.same([[EA], []], envs);
+  }
+
+  public function testIssue20170419() {
+    var engine = new Engine();
+    var phase = engine.phases.create();
+
+    engine.properties.add(EA);
+    engine.properties.add(EB);
+
+    var acc = [];
+
+    phase
+      .reduceComponentsProperty(
+        function(arr: ReadonlyArray<AComponent>) {
+          for(c in arr)
+            if(c == CB) return Maybe.of("CB");
+          return Maybe.none();
+        },
+        function(p: AProperty) {
+          return switch p {
+            case EA: Maybe.of("EA");
+            case _: Maybe.none();
+          }
+        })
+      .feed(function(x) {
+        acc.push(x.property);
+        acc = acc.concat(x.items.map(function(e) return e.data));
+      });
+
+    phase
+      .reduceProperty(function(p: AProperty) {
+        return switch p {
+          case EA: Maybe.of("EA");
+          case _: Maybe.none();
+        }
+      })
+      .feed(function(p) {
+        acc.push(p);
+      });
+
+    engine.entities.create([CA, CB]);
+    engine.entities.create([CB, CC]);
+
+    phase.update();
+    Assert.same(["EA", "CB", "CB", "EA"], acc);
   }
 }

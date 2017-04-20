@@ -805,8 +805,51 @@ TestReducer.prototype = {
 			++_g;
 			p.dispatch(e2);
 		}
-		utest_Assert.same([[AComponent.CA],[AComponent.CA]],comps,null,null,null,{ fileName : "TestReducer.hx", lineNumber : 39, className : "TestReducer", methodName : "testBasics"});
-		utest_Assert.same([[AProperty.EA],[]],envs,null,null,null,{ fileName : "TestReducer.hx", lineNumber : 40, className : "TestReducer", methodName : "testBasics"});
+		utest_Assert.same([[AComponent.CA],[AComponent.CA]],comps,null,null,null,{ fileName : "TestReducer.hx", lineNumber : 40, className : "TestReducer", methodName : "testBasics"});
+		utest_Assert.same([[AProperty.EA],[]],envs,null,null,null,{ fileName : "TestReducer.hx", lineNumber : 41, className : "TestReducer", methodName : "testBasics"});
+	}
+	,testIssue20170419: function() {
+		var engine = new edge_Engine();
+		var phase = engine.phases.create();
+		engine.properties.add(AProperty.EA);
+		engine.properties.add(AProperty.EB);
+		var acc = [];
+		phase.reduceComponentsProperty(function(arr) {
+			var _g = 0;
+			while(_g < arr.length) {
+				var c = arr[_g];
+				++_g;
+				if(c == AComponent.CB) {
+					return "CB";
+				}
+			}
+			return null;
+		},function(p) {
+			if(p[1] == 0) {
+				return "EA";
+			} else {
+				return null;
+			}
+		}).feed(function(x) {
+			acc.push(x.property);
+			var acc1 = x.items.map(function(e) {
+				return e.data;
+			});
+			acc = acc.concat(acc1);
+		});
+		phase.reduceProperty(function(p1) {
+			if(p1[1] == 0) {
+				return "EA";
+			} else {
+				return null;
+			}
+		}).feed(function(p2) {
+			acc.push(p2);
+		});
+		engine.entities.create([AComponent.CA,AComponent.CB]);
+		engine.entities.create([AComponent.CB,AComponent.CC]);
+		phase.update();
+		utest_Assert.same(["EA","CB","CB","EA"],acc,null,null,null,{ fileName : "TestReducer.hx", lineNumber : 86, className : "TestReducer", methodName : "testIssue20170419"});
 	}
 	,__class__: TestReducer
 };
@@ -1211,6 +1254,26 @@ edge_Properties.prototype = {
 		HxOverrides.remove(this.properties,property);
 		this.engine.statusChange(edge_StatusChange.PropertyRemoved(property));
 	}
+	,update: function(handler) {
+		var i = this.properties.length;
+		while(--i >= 0) {
+			var property = this.properties[i];
+			var _g = handler(property);
+			switch(_g[1]) {
+			case 0:
+				break;
+			case 1:
+				this.removeImpl(property);
+				break;
+			case 2:
+				var newproperty = _g[2];
+				this.removeImpl(property);
+				this.add(newproperty);
+				break;
+			}
+		}
+		return this;
+	}
 	,removeOne: function(predicate) {
 		var _g = 0;
 		var _g1 = this.properties;
@@ -1252,6 +1315,12 @@ edge_Properties.prototype = {
 	}
 	,__class__: edge_Properties
 };
+var edge_PropertyAction = { __ename__ : ["edge","PropertyAction"], __constructs__ : ["Ignore","Remove","Update"] };
+edge_PropertyAction.Ignore = ["Ignore",0];
+edge_PropertyAction.Ignore.__enum__ = edge_PropertyAction;
+edge_PropertyAction.Remove = ["Remove",1];
+edge_PropertyAction.Remove.__enum__ = edge_PropertyAction;
+edge_PropertyAction.Update = function(property) { var $x = ["Update",2,property]; $x.__enum__ = edge_PropertyAction; return $x; };
 var edge_ComponentsAndPropertyReducer = function(phase,matchEntity,matchProperty,compose) {
 	this._payload = null;
 	this.reducerComponents = new edge_ComponentReducer(matchEntity);
@@ -1343,11 +1412,16 @@ edge_PropertyReducer.prototype = {
 		switch(change[1]) {
 		case 0:
 			var e = change[2];
-			this._payload = this.matchProperty(e);
+			var maybe = this.matchProperty(e);
+			if(null != maybe) {
+				this._payload = maybe;
+			}
 			break;
 		case 1:
 			var e1 = change[2];
-			this._payload = null;
+			if(null != this.matchProperty(e1)) {
+				this._payload = null;
+			}
 			break;
 		case 2:case 3:case 4:
 			break;
@@ -1374,20 +1448,15 @@ edge_PropertiesReducer.prototype = {
 		case 0:
 			var e = change[2];
 			this.properties.push(e);
-			var _g = this.matchProperties(this.properties);
-			if(_g != null) {
-				var v = _g;
-				this._payload = v;
+			var maybe = this.matchProperties(this.properties);
+			if(null != maybe) {
+				this._payload = maybe;
 			}
 			break;
 		case 1:
 			var e1 = change[2];
 			HxOverrides.remove(this.properties,e1);
-			var _g1 = this.matchProperties(this.properties);
-			if(_g1 != null) {
-				var v1 = _g1;
-				this._payload = v1;
-			}
+			this._payload = this.matchProperties(this.properties);
 			break;
 		case 2:case 3:case 4:
 			break;
@@ -6528,6 +6597,9 @@ thx__$Maybe_Maybe_$Impl_$._new = function(value) {
 	var this1 = value;
 	return this1;
 };
+thx__$Maybe_Maybe_$Impl_$.getUnsafe = function(this1) {
+	return this1;
+};
 thx__$Maybe_Maybe_$Impl_$.get = function(this1) {
 	return this1;
 };
@@ -6675,7 +6747,7 @@ thx__$Maybe_Maybe_$Impl_$.getOrThrow = function(this1,err,posInfo) {
 	}
 };
 thx__$Maybe_Maybe_$Impl_$.getOrFail = function(this1,msg,posInfo) {
-	return thx__$Maybe_Maybe_$Impl_$.getOrThrow(this1,new thx_Error(msg,null,posInfo),{ fileName : "Maybe.hx", lineNumber : 157, className : "thx._Maybe.Maybe_Impl_", methodName : "getOrFail"});
+	return thx__$Maybe_Maybe_$Impl_$.getOrThrow(this1,new thx_Error(msg,null,posInfo),{ fileName : "Maybe.hx", lineNumber : 160, className : "thx._Maybe.Maybe_Impl_", methodName : "getOrFail"});
 };
 thx__$Maybe_Maybe_$Impl_$.orElse = function(this1,alt) {
 	if(null == this1) {

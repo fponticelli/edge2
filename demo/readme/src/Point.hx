@@ -14,6 +14,12 @@ class Point {
     rotate(d.abs().min(maxSteer) * d.sign());
   }
 
+  public function steerAway(from: Point, to: Point, maxSteer: Float) {
+    var vb = new Point(to.x - from.x, to.y - from.y),
+        d = -normalizeDirection(vb.angle() - angle());
+    rotate(d.abs().min(maxSteer) * d.sign());
+  }
+
   public function angle()
     return Math.atan2(y, x);
 
